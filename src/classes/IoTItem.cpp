@@ -191,6 +191,7 @@ void IoTItem::clearValue() {}
 void IoTItem::setPublishDestination(int publishType, int wsNum){};
 void IoTItem::clearHistory() {}
 void IoTItem::setTodayDate() {}
+void IoTItem::setHour() {}
 
 String IoTItem::getID() {
     return _id;

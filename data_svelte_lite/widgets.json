@@ -178,6 +178,39 @@
         "type": "bar"
     },
     {
+        "name": "chart4",
+        "label": "График Часовой",
+        "widget": "chart",
+        "dateFormat": "HH:mm",
+        "maxCount": 3600,
+        "type": "bar"
+    },
+    {
+        "name": "chart5",
+        "label": "График двойной",
+        "widget": "chart",
+        "series": [
+          "Температура, С",
+          "Влажность, %"
+          ],
+        "dateFormat": "HH:mm",
+        "maxCount": 86400,
+        "pointRadius": 0
+    },
+    {
+        "name": "chart6",
+        "label": "График тройной",
+        "widget": "chart",
+        "series": [
+          "Температура, С",
+          "Влажность, %",
+          "Давление, кПа"
+          ],
+        "dateFormat": "HH:mm",
+        "maxCount": 86400,
+        "pointRadius": 0
+    },
+    {
         "name": "fillgauge",
         "label": "Бочка",
         "widget": "fillgauge",

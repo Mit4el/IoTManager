@@ -70,6 +70,7 @@ class IoTItem {
     virtual void setPublishDestination(int type, int wsNum = -1);
     virtual void clearHistory();
     virtual void setTodayDate();
+    virtual void setHour();
 
    protected:
     bool _needSave = false;  // признак необходимости сохранять и загружать значение элемента на flash

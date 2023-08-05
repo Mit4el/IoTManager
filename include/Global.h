@@ -135,6 +135,7 @@ struct Time_t {
 extern unsigned long unixTime;
 extern unsigned long unixTimeShort;
 extern String prevDate;
+extern String prevHourly;//===========================================
 extern bool firstTimeInit;
 
 extern bool isTimeSynch;

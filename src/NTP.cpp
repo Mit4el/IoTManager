@@ -46,6 +46,26 @@ void ntpInit() {
 void synchTime() {
     configTime(0, 0, "pool.ntp.org", "ru.pool.ntp.org", jsonReadStr(settingsFlashJson, F("ntp")).c_str());
 }
+//========================================
+//событие смены часа
+bool onHourlyChange() {
+    bool changed = false;
+    String currentHourly = getTimeLocal_hh();
+    if (!firstTimeInit) {
+        if (prevHourly != currentHourly) {
+            changed = true;
+            SerialPrint("i", F("NTP"), F("Change hour core event"));
+            //установим новую дату во всех графиках системы
+            for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
+                (*it)->setHour();//===================================
+            }
+        }
+    }
+    firstTimeInit = false;
+    prevHourly = currentHourly;
+    return changed;
+}
+//==================================================
 
 //событие смены даты
 bool onDayChange() {
@@ -130,6 +150,12 @@ void breakEpochToTime(unsigned long epoch, Time_t& tm) {
     tm.valid = (epoch > MIN_DATETIME);
 }
 
+const String getTimeLocal_hh() {
+    char buf[32];
+    sprintf(buf, "%02d", _time_local.hour);
+    return String(buf);
+}
+
 const String getTimeLocal_hhmm() {
     char buf[32];
     sprintf(buf, "%02d:%02d", _time_local.hour, _time_local.minute);
@@ -141,6 +167,39 @@ const String getTimeLocal_hhmmss() {
     sprintf(buf, "%02d:%02d:%02d", _time_local.hour, _time_local.minute, _time_local.second);
     return String(buf);
 }
+
+//---------------------------
+/*
+ * Локальное дата время "день недели"
+ */
+  
+   const String getTimeLocal_Weekday() {
+       char buf[32];
+       sprintf(buf, "%d", _time_local.day_of_week);
+       switch (_time_local.day_of_week) {
+  
+  
+      
+      
+   case 1: return "Воскресенье"; break;
+   case 2: return "Понедельник"; break;
+   case 3: return "Вторник"; break;
+   case 4: return "Среда"; break;
+   case 5: return "Четверг"; break;
+   case 6: return "Пятница"; break;
+   case 7: return "Суббота"; break;
+  // case 1: return "7"; break;
+  // case 2: return "1"; break;
+ //  case 3: return "2"; break;
+ //  case 4: return "3"; break;
+  // case 5: return "4"; break;
+  // case 6: return "5"; break;
+ //  case 7: return "6"; break;
+    default: return ""; break;         
+    }
+    return String(buf);
+   }
+   //-----------------------------------------------------------------
 
 const String getDateTimeDotFormated() {
     char buf[32];

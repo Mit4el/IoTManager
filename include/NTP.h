@@ -9,8 +9,11 @@ extern void ntpInit();
 extern time_t getSystemTime();
 extern void synchTime();
 extern bool onDayChange();
+extern bool onHourlyChange();
+extern const String getTimeLocal_hh();//=======================
 extern const String getTimeLocal_hhmm();
 extern const String getTimeLocal_hhmmss();
+extern const String getTimeLocal_Weekday();//=================
 extern const String getDateTimeDotFormated();
 extern const String getTodayDateDotFormated();
 extern unsigned long strDateToUnix(String date);

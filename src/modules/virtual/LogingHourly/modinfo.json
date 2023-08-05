@@ -1,0 +1,57 @@
+{
+    "menuSection": "Виртуальные элементы",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "График часового расхода",
+            "type": "Writing",
+            "subtype": "LogingHourly",
+            "id": "logh",
+            "widget": "chart3",
+            "page": "Графики",
+            "descr": "Расход в час",
+            "num": 1,
+            "int": 1,
+            "logid": "wh",
+            "points": 24,
+            "telegram": 0,
+            "test": 0,
+            "btn-defvalue": 0,
+            "btn-reset": "nil"
+        }
+    ],
+    "about": {
+        "authorName": "Dmitry Borisenko",
+        "authorContact": "https://t.me/Dmitry_Borisenko",
+        "authorGit": "https://github.com/DmitryBorisenko33",
+        "specialThanks": "@itsid1 @Valiuhaaa Serg",
+        "moduleName": "LogingHourly",
+        "moduleVersion": "3.1",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "График часового расхода",
+        "moduleDesc": "Расширение позволяющее логировать накопительные величины и видеть их часовое изменение. Графики доступны в мобильном приложении и в веб интерфейсе. Данные графиков хранятся в встроенной памяти esp",
+        "propInfo": {
+            "int": "Интервал логирования в мнутах, частота проверки смены часа в минутах. Не рекомендуется менять",
+            "logid": "ID накопительной величины которую будем логировать",
+            "points": "Максимальное количество точек",
+            "telegram": "График будет отправлять в телеграм репорт с расходами каждый час",
+            "test": "Параметр необходим для разработчиков. Режим тестирования. График будет обновляться не раз в час, а кадый заданный в int интервал."
+        }
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32_4mb": [],
+        "esp32_16mb": [],
+        "esp8266_4mb": [],
+        "esp8266_16mb": [],
+        "esp8266_1mb": [],
+        "esp8266_1mb_ota": [],
+        "esp8285_1mb": [],
+        "esp8285_1mb_ota": [],
+        "esp8266_2mb": [],
+        "esp8266_2mb_ota": []
+    }
+}
