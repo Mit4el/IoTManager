@@ -92,6 +92,9 @@
         ],
         "esp8266_4mb": [
             "dfrobot/DFRobotDFPlayerMini @ ^1.0.5"
+        ],
+        "esp8266_16mb": [
+            "dfrobot/DFRobotDFPlayerMini @ ^1.0.5"
         ]
     }
 }

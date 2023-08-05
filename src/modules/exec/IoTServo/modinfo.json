@@ -52,6 +52,8 @@
         "esp32_4mb": [
             "https://github.com/RoboticsBrno/ServoESP32"
         ],
-        "esp8266_4mb": []
+        "esp8266_4mb": [
+        ],
+        "esp8266_16mb": []
     }
 }
