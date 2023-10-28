@@ -66,10 +66,10 @@ class Ds18b20 : public IoTItem {
         _sensor->requestTemperatures();
 
         //получаем температуру по адресу
-        value.valD = _sensor->getTempC(_deviceAddress);
+        float valD = _sensor->getTempC(_deviceAddress);
 
-        if (value.valD != DEVICE_DISCONNECTED_C)
-            regEvent(value.valD, "");  //обязательный вызов для отправки результата работы
+        if (valD != DEVICE_DISCONNECTED_C)
+            setValue(valD);  //обязательный вызов для отправки результата работы
         else
             SerialPrint("E", "Sensor Ds18b20", "Error", _id);
     }

@@ -3,7 +3,7 @@
 #include <ArduinoJson.h>
 
 long prevWeatherMillis = millis() - 60001;
-//StaticJsonDocument<JSON_BUFFER_SIZE * 2> Weatherdoc;
+StaticJsonDocument<JSON_BUFFER_SIZE * 2> Weatherdoc;
 
 extern IoTGpio IoTgpio;
 class Weather : public IoTItem
@@ -12,9 +12,9 @@ private:
     String _location;
     String _param;
     // long interval;
-    DynamicJsonDocument Weatherdoc;
+
 public:
-    Weather(String parameters) : Weatherdoc(1024), IoTItem(parameters)
+    Weather(String parameters) : IoTItem(parameters)
     {
         _location = jsonReadStr(parameters, "location");
         _param = jsonReadStr(parameters, "param");
@@ -72,46 +72,45 @@ public:
         {
             if (_param == "temp_C")
             {
-                value.valS = jsonReadStr(Weatherdoc["current_condition"][0], "temp_C", true);
+                setValue( jsonReadStr(Weatherdoc["current_condition"][0], "temp_C", true));
             }
             if (_param == "avgtempC")
             {
-                value.valS = jsonReadStr(Weatherdoc["weather"][0], "avgtempC", true);
+                setValue (jsonReadStr(Weatherdoc["weather"][0], "avgtempC", true));
             }
             if (_param == "humidity")
             {
-                value.valS = jsonReadStr(Weatherdoc["current_condition"][0], "humidity", true);
+                setValue (jsonReadStr(Weatherdoc["current_condition"][0], "humidity", true));
             }
             if (_param == "weatherCode")
             {
-                value.valS = jsonReadStr(Weatherdoc["current_condition"][0], "weatherCode", true);
+                setValue (jsonReadStr(Weatherdoc["current_condition"][0], "weatherCode", true));
             }
             if (_param == "sunrise")
             {
 
-                value.valS = jsonReadStr(Weatherdoc["weather"][0]["astronomy"][0], "sunrise", true);
+                setValue (jsonReadStr(Weatherdoc["weather"][0]["astronomy"][0], "sunrise", true));
             }
             if (_param == "sunset")
             {
-                value.valS = jsonReadStr(Weatherdoc["weather"][0]["astronomy"][0], "sunset", true);
+                setValue (jsonReadStr(Weatherdoc["weather"][0]["astronomy"][0], "sunset", true));
             }
 
             if (_param == "rangetempC")
             {
-                value.valS = jsonReadStr(Weatherdoc["weather"][0], "mintempC", true) + "..." + jsonReadStr(Weatherdoc["weather"][0], "maxtempC", true);
+                setValue (jsonReadStr(Weatherdoc["weather"][0], "mintempC", true) + "..." + jsonReadStr(Weatherdoc["weather"][0], "maxtempC", true));
             }
 
             // погода на завтра
             if (_param == "temp_C_tomorrow")
             {
-                value.valS = jsonReadStr(Weatherdoc["weather"][1], "avgtempC", true);
+                setValue (jsonReadStr(Weatherdoc["weather"][1], "avgtempC", true));
             }
             if (_param == "rangetempC_tomorrow")
             {
-                value.valS = jsonReadStr(Weatherdoc["weather"][1], "mintempC", true) + "..." + jsonReadStr(Weatherdoc["weather"][1], "maxtempC", true);
+                setValue (jsonReadStr(Weatherdoc["weather"][1], "mintempC", true) + "..." + jsonReadStr(Weatherdoc["weather"][1], "maxtempC", true));
             }
 
-            regEvent(value.valS, "Weather");
         }
     }
 

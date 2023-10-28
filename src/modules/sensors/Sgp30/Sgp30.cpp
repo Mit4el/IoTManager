@@ -29,9 +29,8 @@ class Sgp30t : public IoTItem {
 
     void doByInterval() {
         mySensor->measureAirQuality();
-        value.valD = mySensor->CO2;
 
-        if (value.valD > -46.85F) regEvent(value.valD, "Sgp30t");  
+        if (mySensor->CO2 > -46.85F) setValue(mySensor->CO2);  
             else SerialPrint("E", "Sensor Sgp30t", "Error"); 
     }
 
@@ -61,9 +60,7 @@ class Sgp30e : public IoTItem {
     void doByInterval() {
         mySensor->measureAirQuality();
       
-        value.valD = mySensor->TVOC;
-
-        if (value.valD != -6) regEvent(value.valD, "Sgp30e");  
+        if (mySensor->TVOC != -6) setValue(vmySensor->TVOC);  
             else SerialPrint("E", "Sensor Sgp30e", "Error");
 
     }   

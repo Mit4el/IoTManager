@@ -35,7 +35,7 @@ class Oled128 : public IoTItem {
 
         jsonRead(parameters, "addr", addr);
         if (addr == "") {
-            scanI2C();
+            // scanI2C();
             return;
         }
 
@@ -124,23 +124,23 @@ class Oled128 : public IoTItem {
             }
         } else if (command == "x") {
             if (param.size()) {
-                _x = param[0].valD;
+                _x = param[0].val();
             }
         } else if (command == "y") {
             if (param.size()) {
-                _y = param[0].valD;
+                _y = param[0].val();
             }
         } else if (command == "descr") {
             if (param.size()) {
-                _descr = param[0].valS;
+                _descr = param[0].val();
             }
         } else if (command == "descr1") {
             if (param.size()) {
-                _descr1 = param[0].valS;
+                _descr1 = param[0].val();
             }
         } else if (command == "id2show") {
             if (param.size()) {
-                _id2show = param[0].valS;
+                _id2show = param[0].val();
             }
         }
 

@@ -19,9 +19,9 @@ class GY21t : public IoTItem {
 
     void doByInterval() {
         // wire->read();
-        value.valD = sensor->GY21_Temperature();
-        if (value.valD < 300)
-            regEvent(value.valD, "GY21"); 
+        float valD = sensor->GY21_Temperature();
+        if (valD < 300)
+            setValue(valD); 
         else
             SerialPrint("E", "Sensor GY21t", "Error", _id);
     }
@@ -35,9 +35,9 @@ class GY21h : public IoTItem {
 
     void doByInterval() {
         // sht->read();
-        value.valD = sensor->GY21_Humidity();
-        if (value.valD > 0)
-            regEvent(value.valD, "GY21h");
+        float valD = sensor->GY21_Humidity();
+        if (valD > 0)
+            setValue(valD);
         else
             SerialPrint("E", "Sensor GY21h", "Error", _id);
     }

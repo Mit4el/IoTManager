@@ -47,7 +47,6 @@ class TM16XX : public IoTItem {
     void setValue(const IoTValue& Value, bool genEvent = true) {
         if (_display == nullptr) return;
 
-        value = Value;
         _display->println(getValue());
         IoTItem::setValue(Value, genEvent);
     }

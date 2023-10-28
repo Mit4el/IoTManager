@@ -35,29 +35,28 @@ public:
                         float distance = (data[1] << 8) + data[2];
                         if (distance > 30)
                         {
-                            value.valD = distance / 10;
                             //SerialPrint("i", F("A02Distance"), "distance = " + String(value.valD) + "cm");
-                            regEvent(value.valD, "A02Distance");
+                            setValue(distance / 10);
                         }
                         else
                         {
                             SerialPrint("E", "A02Distance", "Below the lower limit");
-                            regEvent(NAN, "A02Distance");
+                            setValue(NAN);
                         }
                     }
                     else
                     {
-                        regEvent(NAN, "A02Distance");
+                        setValue(NAN);
                         SerialPrint("E", "A02Distance", "Distance data error");
                     }
                 }
             } else {
-                regEvent(NAN, "A02Distance");
+                setValue(NAN);
                 SerialPrint("E", "A02Distance", "Recieve data error");
             }
         } else
         {
-            regEvent(NAN, "A02Distance");
+            setValue(NAN);
             SerialPrint("E", "A02Distance", "Not find UART");
         }
         

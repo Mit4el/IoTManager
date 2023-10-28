@@ -45,9 +45,9 @@ class AhtXXt : public IoTItem {
     }
 
     void doByInterval() {
-        value.valD = _aht->readTemperature();
-        if (value.valD != AHTXX_ERROR) {
-            regEvent(value.valD, "AhtXXt");
+        float valD = _aht->readTemperature();
+        if (valD != AHTXX_ERROR) {
+            setValue(valD);
         } else {
             SerialPrint("E", "Sensor AHTXX", getStatus(_aht), _id);
         }
@@ -66,9 +66,9 @@ class AhtXXh : public IoTItem {
     }
 
     void doByInterval() {
-        value.valD = _aht->readHumidity();
-        if (value.valD != AHTXX_ERROR) {
-            regEvent(value.valD, "AhtXXh");
+        float valD = _aht->readHumidity();
+        if (valD != AHTXX_ERROR) {
+            setValue(valD);
         } else {
             SerialPrint("E", "Sensor AHTXX", getStatus(_aht), _id);
         }

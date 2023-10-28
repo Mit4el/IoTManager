@@ -28,7 +28,7 @@ class Pwm32 : public IoTItem {
         pinMode(_pin, OUTPUT);
         ledcSetup(_ledChannel, _freq, _resolution);
         ledcAttachPin(_pin, _ledChannel);
-        ledcWrite(_ledChannel, value.valD);
+        ledcWrite(_ledChannel, getValueD());
 
         _resolution = pow(2, _resolution);  // переводим биты в значение
 
@@ -38,16 +38,16 @@ class Pwm32 : public IoTItem {
 
     void doByInterval() {
         if (_apin >= 0) {
-            value.valD = map(IoTgpio.analogRead(_apin), 0, 4095, 0, _resolution);
-            if (value.valD > _resolution - 6) value.valD = _resolution;  // нивелируем погрешность установки мин и макс
-                else if (value.valD < 9) value.valD = 0;   // из-за смягчения значений
-            if (abs(_oldValue - value.valD) > 20) {
-                _oldValue = value.valD;
-                ledcWrite(_ledChannel, value.valD);
+            setValueSilent(map(IoTgpio.analogRead(_apin), 0, 4095, 0, _resolution)); //Сохраняем значение без события
+            if (getValue() > _resolution - 6) getValue() = _resolution;  // нивелируем погрешность установки мин и макс
+                else if (getValue() < 9) getValue() = 0;   // из-за смягчения значений
+            if (abs(_oldValue - getValue()) > 20) {
+                _oldValue = getValue();
+                ledcWrite(_ledChannel, getValue());
                 _freezVal = false;
             } else {
                 if (!_freezVal) {   // отправляем событие только раз после серии изменений, чтоб не спамить события
-                    regEvent(value.valD, "Pwm32");
+                    setValue(getValue());
                     _freezVal = true;
                 }
             }
@@ -55,9 +55,8 @@ class Pwm32 : public IoTItem {
     }
  
     void setValue(const IoTValue& Value, bool genEvent = true) {
-        value = Value;
-        ledcWrite(_ledChannel, value.valD);
-        regEvent(value.valD, "Pwm32", false, genEvent);
+        ledcWrite(_ledChannel, Value.val());
+        setValue((float)Value.val(), genEvent);
     }
     //=======================================================================================================
 

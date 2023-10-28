@@ -28,10 +28,10 @@ class ButtonIn : public IoTItem {
         else if (_pinMode == F("INPUT_PULLUP")) IoTgpio.pinMode(_pin, INPUT_PULLUP);
         else if (_pinMode == F("INPUT_PULLDOWN")) {IoTgpio.pinMode(_pin, INPUT); IoTgpio.digitalWrite(_pin, LOW);}
         
-        value.valD = _buttonState = IoTgpio.digitalRead(_pin);
-        if (_inv) value.valD = _buttonState = !_buttonState;    // инвертируем, если нужно показания
+        _buttonState = IoTgpio.digitalRead(_pin);
+        if (_inv) _buttonState = !_buttonState;    // инвертируем, если нужно показания
         // сообщаем всем о стартовом статусе без генерации события
-        regEvent(_buttonState, "", false, false);
+        setValue(_buttonState, false, false);
     }
 
     void loop() {
@@ -46,30 +46,29 @@ class ButtonIn : public IoTItem {
                _buttonState = _reading;
 
                 if (_fixState == 1 && _buttonState == _execLevel) {
-                    value.valD = !value.valD;
-                    regEvent(value.valD, F("ButtonIn")); 
+                   // value.valD = !value.valD;
+                    setValue(!(bool)getValue(), F("ButtonIn")); 
                 }
                 
                 if (_fixState == 0) {
-                    value.valD = _buttonState;
-                    if (_inv) value.valD = !_buttonState;    // инвертируем, если нужно показания
-                    regEvent(value.valD, F("ButtonIn"));
+                    if (_inv) setValue(!_buttonState, F("ButtonIn"));    // инвертируем, если нужно показания
+                    else setValue(_buttonState, F("ButtonIn"));
                 }
             }
         }
 
         _lastButtonState = _reading;
     }
-
-    void setValue(const IoTValue& Value, bool genEvent = true) {
-        value = Value;
-        regEvent((String)(int)value.valD, F("ButtonIn"), false, genEvent);
+/*
+    void setValue(const IoTValue& Val, bool genEvent = true) {
+        regEvent((String)(int)Val.valD, F("ButtonIn"), false, genEvent);
     }
-
+    */
+/*
     String getValue() {
-        return (String)(int)value.valD;
+        return (String)(int)getValue().valD;
     }
-
+*/
     ~ButtonIn() {};
 };
 

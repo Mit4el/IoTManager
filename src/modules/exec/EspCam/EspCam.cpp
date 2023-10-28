@@ -71,7 +71,7 @@ public:
         if (command == "save")
         {
             if (param.size() == 1)
-                save_picture(param[0].valS);
+                save_picture(param[0].val());
             else
                 save_picture();
         }
@@ -331,7 +331,7 @@ void handleGetPic()
     HTTP.send_P(200, "image/jpeg", (char *)frame->buf, frame->len);
 
     if (((EspCam *)_camItem)->isWebTicker())
-        _camItem->regEvent("webTakesPhoto", "EspCam");
+        _camItem->setValue("webTakesPhoto");
     esp_camera_fb_return(frame);
 }
 

@@ -65,27 +65,27 @@ public:
                 prevMicros += _sampleInterval;
             }
         }
-
+        float valtmp;
         if (_fl_rms == 0)
         {
 #ifdef ESP32
-            value.valD = ((float)currentAcc / (float)_numSamples) * k;     
+            valtmp = ((float)currentAcc / (float)_numSamples) * k;     
 #else
-            value.valD = ((float)currentAcc / (float)_numSamples) * k;
+            valtmp = ((float)currentAcc / (float)_numSamples) * k;
 #endif
         }
         else
         {
 #ifdef ESP32
-            value.valD = (sqrt((float)currentAcc / (float)_numSamples) * k);
+            valtmp = (sqrt((float)currentAcc / (float)_numSamples) * k);
 #else
-            value.valD = (sqrt((float)currentAcc / (float)_numSamples) * k);
+            valtmp = (sqrt((float)currentAcc / (float)_numSamples) * k);
 #endif
         }
         if (f_nan)
-            regEvent(value.valD, "Acs712");
+            setValue(valtmp);
         else
-            regEvent(NAN, "Acs712");
+            setValue(NAN);
     }
 
     void onModuleOrder(String &key, String &value)

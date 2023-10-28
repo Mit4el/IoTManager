@@ -28,12 +28,12 @@ class Sonar : public IoTItem {
         delayMicroseconds(10); 
         digitalWrite(_pinTrig, LOW); 
         // Рассчитаем расстояние
-        value.valD = pulseIn(_pinEcho, HIGH) / 58;
+        float vald = pulseIn(_pinEcho, HIGH) / 58;
         // Выведем значение в Serial Monitor
-        Serial.print(value.valD); 
+        Serial.print(vald); 
         Serial.println(" cm");
 
-        regEvent(value.valD, "Sonar"); 
+        setValue(vald); 
     }
 
     ~Sonar() {};

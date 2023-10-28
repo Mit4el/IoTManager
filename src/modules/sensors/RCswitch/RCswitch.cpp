@@ -40,8 +40,7 @@ class RCswitch : public IoTItem {
 
             _newValue = mySwitch.getReceivedValue();
             if (_newValue != _oldValue || _repeatCount > _intRepeat) {                
-                value.valD = _newValue;
-                regEvent(value.valD, "RCswitch");
+                setValue(_newValue);
                 _oldValue = _newValue;
                 _repeatCount = 0;
             }
@@ -56,17 +55,17 @@ class RCswitch : public IoTItem {
         if (_pinTx >= 0)
         if (command == "sendBitStr") {  // отправляем строку вида "000000000001010100010001"
             if (param.size()) {
-                mySwitch.send(param[0].valS.c_str());
+                mySwitch.send(param[0].val().c_str());
                 return {};
             }
         } else if (command == "sendTriState") { // отправляем строку вида "00000FFF0F0F"
             if (param.size()) {
-                mySwitch.sendTriState(param[0].valS.c_str());
+                mySwitch.sendTriState(param[0].val().c_str());
                 return {};
             }
         } else if (command == "sendDecimal") { // отправляем строку вида 5393 первым параметром и количество бит чтоб заполнить нулями
             if (param.size()) {
-                mySwitch.send(param[0].valD, param[1].valD);
+                mySwitch.send(param[0].val(), param[1].val());
                 return {};
             }
         }  

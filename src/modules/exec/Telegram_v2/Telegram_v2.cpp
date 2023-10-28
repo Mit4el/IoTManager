@@ -76,52 +76,32 @@ public:
         {
             if (param.size())
             {
-                String strTmp;
-                if (param[0].isDecimal)
-                    strTmp = param[0].valD;
-                else
-                    strTmp = param[0].valS;
-                sendTelegramMsg(false, strTmp);
+                sendTelegramMsg(false, param[0].val());
             }
         }
         else if (command == "sendOftenMsg")
         {
             if (param.size())
             {
-                String strTmp;
-                if (param[0].isDecimal)
-                    strTmp = param[0].valD;
-                else
-                    strTmp = param[0].valS;
-                sendTelegramMsg(true, strTmp);
+                sendTelegramMsg(true, param[0].val());
             }
         }
         else if (command == "sendPinMsg")
         {
             if (param.size())
             {
-                String strTmp;
-                if (param[0].isDecimal)
-                    strTmp = param[0].valD;
-                else
-                    strTmp = param[0].valS;
-                _myBot->sendMessage(strTmp, _chatID);
+                _myBot->sendMessage(param[0].val(), _chatID);
                 _myBot->pinMessage(_myBot->lastBotMsg());
 
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ",pin msg: " + strTmp);
+                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ",pin msg: " + param[0].val());
             }
         }
         else if (command == "editMsg")
         {
             if (param.size())
             {
-                String strTmp;
-                if (param[0].isDecimal)
-                    strTmp = param[0].valD;
-                else
-                    strTmp = param[0].valS;
-                _myBot->editMessage(_myBot->lastBotMsg(), strTmp);
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ",edit msg: " + strTmp);
+                _myBot->editMessage(_myBot->lastBotMsg(), param[0].val());
+                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ",edit msg: " + param[0].val());
             }
         }
         else if (command == "sendFile")
@@ -129,17 +109,17 @@ public:
             if (param.size() && !param[0].isDecimal)
             {
                 //     String path = filepath(filename);
-                auto file = FileFS.open(param[0].valS, FILE_READ);
+                auto file = FileFS.open(param[0].val(), FILE_READ);
                 if (!file)
                 {
-                    SerialPrint("E", F("Telegram"), "Fail send file: " + param[0].valS);
+                    SerialPrint("E", F("Telegram"), "Fail send file: " + param[0].val());
                     return {};
                 }
                 //  File file = LittleFS.open(param[0].valS, "r"); // /test.png
                 // selectToMarkerLast(msg.text, "_")
-                uint8_t res = _myBot->sendFile(file, (FB_FileType)param[1].valD, selectToMarkerLast(param[0].valS, "/"), _chatID);
+                uint8_t res = _myBot->sendFile(file, (FB_FileType)param[1].val(), selectToMarkerLast(param[0].val(), "/"), _chatID);
                 file.close();
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", sendFile: " + param[0].valS + " res: " + String(res));
+                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", sendFile: " + param[0].val() + " res: " + String(res));
             }
         }
 
@@ -148,17 +128,17 @@ public:
             if (param.size() && !param[0].isDecimal)
             {
                 //     String path = filepath(filename);
-                auto file = FileFS.open(param[0].valS, FILE_READ);
+                auto file = FileFS.open(param[0].val(), FILE_READ);
                 if (!file)
                 {
-                    SerialPrint("E", F("Telegram"), "Fail edit file: " + param[0].valS);
+                    SerialPrint("E", F("Telegram"), "Fail edit file: " + param[0].val());
                     return {};
                 }
                 //  File file = LittleFS.open(param[0].valS, "r"); // /test.png
                 // selectToMarkerLast(msg.text, "_")
-                uint8_t res = _myBot->editFile(file, (FB_FileType)param[1].valD, selectToMarkerLast(param[0].valS, "/"), _myBot->lastBotMsg(), _chatID);
+                uint8_t res = _myBot->editFile(file, (FB_FileType)param[1].val(), selectToMarkerLast(param[0].val(), "/"), _myBot->lastBotMsg(), _chatID);
                 file.close();
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", editFile: " + param[0].valS + " res: " + String(res));
+                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", editFile: " + param[0].val() + " res: " + String(res));
             }
         }
         return {};

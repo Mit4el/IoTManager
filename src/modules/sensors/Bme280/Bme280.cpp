@@ -25,9 +25,9 @@ public:
 
     void doByInterval()
     {
-        value.valD = _bme->readTemperature();
-        if (value.valD != NAN && value.valD < 145)
-            regEvent(value.valD, "Bme280t");
+        float valD = _bme->readTemperature();
+        if (valD != NAN && valD < 145)
+            setValue(valD);
         else
             SerialPrint("E", "Sensor Bme280t", "Error", _id);
     }
@@ -48,9 +48,9 @@ public:
 
     void doByInterval()
     {
-        value.valD = _bme->readHumidity();
-        if (value.valD != NAN && value.valD < 100)
-            regEvent(value.valD, "Bme280h");
+        float valD = _bme->readHumidity();
+        if (valD != NAN && valD < 100)
+            setValue(valD);
         else
             SerialPrint("E", "Sensor Bme280h", "Error", _id);
     }
@@ -71,11 +71,11 @@ public:
 
     void doByInterval()
     {
-        value.valD = _bme->readPressure();
-        if (value.valD != NAN && value.valD > 0)
+        float valD = _bme->readPressure();
+        if (valD != NAN && valD > 0)
         {
-            value.valD = value.valD / 1.333224 / 100;
-            regEvent(value.valD, "Bme280p");
+            valD = valD / 1.333224 / 100;
+            setValue(valD);
         }
         else
             SerialPrint("E", "Sensor Bme280p", "Error", _id);
@@ -103,8 +103,8 @@ public:
 
         if (temp != NAN && temp < 145 && humi != NAN && humi > 0 && humi < 100)
         {
-            value.valD = (temp - (14.55 + 0.114 * temp) * (1 - (0.01 * humi)) - pow(((2.5 + 0.007 * temp) * (1 - (0.01 * humi))), 3) - (15.9 + 0.117 * temp) * pow((1 - (0.01 * humi)), 14));
-            regEvent(value.valD, "Bme280dp");
+            float valD = (temp - (14.55 + 0.114 * temp) * (1 - (0.01 * humi)) - pow(((2.5 + 0.007 * temp) * (1 - (0.01 * humi))), 3) - (15.9 + 0.117 * temp) * pow((1 - (0.01 * humi)), 14));
+            setValue(valD);
         }
         else
             SerialPrint("E", "Sensor Bme280dp", "Error", _id);

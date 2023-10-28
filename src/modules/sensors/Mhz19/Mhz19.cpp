@@ -84,8 +84,7 @@ public:
             int reply = MHZ19_request(1);
             if (reply)
             {
-                value.valD = reply;
-                regEvent(value.valD, "Mhz19uart");
+                setValue(reply);
             }
         }
     }
@@ -129,8 +128,7 @@ public:
             if (reply)
             {
                 SerialPrint("E", "Sensor Mhz19pwm", "MHZ19pwm_init reply = " + String(reply));
-                value.valD = reply;
-                regEvent(value.valD, "Mhz19pwm");
+                setValue(reply);
             }
         }
     }
@@ -253,8 +251,7 @@ public:
 
         if (reply)
         {
-            value.valD = reply;
-            regEvent(value.valD, "Mhz19temp");
+            setValue(reply);
         }
     }
     //=======================================================================================================

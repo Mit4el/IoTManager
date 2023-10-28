@@ -25,9 +25,9 @@ class MAX6675t : public IoTItem {
     }
 
     void doByInterval() {
-        value.valD = thermocouple->readCelsius();
-        if (String(value.valD) != "nan") {
-            regEvent(value.valD, "Max6675t");
+        float valD = thermocouple->readCelsius();
+        if (String(valD) != "nan") {
+            setValue(valD);
         } else {
             SerialPrint("E", "Sensor Max6675t", "Error", _id);
         }

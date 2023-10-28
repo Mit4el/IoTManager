@@ -91,9 +91,9 @@ public:
     void doByInterval()
     {
         // Пример получения данных из библиотеки, где READ_LIB_DATA_OTHER - функция Вашей библиотеки
-        value.valD = instanceLibXX(_pin)->READ_LIB_DATA_OTHER();
+        flaot valD = instanceLibXX(_pin)->READ_LIB_DATA_OTHER();
         // Здесь Наменование произвольным но понятным к какому модулю относится
-        regEvent(value.valD, "ExampleModule"); // обязательный вызов хотяб один для регистрации события в ядре IoTM
+        setValue(valD); // обязательный вызов хотяб один для регистрации события в ядре IoTM
     }
 
     //=======================================================================================================
@@ -146,9 +146,9 @@ public:
     void doByInterval()
     {
         // Пример получения данных из библиотеки, где READ_LIB_DATA_OTHER - функция Вашей библиотеки
-        value.valD = libXX->READ_LIB_DATA_OTHER();
+        float valD = libXX->READ_LIB_DATA_OTHER();
         // Здесь Наменование произвольным но понятным к какому модулю относится
-        regEvent(value.valD, "ExampleModule"); // обязательный вызов хотяб один для регистрации события в ядре IoTM
+        setValue(valD); // обязательный вызов хотяб один для регистрации события в ядре IoTM
     }
 
     //================ обработка кнопок из конфигурации ===================
@@ -173,7 +173,7 @@ public:
             {
                 // Забираем данные из другого модуля по его ID
                 // Если в сценарии  передадим id модуля
-                String value = getItemValue(param[0].valS);
+                String value = getItemValue(param[0].val());
                 // Что то делаем с этим параметром
                 return {};
             }
@@ -182,7 +182,7 @@ public:
         {
             if (param.size() == 2)
             {
-                SerialPrint("i", F("Sensor ExampleModule"), "expample2: " + param[0].valS + ", " + param[1].valS);
+                SerialPrint("i", F("Sensor ExampleModule"), "expample2: " + param[0].val() + ", " + param[1].val());
                 // Передаем полученные данные на дальнейшую обработку
                 // foo(param[0].valS, param[1].valS);
                 return {};
@@ -195,7 +195,7 @@ public:
                 int sizeOfParam = param.size();
                 for (unsigned int i = 0; i < sizeOfParam; i++)
                 {
-                    SerialPrint("i", F("Sensor ExampleModule"), "expampleAny: " + param[i].valS);
+                    SerialPrint("i", F("Sensor ExampleModule"), "expampleAny: " + param[i].val());
                     // Что то делаем с каждым принятым значением
                     // foo(param[i].valD);
                 }

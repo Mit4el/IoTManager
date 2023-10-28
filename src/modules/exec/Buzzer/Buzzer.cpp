@@ -94,8 +94,7 @@ public:
                     firstTone = false;
                     if (_indication)
                     {
-                        value.valD = 1;
-                        regEvent((String)(int)value.valD, "Buzzer", false, false);
+                        setValue(1, false);
                     }
                 }
                 else
@@ -114,8 +113,7 @@ public:
                         playMode = 0;
                         if (_indication)
                         {
-                            value.valD = 0;
-                            regEvent((String)(int)value.valD, "Buzzer", false, false);
+                            setValue(0, false);
                         }
                         break;
                     }
@@ -138,8 +136,7 @@ public:
                 {
                     if (_indication)
                     {
-                        value.valD = 1;
-                        regEvent((String)(int)value.valD, "Buzzer", false, false);
+                        setValue(1, false);
                     }
                 }
                 else
@@ -158,8 +155,7 @@ public:
                         playMode = 0;
                         if (_indication)
                         {
-                            value.valD = 0;
-                            regEvent((String)(int)value.valD, "Buzzer", false, false);
+                            setValue(0, false);
                         }
                         break;
                     }
@@ -275,7 +271,7 @@ public:
         if (command == "tone")
         {
             playMode = 2;
-            tone(_pin, param[0].valD, param[1].valD);
+            tone(_pin, param[0].val(), param[1].val());
             SerialPrint("I", "Sensor Buzzer, tone(), playMode = ", String(playMode), _id);
         }
         else if (command == "tones")
@@ -285,7 +281,7 @@ public:
             tonesList.reserve(sizeOfParam);
             for (unsigned int i = 0; i < sizeOfParam; i++)
             {
-                tonesList.push_back(param[i].valD);
+                tonesList.push_back(param[i].val());
             }
             playMode = 3;
             SerialPrint("I", "Sensor Buzzer, tones(), playMode = ", String(playMode), _id);
@@ -302,25 +298,24 @@ public:
             noTone(_pin);
             if (_indication)
             {
-                value.valD = 0;
-                regEvent((String)(int)value.valD, "Buzzer", false, false);
+                setValue(0, false);
             }
             SerialPrint("I", "Sensor Buzzer, notone(), playMode = ", String(playMode), _id);
         }
         else if (command == "melodySetting")
         {
             if (param[0].isDecimal)
-                _beatLevel = param[0].valD;
+                _beatLevel = param[0].val();
             if (param[1].isDecimal)
-                _originalTempo = param[1].valD;
+                _originalTempo = param[1].val();
             if (param[2].isDecimal)
-                _tempoCorrection = param[2].valD;
+                _tempoCorrection = param[2].val();
             if (param[3].isDecimal)
-                _pauseBetween = param[3].valD;
+                _pauseBetween = param[3].val();
             if (param[4].isDecimal)
-                _transpose = param[4].valD;
+                _transpose = param[4].val();
             if (param[5].isDecimal)
-                _cycle = param[5].valD;
+                _cycle = param[5].val();
             String input = "beatLevel = " + String(_beatLevel) + "  originalTempo = " + String(_originalTempo) + "  tempoCorrection = " + String(_tempoCorrection) + "  pauseBetween = " + String(_pauseBetween) + "  transpose = " + String(_transpose) + "  cycle = " + String(_cycle);
             SerialPrint("I", "Sensor Buzzer, melodySetting() exec", input, _id);
         }
@@ -331,7 +326,7 @@ public:
             melodyList.reserve(sizeOfParam);
             for (unsigned int i = 0; i < sizeOfParam; i++)
             {
-                melodyList.push_back(param[i].valS);
+                melodyList.push_back(param[i].val());
             }
             playMode = 4;
             SerialPrint("I", "Sensor Buzzer, melody(), playMode = ", String(playMode), _id);
@@ -345,16 +340,16 @@ public:
         return {}; // команда поддерживает возвращаемое значения. Т.е. по итогу выполнения команды или общения с внешней системой, можно вернуть значение в сценарий для дальнейшей обработки
     }
 
-    void setValue(const IoTValue &Value, bool genEvent = true)
+    void setValue(const IoTValue &Val, bool genEvent = true)
     {
-        value = Value;
-        playMode = value.valD;
-        regEvent((String)(int)value.valD, "Buzzer", false, genEvent);
+        //value = Value;
+        playMode = Val.val();
+        setValue(Val.val(), genEvent);
     }
     //=======================================================================================================
     String getValue()
     {
-        return (String)(int)value.valD;
+        return (String)(int)getValueD();
     }
 
     ~Buzzer(){};

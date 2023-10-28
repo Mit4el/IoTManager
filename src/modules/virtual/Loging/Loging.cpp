@@ -65,7 +65,7 @@ class Loging : public IoTItem {
             return;
         }
 
-        regEvent(value, F("Loging"));
+        setValue(value);
 
         String logData;
 
@@ -118,7 +118,7 @@ class Loging : public IoTItem {
             SerialPrint("E", F("LogingEvent"), "'" + id + "' Сant loging - time not synchronized, return");
             return;
         }
-        regEvent(value, F("LogingEvent"));
+        setValue(value);
         String logData;
         jsonWriteInt(logData, "x", unixTime, false);
         jsonWriteFloat(logData, "y1", value.toFloat(), false);
@@ -317,7 +317,7 @@ class Loging : public IoTItem {
     //     }
     // }
 
-    void regEvent(const String &value, const String &consoleInfo, bool error = false, bool genEvent = true) {
+    void regEventLocal(const String &value, const String &consoleInfo, bool error = false, bool genEvent = true) {
         String userDate = getItemValue(id + "-date");
         String currentDate = getTodayDateDotFormated();
         // отправляем в график данные только когда выбран сегодняшний день
@@ -340,10 +340,10 @@ class Loging : public IoTItem {
         return gmtTimeToLocal(selectToMarkerLast(deleteToMarkerLast(path, "."), "/").toInt() + START_DATETIME);
     }
     void setValue(const IoTValue &Value, bool genEvent = true) {
-        value = Value;
-        this->SetDoByInterval(String(value.valD));
-        SerialPrint("i", "Loging", "setValue:" + String(value.valD));
-        regEvent(value.valS, "Loging", false, genEvent);
+        setValueSilent(Value);
+        this->SetDoByInterval(String(Value.val()));
+        SerialPrint("i", "Loging", "setValue:" + String(Value.val()));
+        regEventLocal(Value.val(), "Loging", false, genEvent);
     }
 };
 
@@ -363,17 +363,18 @@ class Date : public IoTItem {
     String id;
     Date(String parameters) : IoTItem(parameters) {
         jsonRead(parameters, F("id"), id);
-        value.isDecimal = false;
+        setIsDecimal (false);
     }
 
     void setValue(const String &valStr, bool genEvent = true) {
-        value.valS = valStr;
-        setValue(value, genEvent);
+        setValueSilent (valStr);
+        setValue(getIoTValue(), genEvent);
     }
 
     void setValue(const IoTValue &Value, bool genEvent = true) {
-        value = Value;
-        regEvent(value.valS, "", false, genEvent);
+        //value = Value;
+        setValueSilent (valStr);
+        regEventLocal(Value.val(), "", false, genEvent);
         // отправка данных при изменении даты
         for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
             if ((*it)->getSubtype() == "Loging") {

@@ -60,10 +60,9 @@ class Ads1115 : public IoTItem {
     void doByInterval() {
         if (_isInited) {
             if (_isRaw)
-                value.valD = ads.readADC_SingleEnded(_pin);  // Чтение АЦП нулевого канала(rawdata)
+                setValue(ads.readADC_SingleEnded(_pin));  // Чтение АЦП нулевого канала(rawdata)
             else
-                value.valD = ads.computeVolts(ads.readADC_SingleEnded(_pin));  // Чтение АЦП нулевого канала (Вольты)
-            regEvent(value.valD, "ADC1115");
+                setValue(ads.computeVolts(ads.readADC_SingleEnded(_pin)));  // Чтение АЦП нулевого канала (Вольты)
         }
     }
 

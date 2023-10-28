@@ -25,12 +25,10 @@ class TelegramLT : public IoTItem {
             SerialPrint("->", F("Telegram"), "chat ID: " + _chatID + ", server: " + httpResponseCode);
 
             if (!strstr(payload.c_str(), "{\"ok\":true")) {
-                value.valD = 0;
                 Serial.printf("Telegram error, msg from server: %s\n", payload.c_str());
-                regEvent(value.valD, payload);
+                setValue(0);
             } else {
-                value.valD = 1;
-                regEvent(value.valD, payload);
+                setValue(1);
             }
             http.end();
             _prevMsg = msg;
@@ -39,19 +37,13 @@ class TelegramLT : public IoTItem {
 
     IoTValue execute(String command, std::vector<IoTValue> &param) {
         if (param.size() == 1) {
-            String strTmp;
-            if (param[0].isDecimal && param[0].valS == "")
-                strTmp = param[0].valD;
-            else
-                strTmp = param[0].valS;
-
             if (command == "sendMsg") {
                 if (param.size()) {
-                    sendTelegramMsg(false, strTmp);
+                    sendTelegramMsg(false,  param[0].val());
                 }
             } else if (command == "sendOftenMsg") {
                 if (param.size()) {
-                    sendTelegramMsg(true, strTmp);
+                    sendTelegramMsg(true,  param[0].val());
                 }
             }
         }

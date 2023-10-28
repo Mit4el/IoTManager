@@ -75,13 +75,13 @@ public:
           int sizeOfParam = param.size();
           for (unsigned int i = 0; i < sizeOfParam; i++)
           {
-            IoTItem *itm = findIoTItemOnValue(param[i].valS);
+            IoTItem *itm = findIoTItemOnValue(param[i].val());
             if (itm != nullptr)
             {
               if (i == sizeOfParam - 1)
-                send2Google(itm->getID(), param[i].valS, true);
+                send2Google(itm->getID(), param[i].val(), true);
               else
-                send2Google(itm->getID(), param[i].valS, false);
+                send2Google(itm->getID(), param[i].val(), false);
             }
           }
         }
@@ -90,7 +90,7 @@ public:
       { // Запись произвольных данных в GoogleSheet
         if (param.size() == 2)
         {
-          send2Google(param[0].valS, param[1].valS, true);
+          send2Google(param[0].val(), param[1].val(), true);
           return {};
         }
       }

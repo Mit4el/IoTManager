@@ -7,16 +7,16 @@ class VButton : public IoTItem {
     VButton(String parameters): IoTItem(parameters) {
         _round = 0;
     }
-
+/*
     void setValue(const IoTValue& Value, bool genEvent = true) {
-        value = Value;
-        regEvent((String)(int)value.valD, "VButton", false, genEvent);
+       // value = Value;
+        regEvent((String)(int)Value.valD, "VButton", false, genEvent);
     }
 
     String getValue() {
-        return (String)(int)value.valD;
+        return (String)(int)getIoTValue().valD;
     }
-
+*/
     void doByInterval() { }
 };
 

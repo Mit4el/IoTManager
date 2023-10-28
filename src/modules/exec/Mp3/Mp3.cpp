@@ -32,52 +32,52 @@ class Mp3 : public IoTItem {
             myMP3->volume(volumetmp);
         } 
 
-        value.isDecimal = false;    // значение объекта всегда будет строка
+        setIsDecimal (false);    // значение объекта всегда будет строка
     }
 
     void doByInterval() {
         if (myMP3 && myMP3->available()) {
             switch (myMP3->readType()) {
                 case TimeOut:
-                value.valS = F("Time Out!");
+                setValue(F("Time Out!"), false);
                 break;
                 case WrongStack:
-                value.valS = F("Stack Wrong!");
+                setValue(F("Stack Wrong!"), false);
                 break;
                 case DFPlayerCardInserted:
-                value.valS = F("Card Inserted!");
+                setValue(F("Card Inserted!"), false);
                 break;
                 case DFPlayerCardRemoved:
-                value.valS = F("Card Removed!");
+                setValue(F("Card Removed!"), false);
                 break;
                 case DFPlayerCardOnline:
-                value.valS = F("Card Online!");
+                setValue(F("Card Online!"), false);
                 break;
                 case DFPlayerPlayFinished:
-                value.valS = F("Play Finished!");
+                setValue(F("Play Finished!"), false);
                 break;
                 case DFPlayerError:
                     switch (myMP3->read()) {
                         case Busy:
-                        value.valS = F("Card not found");
+                        setValue(F("Card not found"), false);
                         break;
                         case Sleeping:
-                        value.valS = F("Sleeping");
+                        setValue(F("Sleeping"), false);
                         break;
                         case SerialWrongStack:
-                        value.valS = F("Get Wrong Stack");
+                        setValue(F("Get Wrong Stack"), false);
                         break;
                         case CheckSumNotMatch:
-                        value.valS = F("Check Sum Not Match");
+                        setValue(F("Check Sum Not Match"), false);
                         break;
                         case FileIndexOut:
-                        value.valS = F("File Index Out of Bound");
+                        setValue(F("File Index Out of Bound"), false);
                         break;
                         case FileMismatch:
-                        value.valS = F("Cannot Find File");
+                        setValue(F("Cannot Find File"), false);
                         break;
                         case Advertise:
-                        value.valS = F("In Advertise");
+                        setValue(F("In Advertise"), false);
                         break;
                         default:
                         break;
@@ -105,11 +105,11 @@ class Mp3 : public IoTItem {
                 myMP3->stop();
             } else if (command == "volume") { 
                 if (param.size()) {
-                    myMP3->volume(param[0].valD);
+                    myMP3->volume(param[0].val());
                 }
             } else if (command == "playFolder") { 
                 if (param.size()) {
-                    myMP3->playFolder(param[0].valD, param[1].valD);    // (folderNum, fileNum)
+                    myMP3->playFolder(param[0].val(), param[1].val());    // (folderNum, fileNum)
                 }
             } else if (command == "play") { 
                 myMP3->play(1);  //Play the first mp3

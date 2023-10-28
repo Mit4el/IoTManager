@@ -249,20 +249,20 @@ void FreqMeterRequest(int sensorID)
     double frequency = Sampling();
     if (item_FreqMeterF)
     {
-      item_FreqMeterF->value.valD = frequency;
-      item_FreqMeterF->regEvent(item_FreqMeterF->value.valD, "FreqMeterF");
+    //  item_FreqMeterF->value.valD = frequency;
+      item_FreqMeterF->setValue(frequency);
     }
 
     if (item_FreqMeterPcFl)
     {
-      item_FreqMeterPcFl->value.valD = PercentFlickerMax;
-      item_FreqMeterPcFl->regEvent(item_FreqMeterPcFl->value.valD, "FreqMeterPcFl");
+    //  item_FreqMeterPcFl->value.valD = PercentFlickerMax;
+      item_FreqMeterPcFl->setValue(PercentFlickerMax);
     }
 
     if (item_FreqMeterFlIn)
     {
-      item_FreqMeterFlIn->value.valD = FlickerIndex;
-      item_FreqMeterFlIn->regEvent(item_FreqMeterFlIn->value.valD, "FreqMeterFlIn");
+     // item_FreqMeterFlIn->value.valD = FlickerIndex;
+      item_FreqMeterFlIn->setValue(FlickerIndex);
     }
   }
   else

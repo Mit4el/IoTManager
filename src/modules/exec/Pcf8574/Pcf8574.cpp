@@ -1,23 +1,28 @@
 #include "Global.h"
 #include "classes/IoTItem.h"
 #include "classes/IoTGpio.h"
+
 #include <Adafruit_BusIO_Register.h>
 #include <Adafruit_I2CDevice.h>
 
-#define PCF8574_I2CADDR_DEFAULT 0x20 ///< DS3502 стандартный I2C адрес
+#define PCF8574_I2CADDR_DEFAULT 0x20 ///< DS3502 default I2C address
 
 class Adafruit_PCF8574_mod {
    public:
-    Adafruit_PCF8574_mod() : _pinConfig(0xFF) {}; // По умолчанию все пины настроены как входы
-
+    Adafruit_PCF8574_mod() {};
     bool begin(uint8_t i2c_address = PCF8574_I2CADDR_DEFAULT, TwoWire *wire = &Wire) {
         i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
-        return i2c_dev->begin();
+
+        if (!i2c_dev->begin()) {
+            return false;
+        }
+
+        return true;
     }
 
     bool digitalWriteByte(uint8_t d) {
         _writebuf = d;
-        return updateRegister();
+        return i2c_dev->write(&_writebuf, 1);
     }
 
     uint8_t digitalReadByte(void) {
@@ -27,20 +32,20 @@ class Adafruit_PCF8574_mod {
 
     bool digitalWrite(int pinnum, bool val) {
         if (val) {
-            _writebuf |= (1 << pinnum);
+            _writebuf |= 1 << pinnum;
         } else {
             _writebuf &= ~(1 << pinnum);
         }
-        return updateRegister(); // Обновляем регистр после изменения состояния пина
+        return i2c_dev->write(&_writebuf, 1);         
     }
 
     bool pinMode(int pinnum, uint8_t val) {
         if ((val == INPUT) || (val == INPUT_PULLUP)) {
-            _pinConfig |= (1 << pinnum);
+            _writebuf |= 1 << pinnum;
         } else {
-            _pinConfig &= ~(1 << pinnum);
+            _writebuf &= ~(1 << pinnum);
         }
-        return updateRegister(); // Обновляем регистр после изменения конфигурации пина
+        return i2c_dev->write(&_writebuf, 1);
     }
 
     bool digitalRead(int pinnum) {
@@ -50,12 +55,6 @@ class Adafruit_PCF8574_mod {
 
    private:
     uint8_t _readbuf = 0, _writebuf = 0;
-    uint8_t _pinConfig;  // Конфигурация пинов (вход/выход)
-
-    bool updateRegister() {
-        uint8_t outputValue = (_writebuf & ~_pinConfig) | (_pinConfig);
-        return i2c_dev->write(&outputValue, 1); // Отправляем обновленное значение регистра на устройство
-    }
 
     Adafruit_I2CDevice *i2c_dev;
 };
@@ -67,7 +66,7 @@ class Pcf8574Driver : public IoTGpio {
    public:
     Pcf8574Driver(int index, String addr) : IoTGpio(index) {
         if (!_pcf.begin(hexStringToUint8(addr), &Wire)) {
-            Serial.println("Ошибка инициализации PCF8574."); // Переводим на русский
+            Serial.println("PCF8574 Init Error.");
         }
     }
 
@@ -86,7 +85,10 @@ class Pcf8574Driver : public IoTGpio {
     void digitalInvert(int pin) {
         _pcf.digitalWrite(pin, 1 - _pcf.digitalRead(pin));
     }
+
+    ~Pcf8574Driver() {};
 };
+
 
 class Pcf8574 : public IoTItem {
    private:
@@ -106,7 +108,7 @@ class Pcf8574 : public IoTItem {
         int index;
         jsonRead(parameters, "index", index);
         if (index > 4) {
-            Serial.println("Неправильный индекс Pcf8574. Должен быть 0 - 4."); // Переводим на русский
+            Serial.println("Pcf8574 wrong index. Must be 0 - 4");
             return;
         }
         
@@ -120,13 +122,14 @@ class Pcf8574 : public IoTItem {
         }
     }
 
+    //возвращает ссылку на экземпляр класса Pcf8574Driver
     IoTGpio* getGpioDriver() {
         return _driver;
     }
 
     ~Pcf8574() {
         delete _driver;
-    }
+    };
 };
 
 void* getAPI_Pcf8574(String subtype, String param) {

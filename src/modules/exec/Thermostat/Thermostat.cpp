@@ -129,7 +129,7 @@ public:
             {
                 if (param.size())
                 {
-                    enable = param[0].valD;
+                    enable = param[0].val();
                     if (enable)
                     {
                         setValue("включен");
@@ -248,8 +248,6 @@ protected:
                 {
                     interim = tmp->getValue();
                     pv = ::atof(interim.c_str());
-                    if (pv < -40 && pv > 120 && !pv)
-                        pv = 0;
                 }
                 else
                     pv = 0;
@@ -261,10 +259,10 @@ protected:
         {
             //            value.valD = pid(sp, pv, pv_last, ierr, _int);
             //            value.valS = (String)(int)value.valD;
-            regEvent(pid(sp, pv, pv_last, ierr, _int), "ThermostatPID", false, true);
+            setValue(pid(sp, pv, pv_last, ierr, _int), true);
         }
         else
-            regEvent(0, "ThermostatPID", false, true);
+            setValue(0);
         pv_last = pv;
     }
 
@@ -280,14 +278,14 @@ protected:
             currentMillis = millis();
             difference = currentMillis - prevMillis;
 
-            if (_rele != "" && enable && value.valD * interval / 100000 > difference / 1000 && releState == 0)
+            if (_rele != "" && enable && getValueD() * interval / 100000 > difference / 1000 && releState == 0)
             {
                 releState = 1;
                 tmp = findIoTItem(_rele);
                 if (tmp)
                     tmp->setValue("1", true);
             }
-            if (_rele != "" && enable && value.valD * interval / 100000 < difference / 1000 && releState == 1)
+            if (_rele != "" && enable && getValueD() * interval / 100000 < difference / 1000 && releState == 1)
             {
                 releState = 0;
                 tmp = findIoTItem(_rele);
@@ -310,28 +308,28 @@ protected:
             {
                 if (param.size())
                 {
-                    enable = param[0].valD;
+                    enable = param[0].val();
                 }
             }
             if (command == "KP")
             {
                 if (param.size())
                 {
-                    _KP = param[0].valD;
+                    _KP = param[0].val();
                 }
             }
             if (command == "KI")
             {
                 if (param.size())
                 {
-                    _KI = param[0].valD;
+                    _KI = param[0].val();
                 }
             }
             if (command == "KD")
             {
                 if (param.size())
                 {
-                    _KD = param[0].valD;
+                    _KD = param[0].val();
                 }
             }
         }
@@ -389,9 +387,7 @@ protected:
         }
         if (_iv_k && outside_temp)
         {
-
-            value.valD = curve(_iv_k, outside_temp);
-            regEvent(value.valD, "ThermostatETK");
+            setValue(curve(_iv_k, outside_temp));
         }
     }
 
@@ -466,8 +462,7 @@ protected:
         }
         if (sp && pv && _iv_k && outside_temp)
         {
-            value.valD = curve2(sp, pv, _iv_k, outside_temp);
-            regEvent(value.valD, "ThermostatETK2");
+            setValue(curve2(sp, pv, _iv_k, outside_temp));
         }
     }
 

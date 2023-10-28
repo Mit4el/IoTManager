@@ -35,8 +35,8 @@ public:
             IoTgpio.digitalWrite(_pin, LOW);
         }
 
-        value.valD = _buttonState = IoTgpio.digitalRead(_pin);
-        regEvent(_buttonState, "", false, false);
+        _buttonState = IoTgpio.digitalRead(_pin);
+        setValue(_buttonState, false);
     }
 
     void loop()
@@ -62,8 +62,7 @@ public:
             if (millis() - timing > _int * 1000 && _count > 1)
             {
                 timing = millis();
-                value.valD = _count;
-                regEvent(value.valD, F("Impulse"));
+                setValue(_count);
                 _count = 0;
             }
         }

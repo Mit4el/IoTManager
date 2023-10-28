@@ -31,18 +31,14 @@ class Encoder : public IoTItem {
     void loop() { 
         if (enc1.tick() != 0) {
             if (enc1.left()) {  
-                value.valD = value.valD - step;
-                regEvent(value.valD, "Encoder_left");
+                setValue(getValue() - step);
             } else if (enc1.right()) {   
-                value.valD = value.valD + step;
-                regEvent(value.valD, "Encoder_right");
+                setValue(getValue() + step");
             } else if (stepOnPress) {
                 if (enc1.leftH()) {  
-                    value.valD = value.valD - stepOnPress;
-                    regEvent(value.valD, "Encoder_leftH");
+                    setValue(getValue() - stepOnPress);
                 } else if (enc1.rightH()) {   
-                    value.valD = value.valD + stepOnPress;
-                    regEvent(value.valD, "Encoder_rightH");
+                    setValue(getValue() + stepOnPress);
                 }
             }
 

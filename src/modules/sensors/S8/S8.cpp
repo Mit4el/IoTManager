@@ -74,9 +74,8 @@ class S8co : public IoTItem {
     
     void doByInterval() {
       co2_measure();
-      value.valD = _s8_co2;
-      if (value.valD < 15000)
-        regEvent(value.valD, "S8co");
+      if (_s8_co2 < 15000)
+        setValue(_s8_co2);
       else
         SerialPrint("E", "Sensor S8_uart", "Error");
     } 

@@ -66,7 +66,7 @@ public:
 
     void doByInterval()
     {
-        regEvent(instanceIna219(_addr)->getVoltage(), "Ina219voltage");
+        setValue(instanceIna219(_addr)->getVoltage());
     }
 
     ~Ina219voltage(){};
@@ -89,7 +89,7 @@ public:
     }
     void doByInterval()
     {
-        regEvent(instanceIna219(_addr)->getShuntVoltage(), "Ina219shuntvoltage");
+        setValue(instanceIna219(_addr)->getShuntVoltage());
     }
 
     ~Ina219shuntvoltage(){};
@@ -112,7 +112,7 @@ public:
     }
     void doByInterval()
     {
-        regEvent(instanceIna219(_addr)->getCurrent(), "Ina219curr");
+        setValue(instanceIna219(_addr)->getCurrent());
     }
 
     ~Ina219curr(){};
@@ -135,7 +135,7 @@ public:
     }
     void doByInterval()
     {
-        regEvent(instanceIna219(_addr)->getPower(), "Ina219power"); // TODO: найти способ понимания ошибки получения данных
+        setValue(instanceIna219(_addr)->getPower()); // TODO: найти способ понимания ошибки получения данных
     }
 
     ~Ina219Power(){};
@@ -191,9 +191,9 @@ public:
         {
             if (param.size() == 1)
             {
-                if (param[0].valD == 0)
+                if (param[0].val() == 0)
                     instanceIna219(_addr)->sleep(false);
-                if (param[0].valD == 1)
+                if (param[0].val() == 1)
                     instanceIna219(_addr)->sleep(true);
                 return {};
             }

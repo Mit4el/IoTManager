@@ -2,7 +2,7 @@
 #include "classes/IoTItem.h"
 #include <RobotClass_LiquidCrystal_I2C.h>
 
-RobotClass_LiquidCrystal_I2C* LCDI2C;
+RobotClass_LiquidCrystal_I2C *LCDI2C;
 
 class Lcd2004 : public IoTItem {
    private:
@@ -12,7 +12,7 @@ class Lcd2004 : public IoTItem {
     int _prevStrSize;
     String _addr;
 
-    bool _isShow = true;  // экран показывает
+    bool _isShow = true;    // экран показывает
 
    public:
     Lcd2004(String parameters) : IoTItem(parameters) {
@@ -26,9 +26,9 @@ class Lcd2004 : public IoTItem {
         }
 
         jsonRead(parameters, "size", size);
-        int w = selectFromMarkerToMarker(size, ",", 0).toInt();  // количество столбцов
-        int h = selectFromMarkerToMarker(size, ",", 1).toInt();  // количество строк
-        if (LCDI2C == nullptr) {                                 // инициализации экрана еще не было
+        int w = selectFromMarkerToMarker(size, ",", 0).toInt();  //количество столбцов
+        int h = selectFromMarkerToMarker(size, ",", 1).toInt();  //количество строк
+        if (LCDI2C == nullptr) {                                 //инициализации экрана еще не было
             LCDI2C = new RobotClass_LiquidCrystal_I2C(hexStringToUint8(_addr), w, h, CP_UTF8);
             if (LCDI2C != nullptr) {
                 LCDI2C->init();
@@ -46,7 +46,7 @@ class Lcd2004 : public IoTItem {
         jsonRead(parameters, "postfix", _postfix);
     }
 
-    void drawItem(IoTItem* item) {
+     void drawItem(IoTItem* item) {
         String tmpStr = _prefix;
         tmpStr += item->getValue();
         tmpStr += _postfix;
@@ -60,24 +60,20 @@ class Lcd2004 : public IoTItem {
     void setValue(const IoTValue& Value, bool genEvent = true) {
         if (LCDI2C == nullptr) return;
 
-        value = Value;
         drawItem(this);
         IoTItem::setValue(Value, genEvent);
     }
 
     void onRegEvent(IoTItem* eventItem) {
-        if (LCDI2C == nullptr) {
-            scanI2C();
-            return;
-        }
-        if (!eventItem || _id2show == "") return;
+        if (LCDI2C == nullptr) { scanI2C(); return;}
+        if (!eventItem || _id2show == "") return; 
 
         if (_id2show == eventItem->getID()) {
-            setValue(eventItem->value, false);
+            setValue(eventItem->getIoTValue(), false);
         }
     }
 
-    IoTValue execute(String command, std::vector<IoTValue>& param) {
+    IoTValue execute(String command, std::vector<IoTValue> &param) {
         if (command == "noBacklight")
             LCDI2C->noBacklight();
         else if (command == "backlight")
@@ -92,29 +88,29 @@ class Lcd2004 : public IoTItem {
             if (_isShow) {
                 LCDI2C->noDisplay();
                 _isShow = false;
-            } else {
+            } else { 
                 LCDI2C->display();
                 _isShow = true;
             }
         } else if (command == "x") {
             if (param.size()) {
-                _x = param[0].valD;
+                _x = param[0].val();
             }
         } else if (command == "y") {
             if (param.size()) {
-                _y = param[0].valD;
+                _y = param[0].val();
             }
         } else if (command == "prefix") {
             if (param.size()) {
-                _prefix = param[0].valS;
+                _prefix = param[0].val();
             }
         } else if (command == "postfix") {
             if (param.size()) {
-                _postfix = param[0].valS;
+                _postfix = param[0].val();
             }
         } else if (command == "id2show") {
             if (param.size()) {
-                _id2show = param[0].valS;
+                _id2show = param[0].val();
             }
         }
 
@@ -122,7 +118,7 @@ class Lcd2004 : public IoTItem {
         return {};
     }
 
-    // печать пустой строки нужной длинны для затирания предыдущего значения на экране
+    //печать пустой строки нужной длинны для затирания предыдущего значения на экране
     void printBlankStr(int strSize) {
         String tmpStr = "";
         for (int i = 0; i < strSize; i++) tmpStr += " ";
@@ -130,13 +126,13 @@ class Lcd2004 : public IoTItem {
         LCDI2C->print(tmpStr);
     }
 
-    ~Lcd2004() {
+    ~Lcd2004(){
         if (LCDI2C) delete LCDI2C;
         LCDI2C = nullptr;
     };
 };
 
-void* getAPI_Lcd2004(String subtype, String param) {
+void *getAPI_Lcd2004(String subtype, String param) {
     if (subtype == F("Lcd2004")) {
         return new Lcd2004(param);
     } else {

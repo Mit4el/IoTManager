@@ -23,8 +23,7 @@ class GyverHX711g : public IoTItem {
     void doByInterval() {
         if (!_thermocouple->available()) return;
         
-        value.valD = _thermocouple->read();
-        regEvent(value.valD, "Hx711");
+        setValue(_thermocouple->read());
     }
 
     IoTValue execute(String command, std::vector<IoTValue> &param) {
@@ -32,12 +31,11 @@ class GyverHX711g : public IoTItem {
             _thermocouple->tare();
         } else if (command == "sleepMode") { 
             if (param.size() == 1) {
-                _thermocouple->sleepMode(param[0].valD);
+                _thermocouple->sleepMode(param[0].val());
             }
         } else if (command == "read") { 
-            value.valD = _thermocouple->read();
-            regEvent(value.valD, "Hx711");
-            return value;
+            setValue(_thermocouple->read());
+            return getIoTValue();
         } 
         return {};  
     }

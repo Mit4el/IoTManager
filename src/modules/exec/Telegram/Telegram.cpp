@@ -83,13 +83,13 @@ class Telegram : public IoTItem {
         if (command == "sendMsg") { 
             if (param.size()) {
                 String strTmp;
-                if (param[0].isDecimal) strTmp = param[0].valD; else strTmp = param[0].valS;
+                if (param[0].isDecimal) strTmp = param[0].val(); else strTmp = param[0].val();
                 sendTelegramMsg(false, strTmp);
             } 
         } else if (command == "sendOftenMsg") {
             if (param.size()) {
                 String strTmp;
-                if (param[0].isDecimal) strTmp = param[0].valD; else strTmp = param[0].valS;
+                if (param[0].isDecimal) strTmp = param[0].val(); else strTmp = param[0].val();
                 sendTelegramMsg(true, strTmp);
             }
         }

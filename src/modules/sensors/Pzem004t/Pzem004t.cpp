@@ -25,15 +25,14 @@ class Pzem004v : public IoTItem {
     void doByInterval() {
         if (pzem) {
             bool online = false;
-            value.valD = pzem->values(online)->voltage;
             if (online) {
-                regEvent(value.valD, "Pzem V");
+                setValue(pzem->values(online)->voltage);
             } else {
-                regEvent(NAN, "Pzem V");
+                setValue(NAN);
                 SerialPrint("E", "Pzem", "V error", _id);
             }
         } else {
-            regEvent(NAN, "Pzem V");
+            setValue(NAN);
             SerialPrint("E", "Pzem", "V error", _id);
         }
     }
@@ -54,15 +53,14 @@ class Pzem004a : public IoTItem {
     void doByInterval() {
         if (pzem) {
             bool online = false;
-            value.valD = pzem->values(online)->current;
             if (online) {
-                regEvent(value.valD, "Pzem A");
+                setValue(pzem->values(online)->current);
             } else {
-                regEvent(NAN, "Pzem A");
+                setValue(NAN);
                 SerialPrint("E", "Pzem", "A error", _id);
             }
         } else {
-            regEvent(NAN, "Pzem V");
+            setValue(NAN);
             SerialPrint("E", "Pzem", "V error", _id);
         }
     }
@@ -83,15 +81,14 @@ class Pzem004w : public IoTItem {
     void doByInterval() {
         if (pzem) {
             bool online = false;
-            value.valD = pzem->values(online)->power;
             if (online) {
-                regEvent(value.valD, "Pzem W");
+                setValue(pzem->values(online)->power);
             } else {
-                regEvent(NAN, "Pzem W");
+                setValue(NAN);
                 SerialPrint("E", "Pzem", "W error", _id);
             }
         } else {
-            regEvent(NAN, "Pzem V");
+            setValue(NAN);
             SerialPrint("E", "Pzem", "V error", _id);
         }
     }
@@ -112,15 +109,14 @@ class Pzem004wh : public IoTItem {
     void doByInterval() {
         if (pzem) {
             bool online = false;
-            value.valD = pzem->values(online)->energy;
             if (online) {
-                regEvent(value.valD, "Pzem Wh");
+                setValue(pzem->values(online)->energy);
             } else {
-                regEvent(NAN, "Pzem Wh");
+                setValue(NAN);
                 SerialPrint("E", "Pzem", "Wh error", _id);
             }
         } else {
-            regEvent(NAN, "Pzem V");
+            setValue(NAN);
             SerialPrint("E", "Pzem", "V error", _id);
         }
     }
@@ -141,15 +137,14 @@ class Pzem004hz : public IoTItem {
     void doByInterval() {
         if (pzem) {
             bool online = false;
-            value.valD = pzem->values(online)->freq;
             if (online) {
-                regEvent(value.valD, "Pzem Hz");
+                setValue(pzem->values(online)->freq);
             } else {
-                regEvent(NAN, "Pzem Hz");
+                setValue(NAN);
                 SerialPrint("E", "Pzem", "Hz error", _id);
             }
         } else {
-            regEvent(NAN, "Pzem V");
+            setValue(NAN);
             SerialPrint("E", "Pzem", "V error", _id);
         }
     }
@@ -170,15 +165,14 @@ class Pzem004pf : public IoTItem {
     void doByInterval() {
         if (pzem) {
             bool online = false;
-            value.valD = pzem->values(online)->pf;
             if (online) {
-                regEvent(value.valD, "Pzem Pf");
+                setValue(pzem->values(online)->pf);
             } else {
-                regEvent(NAN, "Pzem Pf");
+                setValue(NAN);
                 SerialPrint("E", "Pzem", "Pf error", _id);
             }
         } else {
-            regEvent(NAN, "Pzem V");
+            setValue(NAN);
             SerialPrint("E", "Pzem", "V error", _id);
         }
     }

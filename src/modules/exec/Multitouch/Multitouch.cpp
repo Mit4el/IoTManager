@@ -40,9 +40,9 @@ public:
             IoTgpio.digitalWrite(_pin, LOW);
         }
 
-        value.valD = _buttonState = IoTgpio.digitalRead(_pin);
+        _buttonState = IoTgpio.digitalRead(_pin);
         // сообщаем всем о стартовом статусе без генерации события
-        regEvent(_buttonState, "", false, false);
+        setValue(_buttonState, false);
         SerialPrint("I", F("Multitouch"), "_buttonState " + String(_buttonState));
     }
 
@@ -63,8 +63,7 @@ public:
             }
             if (1 < _count && millis() > _lastDebounceTime + _PWMDelay)
             {
-                value.valD = _count / 2;
-                regEvent(value.valD, F("Multitouch"));
+                setValue( _count / 2);
                 _count = 0;
             }
 
@@ -73,8 +72,7 @@ public:
                 SerialPrint("I", F("Multitouch"), "Считаем задержку");
                 timing = millis();
                 duration = millis() - _lastDebounceTime - _PWMDelay;
-                value.valD = duration / _int + 1;
-                regEvent(value.valD, F("Multitouch"));
+                setValue(duration / _int + 1);
                 _count = -1;
             }
         }

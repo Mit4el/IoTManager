@@ -370,8 +370,7 @@ class MySensorsNode : public IoTItem {
     }
 
     void setValue(const IoTValue& Value, bool genEvent = true) {
-        value = Value;
-        regEvent(value.valD, "MySensorsNode", false, genEvent);
+        setValue(Value, genEvent);
         _minutesPassed = 0;
         prevMillis = millis();
         dataFromNode = true;

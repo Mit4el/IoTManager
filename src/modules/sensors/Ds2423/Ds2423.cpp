@@ -86,9 +86,9 @@ public:
         }
         else
         {
-            value.valD = ds2423->getCount(DS2423_COUNTER_A);
+           // value.valD = ds2423->getCount(DS2423_COUNTER_A);
             // if (value.valD != -127)
-            regEvent(value.valD, "Ds2423a"); // обязательный вызов для отправки результата работы
+            setValue(ds2423->getCount(DS2423_COUNTER_A)); // обязательный вызов для отправки результата работы
             // else
             //   SerialPrint("E", "Sensor Ds2423a", "Error");
         }
@@ -149,9 +149,9 @@ public:
         else
         {
             // запускаем опрос измерений у всех датчиков на линии
-            value.valD = ds2423->getCount(DS2423_COUNTER_B);
+            //value.valD = ds2423->getCount(DS2423_COUNTER_B);
             //  if (value.valD != -127)
-            regEvent(value.valD, "Ds2423b"); // обязательный вызов для отправки результата работы
+            setValue(ds2423->getCount(DS2423_COUNTER_B)); // обязательный вызов для отправки результата работы
             //  else
             //   SerialPrint("E", "Sensor Ds2423b", "Error");
         }

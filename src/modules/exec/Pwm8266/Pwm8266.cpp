@@ -21,7 +21,7 @@ class Pwm8266 : public IoTItem {
         IoTgpio.pinMode(_pin, OUTPUT);
         analogWriteFreq(_freq);
         analogWriteResolution(10);
-        IoTgpio.analogWrite(_pin, value.valD);
+        IoTgpio.analogWrite(_pin, getValueD());
 
         jsonRead(parameters, "apin", _apin);
         if (_apin >= 0) IoTgpio.pinMode(_apin, INPUT);
@@ -29,16 +29,16 @@ class Pwm8266 : public IoTItem {
 
     void doByInterval() {
         if (_apin >= 0) {
-            value.valD = IoTgpio.analogRead(_apin);
-            if (value.valD > 1018) value.valD = 1024;  // нивелируем погрешность установки мин и макс
-                else if (value.valD < 9) value.valD = 0;   // из-за смягчения значений
-            if (abs(_oldValue - value.valD) > 5) {
-                _oldValue = value.valD;
-                analogWrite(_pin,value.valD);
+            setValueSilent (IoTgpio.analogRead(_apin)); //Сохраняем значение без события
+            if (getValue() > 1018) getValue() = 1024;  // нивелируем погрешность установки мин и макс
+                else if (getValue() < 9) getValue() = 0;   // из-за смягчения значений
+            if (abs(_oldValue - getValue()) > 5) {
+                _oldValue = getValue();
+                analogWrite(_pin,getValue());
                 _freezVal = false;
             } else {
                 if (!_freezVal) {   // отправляем событие только раз после серии изменений, чтоб не спамить события
-                    regEvent(value.valD, "Pwm8266");
+                    setValue(getValue());
                     _freezVal = true;
                 }
             }
@@ -46,9 +46,8 @@ class Pwm8266 : public IoTItem {
     }
  
     void setValue(const IoTValue& Value, bool genEvent = true) {
-        value = Value;
-        IoTgpio.analogWrite(_pin, value.valD);
-        regEvent(value.valD, "Pwm8266", false, genEvent);
+        IoTgpio.analogWrite(_pin, Value.val());
+        setValue((float)Value.val(), genEvent);
     }
     //=======================================================================================================
 

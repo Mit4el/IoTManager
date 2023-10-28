@@ -33,9 +33,10 @@ class IoTServo : public IoTItem {
 
         void doByInterval() {
             if (_apin >= 0) {
-                value.valD = map(IoTgpio.analogRead(_apin), _locmap1, _locmap2, _locmap3, _locmap4);
-                if (abs(_oldValue - value.valD) > 5) {
-                    _oldValue = value.valD;
+                //value.valD = map(IoTgpio.analogRead(_apin), _locmap1, _locmap2, _locmap3, _locmap4);
+                setValue(map(IoTgpio.analogRead(_apin), _locmap1, _locmap2, _locmap3, _locmap4), false);
+                if (abs(_oldValue - getValueD()) > 5) {
+                    _oldValue = getValueD();
                     servObj.write(_oldValue);
                 }
             }
@@ -44,20 +45,18 @@ class IoTServo : public IoTItem {
         IoTValue execute(String command, std::vector<IoTValue> &param) {
             if (command == "rotate") { 
                 if (param.size()) {
-                    value.valD = param[0].valD;
-                    servObj.write(value.valD);
-                    regEvent(value.valD, "IoTServo");
+                    servObj.write(param[0].val());
+                    setValue(param[0].val());
                 }
             } 
             return {}; 
         }
 
         void setValue(const IoTValue& Value, bool genEvent = true) {
-            value = Value;
-            if (value.isDecimal & (_oldValue != value.valD)) {
-                _oldValue = value.valD;
+            if (Value.isDecimal & (_oldValue != Value.val())) {
+                _oldValue = Value.val();
                 servObj.write(_oldValue);
-                regEvent(value.valD, "IoTServo", false, genEvent);
+                setValue(Value.val(), genEvent);
             }
         }
 

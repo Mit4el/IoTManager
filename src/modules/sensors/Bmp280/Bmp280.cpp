@@ -22,9 +22,9 @@ class Bmp280t : public IoTItem {
     }
 
     void doByInterval() {
-        value.valD = _bmp->readTemperature();
-        if (value.valD != NAN && value.valD < 150)
-            regEvent(value.valD, "Bmp280t");
+        float valD = _bmp->readTemperature();
+        if (valD != NAN && valD < 150)
+            setValue(valD);
         else
             SerialPrint("E", "Sensor Bmp280t", "Error", _id);
     }
@@ -42,10 +42,10 @@ class Bmp280p : public IoTItem {
     }
 
     void doByInterval() {
-        value.valD = _bmp->readPressure();
-        if (value.valD != NAN && value.valD > 0) {
-            value.valD = value.valD / 1.333224 / 100;
-            regEvent(value.valD, "Bmp280p");
+        float valD = _bmp->readPressure();
+        if (valD != NAN && valD > 0) {
+            valD = valD / 1.333224 / 100;
+            setValue(valD);
         } else
             SerialPrint("E", "Sensor Bmp280p", "Error", _id);
     }

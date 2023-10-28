@@ -138,9 +138,8 @@ public:
             // Serial.println(humidity);
         }
         // value.valD = scd4x.readMeasurement(temperature);
-        value.valD = co2;
-        if (value.valD < 5000)
-            regEvent(value.valD, "Scd40co2");
+        if (co2 < 5000)
+            setValue(co2);
         else
             SerialPrint("E", "Sensor Scd40co2", "Error", _id);
     }
@@ -297,9 +296,8 @@ public:
             // Serial.println(humidity);
         }
         // value.valD = scd4x.readMeasurement(temperature);
-        value.valD = temperature;
-        if (value.valD < 124)
-            regEvent(value.valD, "Scd40t");
+        if (temperature < 124)
+            setValue(temperature);
         else
             SerialPrint("E", "Sensor Scd40t", "Error", _id);
     }
@@ -393,9 +391,8 @@ public:
             Serial.print("\t");
         }
         // value.valD = scd4x.readMeasurement(temperature);
-        value.valD = humidity;
-        if (value.valD < 100)
-            regEvent(value.valD, "Scd40h");
+        if (vhumidity < 100)
+            setValue(humidity);
         else
             SerialPrint("E", "Sensor Scd40h", "Error", _id);
     }

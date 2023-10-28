@@ -18,8 +18,8 @@ class Timer : public IoTItem {
         _unfin = !_initValue;
         
         if (!_needSave) {
-            value.valD = _initValue;                    
-            if (_initValue) value.valD = value.valD + 1;        // +1 - компенсируем ранний вычет счетчика, ранний вычет, чтоб после события значение таймера не исказилось.     
+            setValueSilent(_initValue);                    
+            if (_initValue) setValueSilent(getValueD() + 1);        // +1 - компенсируем ранний вычет счетчика, ранний вычет, чтоб после события значение таймера не исказилось.     
         }
         
         jsonRead(parameters, "ticker", _ticker);
@@ -27,16 +27,16 @@ class Timer : public IoTItem {
     }
 
     void doByInterval() {
-        if (!_unfin && value.valD >= 0 && !_pause) {
-            if (_repeat && value.valD == 0) value.valD = _initValue;
-            value.valD--;
-            if (value.valD == 0) {
-                regEvent(value.valD, "Time's up");
+        if (!_unfin && getValueD() >= 0 && !_pause) {
+            if (_repeat && getValueD() == 0) setValueSilent (_initValue);
+            setValueSilent(getValueD() - 1);
+            if (getValueD() == 0) {
+                setValue(getValueD());
             }
             //if (!_ticker) regEvent(getValue(), "Timer tick", false, false);  // только регистрируем изменения без генерации тиков
         }
 
-        if (_ticker && (value.valD > 0 || _unfin) && !_pause) regEvent(value.valD, "Timer tick");
+        if (_ticker && (getValueD() > 0 || _unfin) && !_pause) setValue(getValueD());
     }
 
     IoTValue execute(String command, std::vector<IoTValue> &param) {
@@ -44,17 +44,17 @@ class Timer : public IoTItem {
             _pause = true;
         } else if (command == "reset") {
             _pause = false;
-            value.valD = _initValue;
-            if (_initValue) value.valD = value.valD + 1;
+            setValueSilent (_initValue);
+            if (_initValue) setValueSilent (getValueD() + 1);
         } else if (command == "continue") {
             _pause = false;
         } else if (command == "int") {
             if (param.size() == 1) {
-                setInterval(param[0].valD);
+                setInterval(param[0].val());
             }
         } else if (command == "setInitCountDown") {
             if (param.size() == 1) {
-                _initValue = param[0].valD;
+                _initValue = param[0].val();
             }
         }
 

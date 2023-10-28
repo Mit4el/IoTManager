@@ -21,11 +21,10 @@ class Sht30t : public IoTItem {
     
     void doByInterval() {
         if(sht30.get()==0){
-        value.valD = sht30.cTemp;
 
         SerialPrint("E", "Sensor Sht30t", "OK");
 
-        if (value.valD < -46.85F) regEvent(value.valD, "Sht30t");     // TODO: найти способ понимания ошибки получения данных
+        if (sht30.cTemp < -46.85F) setValue(sht30.cTemp);     // TODO: найти способ понимания ошибки получения данных
             else SerialPrint("E", "Sensor Sht30t", "Error", _id);  
         }
     }
@@ -38,10 +37,9 @@ class Sht30h : public IoTItem {
     
     void doByInterval() {
         if(sht30.get()==0){
-        value.valD = sht30.humidity;
 
         SerialPrint("E", "Sensor Sht30h", "OK");
-        if (value.valD != -6) regEvent(value.valD, "Sht30h");    // TODO: найти способ понимания ошибки получения данных
+        if (sht30.humidity != -6) setValue(sht30.humidity);    // TODO: найти способ понимания ошибки получения данных
             else SerialPrint("E", "Sensor Sht30h", "Error", _id);
         }   
     }

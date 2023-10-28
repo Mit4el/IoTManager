@@ -20,9 +20,9 @@ class Hdc1080t : public IoTItem {
     Hdc1080t(String parameters) : IoTItem(parameters) {}
 
     void doByInterval() {
-        value.valD = hdc1080.readTemperature();
-        if (value.valD < 124)
-            regEvent(value.valD, "Hdc1080t");
+        float valD = hdc1080.readTemperature();
+        if (valD < 124)
+            setValue(valD);
         else
             SerialPrint("E", "Sensor Hdc1080t", "Error", _id);
     }
@@ -35,9 +35,9 @@ class Hdc1080h : public IoTItem {
     Hdc1080h(String parameters) : IoTItem(parameters) {}
 
     void doByInterval() {
-        value.valD = hdc1080.readHumidity();
-        if (value.valD < 99)
-            regEvent(value.valD, "Hdc1080h");
+        float valD = hdc1080.readHumidity();
+        if (valD < 99)
+            setValue(valD);
         else
             SerialPrint("E", "Sensor Hdc1080h", "Error", _id);
     }

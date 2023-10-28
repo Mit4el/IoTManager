@@ -13,9 +13,9 @@ class Bh1750 : public IoTItem {
     }
       
     void doByInterval() {
-        value.valD = _lightMeter.readLightLevel();
-        if (value.valD < 70000)
-            regEvent(value.valD, "BH1750");
+        float valD = _lightMeter.readLightLevel();
+        if (valD < 70000)
+            setValue(valD);
         else
             SerialPrint("E", "Sensor BH1750", "Error");  
     }

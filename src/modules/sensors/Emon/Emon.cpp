@@ -31,8 +31,8 @@ class Energy : public IoTItem {
     }
 
     void doByInterval() {
-      value.valD = emon1.calcIrms(1480);  // Calculate Irms only       
-      regEvent(value.valD, "current");
+    //  value.valD = emon1.calcIrms(1480);  // Calculate Irms only       
+      setValue(emon1.calcIrms(1480));
     }
 
     ~Energy(){};
@@ -54,8 +54,8 @@ class Power : public IoTItem {
 
     void doByInterval() {
       if (emon1.Irms > 0) emon1.calcVI(10, 1000);         // Calculate all. No.of half wavelengths (crossings), time-out при условии, что ток не нулевой
-      value.valD = emon1.Vrms;             //extract Vrms into Variable;        
-      regEvent(value.valD, "voltage");
+   //   value.valD = emon1.Vrms;             //extract Vrms into Variable;        
+      setValue(emon1.Vrms);
     }
 
     ~Power(){};

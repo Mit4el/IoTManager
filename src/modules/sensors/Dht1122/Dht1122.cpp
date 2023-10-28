@@ -22,9 +22,9 @@ class Dht1122t : public IoTItem {
     }
 
     void doByInterval() {
-        value.valD = _dht->getTemperature();
-        if (String(value.valD) != "nan")
-            regEvent(value.valD, "Dht1122t");
+        float valD = _dht->getTemperature();
+        if (String(valD) != "nan")
+            setValue(valD);
         else
             SerialPrint("E", "Sensor DHTt", "Error", _id);
     }
@@ -42,9 +42,9 @@ class Dht1122h : public IoTItem {
     }
 
     void doByInterval() {
-        value.valD = _dht->getHumidity();
-        if (String(value.valD) != "nan")
-            regEvent(value.valD, "Dht1122h");
+        float valD = _dht->getHumidity();
+        if (String(valD) != "nan")
+            setValue(valD);
         else
             SerialPrint("E", "Sensor DHTh", "Error", _id);
     }

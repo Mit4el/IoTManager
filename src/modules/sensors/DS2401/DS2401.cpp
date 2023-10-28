@@ -36,9 +36,8 @@ class DS2401 : public IoTItem {
 
             if (!cmpAddr(_addr, _oldAddr, 8) || _repeatCount > _intRepeat) {                
                 hex2string(_addr, 8, _addrStr);
-                value.valS = _addrStr;
-                value.isDecimal = false;
-                regEvent(value.valS, "DS2401");
+                setIsDecimal (false);
+                setValue(_addrStr);
                 memcpy(_oldAddr, _addr, 8);
                 _repeatCount = 0;
             }

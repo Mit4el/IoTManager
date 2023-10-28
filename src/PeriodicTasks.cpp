@@ -59,7 +59,7 @@ String ESP_getResetReason(void) {
     return ESP.getResetReason();
 }
 #endif
-#if defined(esp32s2_4mb) || defined(esp32s3_16mb) || defined(esp32c3m_4mb)
+#ifdef esp32s2_4mb
 String ESP_getResetReason(void) {
     return ESP32GetResetReason(0);  // CPU 0
 }

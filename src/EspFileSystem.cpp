@@ -78,8 +78,7 @@ uint32_t ESP_getChipId(void)
 }
 
 // устарела используем новую функцию ниже
-#if !defined(esp32s2_4mb) && !defined(esp32c3m_4mb) && !defined(esp32s3_16mb)
-//#ifndef esp32s2_4mb
+#ifndef esp32s2_4mb
 uint32_t ESP_getFlashChipId(void)
 {
 #ifdef ESP32

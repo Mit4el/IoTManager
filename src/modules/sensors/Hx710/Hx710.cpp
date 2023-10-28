@@ -21,17 +21,16 @@ class HX710b : public IoTItem {
 
     void doByInterval() {
         if (!pressure_sensor.is_ready()) return;
-		value.valD = pressure_sensor.mmHg();
 		
-        regEvent(value.valD, "Hx710");
+        setValue(pressure_sensor.mmHg());
     }
 
     IoTValue execute(String command, std::vector<IoTValue> &param) {
         if (command == "tare") { 
             pressure_sensor.tare();
         } else if (command == "read") { 
-            value.valD = pressure_sensor.read();
-            return value;
+            setValueSilent (pressure_sensor.read());
+            return getIoTValue();
         } 
         return {};  
     }

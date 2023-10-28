@@ -49,7 +49,7 @@ class SDcard : public IoTItem {
     IoTValue execute(String command, std::vector<IoTValue> &param) {
         if (command == "saveBin") { 
             if (param.size() == 2) {
-                savePicture (param[0].valS, param[1]);
+                savePicture (param[0].val(), param[1]);
             }
         }
 

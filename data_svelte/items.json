@@ -78,7 +78,7 @@
         "descr": "Температура на улице",
         "int": 30,
         "API_key": "",
-        "city": "Moscow",
+        "сity": "Moscow",
         "lon": "37.54",
         "lat": "57.74",
         "lang": "ru",

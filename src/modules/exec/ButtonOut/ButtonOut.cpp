@@ -14,7 +14,7 @@ class ButtonOut : public IoTItem {
         jsonRead(parameters, "inv", _inv);
         _round = 0;
         IoTgpio.pinMode(_pin, OUTPUT);
-        IoTgpio.digitalWrite(_pin, _inv?!value.valD:value.valD);
+        IoTgpio.digitalWrite(_pin, _inv?!(bool)getValue():(bool)getValue());
         enableDoByInt = false;
     }
 
@@ -22,8 +22,8 @@ class ButtonOut : public IoTItem {
         int val = _inv?1:0;
         IoTgpio.digitalWrite(_pin, val);
         // SerialPrint("I", "ButtonOut","single pulse end");
-        value.valD = 0;
-        regEvent(0, "ButtonOut");
+       // value.valD = 0;
+        setValue(0);
         enableDoByInt = false;
         //regEvent(value.valD, "ButtonOut");  //обязательный вызов хотяб один
     }
@@ -34,41 +34,41 @@ class ButtonOut : public IoTItem {
         // param - вектор ("массив") значений параметров переданных вместе с командой: ID.Команда("пар1", 22, 33) -> param[0].ValS = "пар1", param[1].ValD = 22
     
         if (command == "change") { 
-            value.valD = 1 - (int)value.valD;
-            IoTgpio.digitalWrite(_pin, _inv?!value.valD:value.valD);
-            regEvent(value.valD, "ButtonOut");
+            //value.valD = 1 - (int)value.valD;
+            setValue(1 - (int)getValue());
+            IoTgpio.digitalWrite(_pin, _inv?!(bool)getValue():(bool)getValue());
         }
         else if (command == "pulse") {
-            if (param[0].isDecimal && (param[0].valD != 0)) {
-                value.valD = !_inv?1:0;
+            if (param[0].isDecimal && (param[0].val() != 0)) {
+                //value.valD = !_inv?1:0;
                 enableDoByInt = true;
                 // SerialPrint("I", "ButtonOut","single pulse start");
-                regEvent((String)(int)!_inv?1:0, "ButtonOut");
-                suspendNextDoByInt(param[0].valD);
+                setValue((int)!_inv?1:0);
+                suspendNextDoByInt(param[0].val());
                 IoTgpio.digitalWrite(_pin, !_inv?1:0);
             }
         }
         return {};  // команда поддерживает возвращаемое значения. Т.е. по итогу выполнения команды или общения с внешней системой, можно вернуть значение в сценарий для дальнейшей обработки
     }
 
-    void setValue(const IoTValue& Value, bool genEvent = true) {
-        value = Value;
-        if ((value.valD == !_inv?1:0) && (_interval != 0)) {
-            value.valD = !_inv?1:0;
+    void setValue(const IoTValue& Val, bool genEvent = true) {
+      //  value = Value;
+        if ((Val.val() == !_inv?1:0) && (_interval != 0)) {
+            Val.val = !_inv?1:0;
             enableDoByInt = true;
             // SerialPrint("I", "ButtonOut","single pulse start");
             suspendNextDoByInt(_interval);
         } else {
             enableDoByInt = false;
         }
-        regEvent((String)(int)value.valD, "ButtonOut", false, genEvent);
-        IoTgpio.digitalWrite(_pin, _inv?!value.valD:value.valD);
+        setValue(Val, genEvent);
+        IoTgpio.digitalWrite(_pin, _inv?!Val.val():Val.val());
     }
-
+/*
     String getValue() {
-        return (String)(int)value.valD;
+        return (String)(int)getValueD();
     }
-
+*/
     ~ButtonOut() {};
 };
 

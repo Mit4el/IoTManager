@@ -234,14 +234,12 @@ void Sds011request(int sensorID)
 
             if (item_Sds011_25 && pm25)
             {
-                item_Sds011_25->value.valD = pm25;
-                item_Sds011_25->regEvent(item_Sds011_25->value.valD, "Sds011_25");
+                item_Sds011_25->setValue(pm25);
             }
 
             if (item_Sds011_10 && pm10)
             {
-                item_Sds011_10->value.valD = pm10;
-                item_Sds011_10->regEvent(item_Sds011_10->value.valD, "Sds011_10");
+                item_Sds011_10->setValue(pm10);
             }
         }
         else

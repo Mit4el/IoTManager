@@ -16,7 +16,6 @@ private:
     String _topic = "";
     bool _isJson;
     bool _debug;
-    bool sendOk = false;
 
 public:
     ExternalMQTT(String parameters) : IoTItem(parameters)
@@ -30,11 +29,6 @@ public:
         //        jsonRead(parameters, "addPrefix", _addPrefix);
         jsonRead(parameters, "debug", _debug);
         dataFromNode = false;
-        if (mqttIsConnect())
-        {
-            sendOk = true;
-            mqttSubscribeExternal(_topic);
-        }
     }
     char *TimeToString(unsigned long t)
     {
@@ -101,8 +95,7 @@ public:
         }
     }
 
-    String getMqttExterSub()
-    {
+    String getMqttExterSub(){
         return _topic;
     }
 
@@ -110,11 +103,6 @@ public:
     {
         _minutesPassed++;
         setNewWidgetAttributes();
-        if (mqttIsConnect() && !sendOk)
-        {
-            sendOk = true;
-            mqttSubscribeExternal(_topic);
-        }
     }
     void onMqttWsAppConnectEvent()
     {
@@ -144,7 +132,7 @@ public:
                 if (_minutesPassed >= offline)
                 {
                     jsonWriteStr(json, F("info"), F("offline"));
-                    SerialPrint("i", "ExternalMQTT", _id + " - offline");
+                    SerialPrint("i", "ExternalMQTT", _id + " - offline", );
                 }
             }
         }

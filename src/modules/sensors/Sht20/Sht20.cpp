@@ -12,9 +12,9 @@ class Sht20t : public IoTItem {
 
     void doByInterval() {
         sht->read();
-        value.valD = sht->getTemperature();
-        if (value.valD > -46.85F)
-            regEvent(value.valD, "Sht20t");
+        float valD = sht->getTemperature();
+        if (valD > -46.85F)
+            setValue(valD);
         else
             SerialPrint("E", "Sensor Sht20t", "Error", _id);
     }
@@ -28,9 +28,9 @@ class Sht20h : public IoTItem {
 
     void doByInterval() {
         sht->read();
-        value.valD = sht->getHumidity();
-        if (value.valD != -6)
-            regEvent(value.valD, "Sht20h");
+        float valD = sht->getHumidity();
+        if (valD != -6)
+            setValue(valD);
         else
             SerialPrint("E", "Sensor Sht20h", "Error", _id);
     }

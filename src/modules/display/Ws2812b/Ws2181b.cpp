@@ -139,23 +139,23 @@ public:
             SerialPrint("E", "Strip Ws2812b", "noShow");
         } else if(command == "noShowOne"){
             if (param.size() == 1) {
-                _strip->setPixelColor(param[0].valD, _strip->Color(0, 0, 0));
+                _strip->setPixelColor(param[0].val(), _strip->Color(0, 0, 0));
                 _strip->show();
                 SerialPrint("E", "Strip Ws2812b", "noShowOne");
             }
         } else if (command == "showLed"){
             if (param.size() == 4) {
-                _strip->setPixelColor( param[0].valD, _strip->Color(param[1].valD, param[2].valD, param[3].valD));
+                _strip->setPixelColor( param[0].val(), _strip->Color(param[1].val(), param[2].val(), param[3].val()));
                 _strip->show(); 
-                SerialPrint("E", "Strip Ws2812b", "showLed:" + param[0].valS + " red:" + param[1].valS + " green:" + param[2].valS + " blue:" + param[3].valS);
+                SerialPrint("E", "Strip Ws2812b", "showLed:" + param[0].val() + " red:" + param[1].val() + " green:" + param[2].val() + " blue:" + param[3].val());
             }
         } else if (command == "showLedAll"){
             if (param.size() == 3) {
                 for(int i=0; i<_numLeds; i++) {
-                _strip->setPixelColor(i, _strip->Color(param[0].valD, param[1].valD, param[2].valD));
+                _strip->setPixelColor(i, _strip->Color(param[0].val(), param[1].val(), param[2].val()));
                 _strip->show(); 
                 }
-                SerialPrint("E", "Strip Ws2812b", "showLedAll - red:" + param[0].valS + " green:" + param[1].valS + " blue:" + param[2].valS);
+                SerialPrint("E", "Strip Ws2812b", "showLedAll - red:" + param[0].val() + " green:" + param[1].val() + " blue:" + param[2].val());
             }
         } else if (command == "disableIndication"){
             FlagFN = 0;
@@ -174,11 +174,10 @@ public:
     void setValue(const IoTValue& Value, bool genEvent = true){
         if (!_strip) return;
 
-        value = Value;
-        int b =  map(value.valD, 1,1024,1,255);
+        int b =  map(Value.val(), 1,1024,1,255);
         _strip->setBrightness(b);
         _strip->show(); 
-        regEvent(value.valD, "Ws2812b", false, genEvent);
+        setValue(Value.val(), false, genEvent);
     }
 
     ~Ws2812b(){};

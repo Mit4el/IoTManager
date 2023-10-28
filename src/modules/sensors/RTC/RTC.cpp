@@ -29,10 +29,9 @@ class RTC : public IoTItem {
     }
 
     void doByInterval() {
-        value.isDecimal = false;
-        value.valS = _watch->gettime(_timeFormat);
+        setIsDecimal (false);
 
-        if (_ticker) regEvent(value.valS, F("RTC tick"));
+        if (_ticker) setValue(_watch->gettime(_timeFormat));
     }
 
     IoTItem* getRtcDriver() {
@@ -60,7 +59,7 @@ class RTC : public IoTItem {
             if (param.size() == 1) {
                 IoTValue valTmp;
                 valTmp.isDecimal = false;
-                valTmp.valS = _watch->gettime(param[0].valS + " ");
+                valTmp.val = _watch->gettime(param[0].val() + " ");
                 return valTmp;
             }
         }

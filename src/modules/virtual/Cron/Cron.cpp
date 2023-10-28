@@ -25,7 +25,7 @@ class Cron : public IoTItem {
         const char* err = NULL;
         memset(&_expr, 0, sizeof(_expr));
         
-        cron_parse_expr(value.valS.c_str(), &_expr, &err);
+        cron_parse_expr(getIoTValue().val().c_str(), &_expr, &err);
         if (err) {
             _pause = true;
             _nextAlarm = 0;
@@ -62,18 +62,18 @@ class Cron : public IoTItem {
     void setValue(const IoTValue& Value, bool genEvent) {
         if (!_time_isTrust) return;
 
-        value = Value;
+        setValueSilent(Value);
         _pause = false;
         initCron();
         
         if (_needSave) {
-            jsonWriteStr_(valuesFlashJson, _id, value.valS);
+            jsonWriteStr_(valuesFlashJson, _id, getIoTValue().val());
             needSaveValues = true;
         }
 
         bool _needSaveBak = _needSave;
         _needSave = false;
-        regEvent(getNextAlarmF(), F("Cron alarm"), false, false);   
+        vald(getNextAlarmF(), false);   
         _needSave = _needSaveBak;
     }
 
@@ -83,7 +83,7 @@ class Cron : public IoTItem {
             updateNextAlarm(true);
             bool _needSaveBak = _needSave;
             _needSave = false;
-            regEvent(getNextAlarmF(), F("Cron alarm"));   
+            vald(getNextAlarmF());   
             _needSave = _needSaveBak;
         }
     }
@@ -98,7 +98,7 @@ class Cron : public IoTItem {
 
         bool _needSaveBak = _needSave;
         _needSave = false;
-        regEvent(getNextAlarmF(), F("Cron alarm"), false, false);   
+        vald(getNextAlarmF(), false);   
         _needSave = _needSaveBak;
 
         return {}; 

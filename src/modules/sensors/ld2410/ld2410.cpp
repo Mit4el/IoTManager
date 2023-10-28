@@ -98,21 +98,18 @@ public:
 
             if (presence != presence_last)
             {
-                value.valD = int(presence);
-                regEvent(value.valD, "ld2410m");
+                setValue(int(presence));
                 presence_last = presence;
                 //    SerialPrint("i", "LD2410", "присутствие: " + String(int(presence)));
             }
 
             if (presence && movement != movement_last)
             {
-                value.valD = int(presence);
-                regEvent(value.valD, "ld2410m");
+                setValue(int(presence));
             }
             if (presence && _ticker)
             {
-                value.valD = int(presence);
-                regEvent(value.valD, "ld2410m");
+                setValue(int(presence));
                 presence_last = presence;
             }
         }
@@ -134,9 +131,9 @@ public:
         {
             if (param[0].isDecimal && param[1].isDecimal && param[2].isDecimal)
             {
-                uint8_t newMovingMaxDistance = param[0].valD;
-                uint8_t newStationaryMaxDistance = param[1].valD;
-                uint16_t inactivityTimer = param[2].valD;
+                uint8_t newMovingMaxDistance = param[0].val();
+                uint8_t newStationaryMaxDistance = param[1].val();
+                uint16_t inactivityTimer = param[2].val();
                 if (newMovingMaxDistance > 0 && newStationaryMaxDistance > 0 && newMovingMaxDistance <= 8 && newStationaryMaxDistance <= 8)
                 {
                     if (instanceradar(_rx, _tx)->setMaxValues(newMovingMaxDistance, newStationaryMaxDistance, inactivityTimer))
@@ -158,9 +155,9 @@ public:
         {
             if (param[0].isDecimal && param[1].isDecimal && param[2].isDecimal)
             {
-                uint8_t gate = param[0].valD;
-                uint8_t motionSensitivity = param[1].valD;
-                uint16_t stationarySensitivity = param[2].valD;
+                uint8_t gate = param[0].val();
+                uint8_t motionSensitivity = param[1].val();
+                uint16_t stationarySensitivity = param[2].val();
                 if (motionSensitivity >= 0 && stationarySensitivity >= 0 && motionSensitivity <= 100 && stationarySensitivity <= 100)
                 {
                     if (instanceradar(_rx, _tx)->setGateSensitivityThreshold(gate, motionSensitivity, stationarySensitivity))
@@ -289,8 +286,7 @@ public:
         }
         if (movement != movement_last)
         {
-            value.valD = int(movement);
-            regEvent(value.valD, "ld2410t");
+            setValue(int(movement));
             movement_last = movement;
         }
     }
@@ -348,8 +344,7 @@ public:
             }
             if (distance != distance_last)
             {
-                value.valD = int(distance);
-                regEvent(value.valD, "ld2410d");
+                setValue(int(distance));
                 distance_last = distance;
             }
         }
@@ -407,8 +402,7 @@ public:
             }
             if (energy != energy_last)
             {
-                value.valD = int(energy);
-                regEvent(value.valD, "ld2410e");
+                setValue(int(energy));
                 // value = Value;
                 // regEvent((String)(int)value.valD, F("ld2410e"), false, true);
                 // SerialPrint("i", "LD2410", "Radar sensor энергия: " + String(energy));
