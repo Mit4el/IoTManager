@@ -222,7 +222,7 @@ class LogingDaily : public IoTItem {
         _wsNum = wsNum;
     }
 
-    String getValue() {
+    String getValueS() {
         return "";
     }
 

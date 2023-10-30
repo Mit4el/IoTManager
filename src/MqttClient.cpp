@@ -129,6 +129,19 @@ void mqttSubscribe() {
     }
 }
 
+void mqttSubscribeExternal(String topic, bool usePrefix) {
+
+   // SerialPrint("i", F("MQTT"), mqttRootDevice);
+   String _sb_topic = topic;
+   if (usePrefix)
+   {
+    _sb_topic = mqttPrefix + "/" + topic;
+   }
+   mqtt.subscribe(_sb_topic.c_str());
+
+    SerialPrint("i", F("MQTT"), ("subscribed external " + _sb_topic).c_str());
+}
+
 void mqttCallback(char* topic, uint8_t* payload, size_t length) {
     String topicStr = String(topic);
     // SerialPrint("i", "=>MQTT", topicStr);
@@ -152,7 +165,7 @@ void mqttCallback(char* topic, uint8_t* payload, size_t length) {
         // публикация всех статус сообщений при подключении приложения и генерация события подключения приложения в модулях
         for (std::list<IoTItem*>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
             if ((*it)->iAmLocal) {
-                publishStatusMqtt((*it)->getID(), (*it)->getValue());
+                publishStatusMqtt((*it)->getID(), (*it)->getValueS());
                 (*it)->onMqttWsAppConnectEvent();
             }
         }

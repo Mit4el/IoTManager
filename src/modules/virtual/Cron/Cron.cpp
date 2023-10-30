@@ -25,7 +25,7 @@ class Cron : public IoTItem {
         const char* err = NULL;
         memset(&_expr, 0, sizeof(_expr));
         
-        cron_parse_expr(getIoTValue().val().c_str(), &_expr, &err);
+        cron_parse_expr(getValueS().c_str(), &_expr, &err);
         if (err) {
             _pause = true;
             _nextAlarm = 0;
@@ -55,25 +55,25 @@ class Cron : public IoTItem {
         return buffer;
     }
 
-    String getValue() {
+    String getValueS() {
         return getNextAlarmF();
     }
 
-    void setValue(const IoTValue& Value, bool genEvent) {
+    void setValue(String Value, bool genEvent) {
         if (!_time_isTrust) return;
 
-        setValueSilent(Value);
+        setValue(Value, false);
         _pause = false;
         initCron();
         
         if (_needSave) {
-            jsonWriteStr_(valuesFlashJson, _id, getIoTValue().val());
+            jsonWriteStr_(valuesFlashJson, _id, getValueS());
             needSaveValues = true;
         }
 
         bool _needSaveBak = _needSave;
         _needSave = false;
-        vald(getNextAlarmF(), false);   
+        setValue(getNextAlarmF(), false);   
         _needSave = _needSaveBak;
     }
 
@@ -83,7 +83,7 @@ class Cron : public IoTItem {
             updateNextAlarm(true);
             bool _needSaveBak = _needSave;
             _needSave = false;
-            vald(getNextAlarmF());   
+            setValue(getNextAlarmF(), true);   
             _needSave = _needSaveBak;
         }
     }
@@ -98,7 +98,7 @@ class Cron : public IoTItem {
 
         bool _needSaveBak = _needSave;
         _needSave = false;
-        vald(getNextAlarmF(), false);   
+        setValue(getNextAlarmF(), false);   
         _needSave = _needSaveBak;
 
         return {}; 

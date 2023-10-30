@@ -112,8 +112,8 @@ class VariableExprAST : public ExprAST {
             // if (Item->value.isDecimal)
             //   Serial.printf("Call from  VariableExprAST: %s = %f\n", Name.c_str(), Item->value.valD);
             // else Serial.printf("Call from  VariableExprAST: %s = %s\n", Name.c_str(), Item->value.valS.c_str());
-            Item->getRoundValue();
-            return (Item->getIoTValue());
+           // Item->getRoundValue();
+            return (Item->getValue());
         }
 
         SerialPrint("E", Name, "The element is not found or the connection is lost", Name);
@@ -159,78 +159,78 @@ class BinaryExprAST : public ExprAST {
         // все бинарные операции кроме +, -, != и == обязаны работать с числами
         if (Op != '+' && Op != '-' && Op != tok_equal && Op != tok_notequal) {
             // поэтому преобразовываем строки в булевые интерпретации
-            if (!lhs->isDecimal()) lhs->val = lhs->val() != "";  // пустая строка = false 
-            if (!rhs->isDecimal()) rhs->val = rhs->val() != "";  // пустая строка = false 
+            if (!lhs->isDecimal()) lhs->val = lhs->valS() != "";  // пустая строка = false 
+            if (!rhs->isDecimal()) rhs->val = rhs->valS() != "";  // пустая строка = false 
 
             switch (Op) {
                 case '>':
-                    val.val = lhs->val() > rhs->val();
+                    val.val = lhs->valD() > rhs->valD();
                     break;
                 case '<':
-                    val.val = lhs->val() < rhs->val();
+                    val.val = lhs->valD() < rhs->valD();
                     break;
                 case tok_lesseq:
-                    val.val = lhs->val() <= rhs->val();
+                    val.val = lhs->valD() <= rhs->valD();
                     break;
                 case tok_greateq:
-                    val.val = lhs->val() >= rhs->val();
+                    val.val = lhs->valD() >= rhs->valD();
                     break;
 
                 case '*':
-                    val.val = lhs->val() * rhs->val();
+                    val.val = lhs->valD() * rhs->valD();
                     break;
                 case '/':
-                    if (rhs->val != 0)
-                        val.val = lhs->val() / rhs->val();
+                    if (rhs->valD() != 0)
+                        val.val = lhs->valD() / rhs->valD();
                     else
                         val.val = 3.4E+38;
                     break;
 
                 case '|':
-                    val.val = lhs->val() || rhs->val();
+                    val.val = lhs->valD() || rhs->valD();
                     break;
                 case '&':
-                    val.val = lhs->val() && rhs->val();
+                    val.val = lhs->valD() && rhs->valD();
                     break;
 
                 default:
                     break;
             }
         } else {    // иначе имеем дело с операциями + или - или == или !=, которые могут работать с разными типами данных
-            if (lhs->isDecimal && lhs->val() == "") lhs->val = (String)lhs->val();   // небольшой костыль пока не переделаем работу со значениями, планируется добавить long, работу со временем, перенести округление и модификаторы в IoTValue
-            if (rhs->isDecimal && rhs->val() == "") rhs->valb = (String)rhs->val();   // пока для сохранения округления в IoTItem применяется хитрость с сохранением внешнего вида числа в строку valS,
+            if (lhs->isDecimal() && lhs->valS() == "") lhs->val = (String)lhs->valD();   // небольшой костыль пока не переделаем работу со значениями, планируется добавить long, работу со временем, перенести округление и модификаторы в IoTValue
+            if (rhs->isDecimal() && rhs->valS() == "") rhs->val = (String)rhs->valD();   // пока для сохранения округления в IoTItem применяется хитрость с сохранением внешнего вида числа в строку valS,
                                                                                     // но некоторые модули и системные не делают этого, поэтому отлавливаем эту ситуацию тут и учитываем.
             switch (Op) {
                 case tok_equal:
-                    if (lhs->isDecimal && rhs->isDecimal)
-                        val.val = (float)lhs->val() == (float)rhs->val();
+                    if (lhs->isDecimal() && rhs->isDecimal())
+                        val.val = lhs->valD() == rhs->valD();
                     else
-                        val.val = compStr(lhs->val(), rhs->val());
+                        val.val = compStr(lhs->valS(), rhs->valS());
                     break;
 
                 case tok_notequal:
-                    if (lhs->isDecimal && rhs->isDecimal)
-                        val.val = (float)lhs->val() != (float)rhs->val();
+                    if (lhs->isDecimal() && rhs->isDecimal())
+                        val.val = lhs->valD() != rhs->valD();
                     else
-                        val.val = !compStr(lhs->val(), rhs->val());
+                        val.val = !compStr(lhs->valS(), rhs->valS());
                     break;
 
                 case '+':
-                    if (lhs->isDecimal && rhs->isDecimal)
-                        val.val = (float)lhs->val() + (float)rhs->val();
+                    if (lhs->isDecimal() && rhs->isDecimal())
+                        val.val = (float)lhs->valD() + (float)rhs->valD();
                     else {
-                        val.val = (String)lhs->val() + (String)rhs->val();
+                        val.val = (String)lhs->valS() + (String)rhs->valS();
                        // val.valD = 1;
                        // val.isDecimal = false;
                     }
                     break;
 
                 case '-':
-                    if (lhs->isDecimal && rhs->isDecimal)
-                        val.val = lhs->val() - rhs->val();
+                    if (lhs->isDecimal() && rhs->isDecimal())
+                        val.val = lhs->valD() - rhs->valD();
                     else {
-                        val.val = lhs->val();
-                        val.val().replace(rhs->val(), "");
+                        val.val = lhs->valS();
+                        val.valS().replace(rhs->valS(), "");
                         //val.valD = 1;
                         //val.isDecimal = false;
                     }
@@ -278,7 +278,7 @@ class CallExprAST : public ExprAST {
                 tmp = Args[0]->exec();
             else
                 SerialPrint("i", "SysExt", "Exit");
-            if (tmp) SerialPrint("i", "SysExt", "Exit = '" + tmp->val() + "'");
+            if (tmp) SerialPrint("i", "SysExt", "Exit = '" + tmp->valS() + "'");
 
             isIotScenException = true;
             return nullptr;
@@ -366,20 +366,20 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
                 value.val = _time_local.day_of_month;
                 break;
             case sysop_gethhmm:
-                value.isDecimal = false;
+                //value.isDecimal = false;
                 value.val = getTimeLocal_hhmm();
                 break;
             case sysop_gethhmmss:
-                value.isDecimal = false;
+                //value.isDecimal = false;
                 value.val = getTimeLocal_hhmmss();
                 break;
             case sysop_getTime:
-                value.isDecimal = false;
+                //value.isDecimal = false;
                 value.val = getDateTimeDotFormated();
                 break;
         }
     else {
-        value.isDecimal = false;
+        //value.isDecimal = false;
         value.val = "none";
     }
 
@@ -389,59 +389,59 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
             break;
         case sysop_digitalRead:
             if (param.size()) {
-                IoTgpio.pinMode(param[0].val(), INPUT);
-                value.val = IoTgpio.digitalRead(param[0].val());
+                IoTgpio.pinMode(param[0].valD(), INPUT);
+                value.val = IoTgpio.digitalRead(param[0].valD());
             }
             break;
         case sysop_analogRead:
             if (param.size()) {
-                IoTgpio.pinMode(param[0].val(), INPUT);
-                value.val = IoTgpio.analogRead(param[0].val());
+                IoTgpio.pinMode(param[0].valD(), INPUT);
+                value.val = IoTgpio.analogRead(param[0].valD());
             }
             break;
         case sysop_digitalWrite:
             if (param.size() == 2) {
-                IoTgpio.pinMode(param[0].val(), OUTPUT);
-                IoTgpio.digitalWrite(param[0].val(), param[1].val());
+                IoTgpio.pinMode(param[0].valD(), OUTPUT);
+                IoTgpio.digitalWrite(param[0].valD(), param[1].valD());
             }
             break;
         case sysop_digitalInvert:
             if (param.size()) {
-                IoTgpio.pinMode(param[0].val(), OUTPUT);
-                IoTgpio.digitalInvert(param[0].val());
+                IoTgpio.pinMode(param[0].valD(), OUTPUT);
+                IoTgpio.digitalInvert(param[0].valD());
             }
             break;
         case sysop_deepSleep:
             if (param.size()) {
-                Serial.printf("Ушел спать на %d сек...", (int)param[0].val());
+                Serial.printf("Ушел спать на %d сек...", (int)param[0].valD());
 #ifdef ESP32
-                esp_sleep_enable_timer_wakeup(param[0].val() * 1000000);
+                esp_sleep_enable_timer_wakeup(param[0].valD() * 1000000);
                 delay(1000);
                 esp_deep_sleep_start();
 #else
-                ESP.deepSleep(param[0].val() * 1000000);
+                ESP.deepSleep(param[0].valD() * 1000000);
 #endif
             }
             break;
         case sysop_getRSSI:
             value.val = WiFi.RSSI();
-            value.isDecimal = true;
+            //value.isDecimal = true;
             break;
         case sysop_getIP:
             value.val = jsonReadStr(settingsFlashJson, F("ip"));
-            value.isDecimal = false;
+            //value.isDecimal = false;
             break;
         case sysop_mqttPub:
             if (param.size() == 2) {
                 // Serial.printf("Call from  sysExecute %s %s\n", param[0].valS.c_str(), param[1].valS.c_str());
-                String tmpStr = param[1].val();
-                if (param[1].isDecimal) tmpStr = param[1].val();
-                value.val = mqtt.publish(param[0].val().c_str(),  tmpStr.c_str(), false);
+                String tmpStr = param[1].valS();
+                if (param[1].isDecimal()) tmpStr = param[1].valD();
+                value.val = mqtt.publish(param[0].valS().c_str(),  tmpStr.c_str(), false);
             }
             break;
         case sysop_getUptime:
             value.val = jsonReadStr(errorsHeapJson, F("upt"));
-            value.isDecimal = false;
+           // value.isDecimal = false;
             break;
         case sysop_mqttIsConnect:
             value.val = mqttIsConnect();
@@ -568,7 +568,7 @@ class IfExprAST : public ExprAST {
         }
 
         // если число больше нуля или строка не равна пустой, то считаем условие выполненным
-        if (cond_ret->isDecimal && cond_ret->val() || !(cond_ret->isDecimal) && cond_ret->val() != "") {
+        if (cond_ret->isDecimal() && cond_ret->valD() || !(cond_ret->isDecimal()) && cond_ret->valS() != "") {
             if (Then == nullptr) return nullptr;
             res_ret = Then->exec();
         } else {

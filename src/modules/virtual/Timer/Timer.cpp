@@ -18,8 +18,8 @@ class Timer : public IoTItem {
         _unfin = !_initValue;
         
         if (!_needSave) {
-            setValueSilent(_initValue);                    
-            if (_initValue) setValueSilent(getValueD() + 1);        // +1 - компенсируем ранний вычет счетчика, ранний вычет, чтоб после события значение таймера не исказилось.     
+            setValue(_initValue, false);                    
+            if (_initValue) setValue(getValueD() + 1, false);        // +1 - компенсируем ранний вычет счетчика, ранний вычет, чтоб после события значение таймера не исказилось.     
         }
         
         jsonRead(parameters, "ticker", _ticker);
@@ -28,8 +28,8 @@ class Timer : public IoTItem {
 
     void doByInterval() {
         if (!_unfin && getValueD() >= 0 && !_pause) {
-            if (_repeat && getValueD() == 0) setValueSilent (_initValue);
-            setValueSilent(getValueD() - 1);
+            if (_repeat && getValueD() == 0) setValue (_initValue, false);
+            setValue(getValueD() - 1, false);
             if (getValueD() == 0) {
                 setValue(getValueD());
             }
@@ -44,17 +44,17 @@ class Timer : public IoTItem {
             _pause = true;
         } else if (command == "reset") {
             _pause = false;
-            setValueSilent (_initValue);
-            if (_initValue) setValueSilent (getValueD() + 1);
+            setValue (_initValue, false);
+            if (_initValue) setValue (getValueD() + 1, false);
         } else if (command == "continue") {
             _pause = false;
         } else if (command == "int") {
             if (param.size() == 1) {
-                setInterval(param[0].val());
+                setInterval(param[0].valD());
             }
         } else if (command == "setInitCountDown") {
             if (param.size() == 1) {
-                _initValue = param[0].val();
+                _initValue = param[0].valD();
             }
         }
 

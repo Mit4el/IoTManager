@@ -51,7 +51,7 @@ class Oled64 : public IoTItem {
 
     void drawItem(IoTItem *item) {
         String tmpStr = _prefix;
-        tmpStr += item->getValue();
+        tmpStr += item->getValueS();
         tmpStr += _postfix;
 
         display.setRotation(0);
@@ -70,7 +70,7 @@ class Oled64 : public IoTItem {
     }
 
     void setValue(const IoTValue &Value, bool genEvent = true) {
-        value = Value;
+        //_value = Value;
         drawItem(this);
         IoTItem::setValue(Value, genEvent);
     }
@@ -79,7 +79,7 @@ class Oled64 : public IoTItem {
         if (!eventItem || _id2show == "") return;
 
         if (_id2show == eventItem->getID()) {
-            setValue(eventItem->value, false);
+            setValue(*eventItem->getValue(), false);
         }
     }
 
@@ -90,23 +90,23 @@ class Oled64 : public IoTItem {
             _isShow = false;
         } else if (command == "x") {
             if (param.size()) {
-                _x = param[0].valD;
+                _x = param[0].valD();
             }
         } else if (command == "y") {
             if (param.size()) {
-                _y = param[0].valD;
+                _y = param[0].valD();
             }
         } else if (command == "prefix") {
             if (param.size()) {
-                _prefix = param[0].valS;
+                _prefix = param[0].valS();
             }
         } else if (command == "postfix") {
             if (param.size()) {
-                _postfix = param[0].valS;
+                _postfix = param[0].valS();
             }
         } else if (command == "id2show") {
             if (param.size()) {
-                _id2show = param[0].valS;
+                _id2show = param[0].valS();
             }
         }
 

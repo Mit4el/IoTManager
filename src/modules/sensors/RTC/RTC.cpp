@@ -29,7 +29,7 @@ class RTC : public IoTItem {
     }
 
     void doByInterval() {
-        setIsDecimal (false);
+      //  setIsDecimal (false);
 
         if (_ticker) setValue(_watch->gettime(_timeFormat));
     }
@@ -58,8 +58,8 @@ class RTC : public IoTItem {
         if (command == "getTime") { 
             if (param.size() == 1) {
                 IoTValue valTmp;
-                valTmp.isDecimal = false;
-                valTmp.val = _watch->gettime(param[0].val() + " ");
+           //     valTmp.isDecimal = false;
+                valTmp.val = _watch->gettime(param[0].valS() + " ");
                 return valTmp;
             }
         }

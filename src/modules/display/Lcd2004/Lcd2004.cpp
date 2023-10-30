@@ -48,7 +48,7 @@ class Lcd2004 : public IoTItem {
 
      void drawItem(IoTItem* item) {
         String tmpStr = _prefix;
-        tmpStr += item->getValue();
+        tmpStr += item->getValueS();
         tmpStr += _postfix;
 
         printBlankStr(_prevStrSize);
@@ -69,7 +69,7 @@ class Lcd2004 : public IoTItem {
         if (!eventItem || _id2show == "") return; 
 
         if (_id2show == eventItem->getID()) {
-            setValue(eventItem->getIoTValue(), false);
+            setValue(*eventItem->getValue(), false);
         }
     }
 
@@ -94,23 +94,23 @@ class Lcd2004 : public IoTItem {
             }
         } else if (command == "x") {
             if (param.size()) {
-                _x = param[0].val();
+                _x = param[0].valD();
             }
         } else if (command == "y") {
             if (param.size()) {
-                _y = param[0].val();
+                _y = param[0].valD();
             }
         } else if (command == "prefix") {
             if (param.size()) {
-                _prefix = param[0].val();
+                _prefix = param[0].valS();
             }
         } else if (command == "postfix") {
             if (param.size()) {
-                _postfix = param[0].val();
+                _postfix = param[0].valS();
             }
         } else if (command == "id2show") {
             if (param.size()) {
-                _id2show = param[0].val();
+                _id2show = param[0].valS();
             }
         }
 

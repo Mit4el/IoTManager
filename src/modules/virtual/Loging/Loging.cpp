@@ -300,7 +300,7 @@ class Loging : public IoTItem {
         _wsNum = wsNum;
     }
 
-    String getValue() {
+    String getValueS() {
         return "";
     }
 
@@ -339,11 +339,11 @@ class Loging : public IoTItem {
     unsigned long getFileUnixLocalTime(String path) {
         return gmtTimeToLocal(selectToMarkerLast(deleteToMarkerLast(path, "."), "/").toInt() + START_DATETIME);
     }
-    void setValue(const IoTValue &Value, bool genEvent = true) {
-        setValueSilent(Value);
-        this->SetDoByInterval(String(Value.val()));
-        SerialPrint("i", "Loging", "setValue:" + String(Value.val()));
-        regEventLocal(Value.val(), "Loging", false, genEvent);
+    void setValue(String Value, bool genEvent = true) {
+        setValue(Value, false);
+        this->SetDoByInterval(String(Value));
+        SerialPrint("i", "Loging", "setValue:" + Value);
+        regEventLocal(Value, "Loging", false, genEvent);
     }
 };
 
@@ -363,18 +363,19 @@ class Date : public IoTItem {
     String id;
     Date(String parameters) : IoTItem(parameters) {
         jsonRead(parameters, F("id"), id);
-        setIsDecimal (false);
+   //     setIsDecimal (false);
     }
-
+/*
     void setValue(const String &valStr, bool genEvent = true) {
-        setValueSilent (valStr);
-        setValue(getIoTValue(), genEvent);
+        setValue (valStr, false);
+        setValue(getValueS(), genEvent);
     }
-
-    void setValue(const IoTValue &Value, bool genEvent = true) {
+*/
+    void setValue(String Value, bool genEvent = true) {
         //value = Value;
-        setValueSilent (valStr);
-        regEventLocal(Value.val(), "", false, genEvent);
+        setValue (Value, false);
+        
+       // regEventLocal(Value, "", false, genEvent);
         // отправка данных при изменении даты
         for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
             if ((*it)->getSubtype() == "Loging") {

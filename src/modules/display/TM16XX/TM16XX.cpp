@@ -47,7 +47,7 @@ class TM16XX : public IoTItem {
     void setValue(const IoTValue& Value, bool genEvent = true) {
         if (_display == nullptr) return;
 
-        _display->println(getValue());
+        _display->println(getValueS());
         IoTItem::setValue(Value, genEvent);
     }
 
@@ -57,13 +57,13 @@ class TM16XX : public IoTItem {
 
         if (strInVector(eventItem->getID(), _ids2show)) {
             if (_ids2show.size() == 1) {
-                _display->println(eventItem->getValue());
+                _display->println(eventItem->getValueS());
             } else {
                 _display->println();
                 for (int i = 0; i < _ids2show.size(); i++) {
                     IoTItem* item = findIoTItem(_ids2show[i]);
                     if (item) {
-                        _display->print(item->getValue());    
+                        _display->print(item->getValueS());    
                     }
                 }
             }

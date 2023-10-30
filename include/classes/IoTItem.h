@@ -1,30 +1,38 @@
 #pragma once
 #include "classes/IoTGpio.h"
+//#define __cplusplus 201703L
+#include <variant>
 
-struct IoTValue
+class IoTValue
 {
+    public:
     //    float valD = 0;
     //    String valS = "";
     std::variant<String, float> val;
-    bool isDecimal() { val.index() == 0 ? false : true }
+    bool isDecimal() { return val.index() == 0 ? false : true; }
     // вернет значение float без окреглений, map и т.п. преобразований
     // Для работы в IoTItem и наследниках используйте getValue(), вкернте с учётом округленяи и преобразований
-    float val()
+    float valD()
     {
-        auto ptr = std::get_if<float>(&value.val); // запросили float
+        auto ptr = std::get_if<float>(&val); // запросили float
         if (ptr == nullptr)
             return 0.0;
         return (float)*ptr;
     }
     // Вернет строку, если значение во float, то преобразует к строке
-    // Для работы в IoTItem и наследниках используйте getValue(), вкернте с учётом округленяи и преобразований    
-    String val()
+    // Для работы в IoTItem и наследниках используйте getValue(), вкернте с учётом округленяи и преобразований
+    String valS()
     {
-        if (std::index(&value.val) == 0) // если это float, а хотят строку, то берем float и копируем в строку
-            return String(getValue());
+        if (val.index() == 0)
+        {                                        // если это float, а хотят строку, то берем float и копируем в строку
+            auto ptr = std::get_if<float>(&val); // запросили float
+            if (ptr == nullptr)
+                return "";
+            return String((float)*ptr);
+        }
         else // если это строка, то просто возвращаем
         {
-            auto ptr = std::get_if<String>(&value.val);
+            auto ptr = std::get_if<String>(&val);
             return *ptr;
         }
     }
@@ -86,24 +94,29 @@ public:
     // получтьтип записанных данных 0-float, 1-String
     //  uint8_t getTypeValue(){ val.index();}
     // Верет саму структкру, в основном испоьзуется в ядре //????????????????????????
-    virtual IoTValue *getValue() { return value; }
+    virtual IoTValue* getValue() { return &_value; }
 
     // вернуть строку, даже если там число, то округлит, переведет в строку, а потом вернет (напрмер для вывода в serial или json)
-    virtual String getValue();
+    virtual String getValueS();
     // вернет число float если его нет то вернет 0, для проверки использовать isDecimal()
-    virtual float getValue();
-
+    virtual float getValueD();
+    void value(String &val){val = getValueS();}
+    void value(float &val){val = getValueD();}
     // установить данные в формате строки, если в строке содержится число, то оно округлится будет храниться как число
-    virtual void setValue(const String &valStr, bool genEvent = true);
+    virtual void setValue( String valStr, bool genEvent = true);
     // установить данные в формате float
-    virtual void setValue(const float &valD, bool genEvent = true);
+    virtual void setValue( float valD, bool genEvent = true);
+        // установить данные в формате bool
+    virtual void setValue( bool valD, bool genEvent = true);
+            // установить данные в формате bool
+    virtual void setValue( int valD, bool genEvent = true) {setValue ((float)valD, genEvent);}
     // установить данные в формате IoTValue
     virtual void setValue(const IoTValue &val, bool genEvent = true);
 
     // Молчаливое присвоение главного значения. При этом не будет выработано события и не будет работать isChange
-    void setValueSilent(float &val) { value.val = val; }
+ //   void setValueSilent(float val) { _value.val = val; }
     // Молчаливое присвоение главного значения. При этом не будет выработано события и не будет работать isChange
-    void setValueSilent(String &val) { value.val = val; }
+ //   void setValueSilent(String &val) { _value.val = val; }
 
     //    String getRoundValue();
     void getNetEvent(String &event);
@@ -148,7 +161,7 @@ protected:
     IoTValue *_trackingValue = nullptr; // указатель на значение родительского элемента изменение которого отслеживается
 
 private:
-    IoTValue value;        // хранение основного значения, которое обновляется из сценария, execute(), loop() или doByInterval()
+    IoTValue _value;        // хранение основного значения, которое обновляется из сценария, execute(), loop() или doByInterval()
     bool flChange = false; // флаг иземения основного значения с последнего опроса isChange()
     //       virtual void regEvent(const String& value, const String& consoleInfo, bool error = false, bool genEvent = true);
     //        virtual void regEvent(float value, const String& consoleInfo, bool error = false, bool genEvent = true);

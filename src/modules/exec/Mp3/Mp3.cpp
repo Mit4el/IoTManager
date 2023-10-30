@@ -32,7 +32,7 @@ class Mp3 : public IoTItem {
             myMP3->volume(volumetmp);
         } 
 
-        setIsDecimal (false);    // значение объекта всегда будет строка
+//        setIsDecimal (false);    // значение объекта всегда будет строка
     }
 
     void doByInterval() {
@@ -105,11 +105,11 @@ class Mp3 : public IoTItem {
                 myMP3->stop();
             } else if (command == "volume") { 
                 if (param.size()) {
-                    myMP3->volume(param[0].val());
+                    myMP3->volume(param[0].valD());
                 }
             } else if (command == "playFolder") { 
                 if (param.size()) {
-                    myMP3->playFolder(param[0].val(), param[1].val());    // (folderNum, fileNum)
+                    myMP3->playFolder(param[0].valD(), param[1].valD());    // (folderNum, fileNum)
                 }
             } else if (command == "play") { 
                 myMP3->play(1);  //Play the first mp3

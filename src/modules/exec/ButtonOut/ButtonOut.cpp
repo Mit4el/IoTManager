@@ -39,30 +39,30 @@ class ButtonOut : public IoTItem {
             IoTgpio.digitalWrite(_pin, _inv?!(bool)getValue():(bool)getValue());
         }
         else if (command == "pulse") {
-            if (param[0].isDecimal && (param[0].val() != 0)) {
+            if (param[0].isDecimal() && (param[0].valD() != 0)) {
                 //value.valD = !_inv?1:0;
                 enableDoByInt = true;
                 // SerialPrint("I", "ButtonOut","single pulse start");
                 setValue((int)!_inv?1:0);
-                suspendNextDoByInt(param[0].val());
+                suspendNextDoByInt(param[0].valD());
                 IoTgpio.digitalWrite(_pin, !_inv?1:0);
             }
         }
         return {};  // команда поддерживает возвращаемое значения. Т.е. по итогу выполнения команды или общения с внешней системой, можно вернуть значение в сценарий для дальнейшей обработки
     }
 
-    void setValue(const IoTValue& Val, bool genEvent = true) {
+    void setValue(int Val, bool genEvent = true) {
       //  value = Value;
-        if ((Val.val() == !_inv?1:0) && (_interval != 0)) {
-            Val.val = !_inv?1:0;
+        if ((Val == !_inv?1:0) && (_interval != 0)) {
+            Val = !_inv?1:0;
             enableDoByInt = true;
             // SerialPrint("I", "ButtonOut","single pulse start");
             suspendNextDoByInt(_interval);
         } else {
             enableDoByInt = false;
         }
-        setValue(Val, genEvent);
-        IoTgpio.digitalWrite(_pin, _inv?!Val.val():Val.val());
+        setValue((float)Val, genEvent);
+        IoTgpio.digitalWrite(_pin, _inv?!Val:Val);
     }
 /*
     String getValue() {

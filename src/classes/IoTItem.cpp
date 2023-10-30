@@ -48,7 +48,7 @@ IoTItem::IoTItem(const String &parameters)
     IoTItem *item = nullptr;
     if (jsonRead(parameters, F("trackingID"), trackingID, false) && (item = findIoTItem(trackingID)) != nullptr)
     {
-        _trackingValue = &(item->value);
+        _trackingValue = &(item->_value);
     }
 }
 
@@ -71,25 +71,25 @@ void IoTItem::loop()
     }
 }
 
-String IoTItem::getValue()
+String IoTItem::getValueS()
 {
-    if (std::index(&value.val) == 0) // если это float, а хотят строку, то берем float, укругляем и копируем в строку
+    if (_value.val.index() == 0) // если это float, а хотят строку, то берем float, укругляем и копируем в строку
     {
-        float tmp = getValue();
+        float tmp = getValueD();
         char buf[15];
         sprintf(buf, ("%0" + (String)(_numDigits + _round) + "." + (String)_round + "f").c_str(), tmp);
         return (String)buf;
     }
     else // если это строка, то просто возвращаем
     {
-        auto ptr = std::get_if<String>(&value.val);
+        auto ptr = std::get_if<String>(&_value.val);
         return *ptr;
     }
 }
 
-float IoTItem::getValue()
+float IoTItem::getValueD()
 {
-    auto ptr = std::get_if<float>(&value.val); // запросили float
+    auto ptr = std::get_if<float>(&_value.val); // запросили float
     if (ptr == nullptr)
     {
         return 0.0;
@@ -107,30 +107,30 @@ long IoTItem::getInterval() { return _interval; }
 
 bool IoTItem::isGlobal() { return _global; }
 
-void setValue(const IoTValue &val, bool genEvent = true)
+void IoTItem::setValue(const IoTValue &val, bool genEvent)
 {
-    value = val;
-    regEvent(false, genEvent);
+    _value = val;
+    regEvent(_value, genEvent);
 }
 
-void IoTItem::setValue(const String &valStr, bool genEvent)
+void IoTItem::setValue(String valStr, bool genEvent)
 {
-    IoTValue &_val;
-    if (isDigitDotCommaStr(valStr);)
+  //  IoTValue &val;
+    if (isDigitDotCommaStr(valStr))
     {
         float valtmp = valStr.toFloat();
         setValue(valtmp, genEvent);
     }
     else
     {
-        if ((String)getValue() != valStr)
+        if ((String)getValueS() != valStr)
             flChange = true;
-        value.val = valStr;
-        regEvent(false, genEvent);
+        _value.val = valStr;
+        regEvent(_value, genEvent);
     }
 }
 
-void IoTItem::setValue(const float &valtmp, bool genEvent)
+void IoTItem::setValue(float valtmp, bool genEvent)
 {
     if (_round >= 0 && _round <= 6)
     {
@@ -143,13 +143,21 @@ void IoTItem::setValue(const float &valtmp, bool genEvent)
         valtmp = valtmp + _plus;
     if (_map1 != _map2)
         valtmp = map(valtmp, _map1, _map2, _map3, _map4);
-    if ((float)getValue() != valtmp)
+    if ((float)getValueD() != valtmp)
         flChange = true;
 
-    value.val = valtmp;
-    regEvent(false, genEvent);
+    _value.val = valtmp;
+    regEvent(_value, genEvent);
 }
 
+void IoTItem::setValue(bool valtmp, bool genEvent)
+{
+    if ((bool)getValueD() != valtmp)
+        flChange = true;
+
+    _value.val = valtmp;
+    regEvent(_value, genEvent);
+}
 // метод отправки из модуля дополнительных json полей виджета в приложение и веб интерфейс,
 // необходимый для изменения виджетов "на лету" из модуля
 void IoTItem::sendSubWidgetsValues(String &id, String &json)
@@ -163,23 +171,23 @@ void IoTItem::regEvent(const IoTValue &val, bool error, bool genEvent)
 {
     if (_needSave)
     {
-        jsonWriteStr_(valuesFlashJson, _id, getValue());
+        jsonWriteStr_(valuesFlashJson, _id, getValueS());
         needSaveValues = true;
     }
-    publishStatusMqtt(_id, getValue());
-    publishStatusWs(_id, getValue());
+    publishStatusMqtt(_id, getValueS());
+    publishStatusWs(_id, getValueS());
     // SerialPrint("i", "Sensor", consoleInfo + " '" + _id + "' data: " + value + "'");
 
     if (genEvent)
     {
-        generateEvent(_id, getValue());
+        generateEvent(_id, getValueS());
 
         // отправка события другим устройствам в сети если не было ошибки
         if (_global && !error)
         {
             String json = "{}";
             jsonWriteStr_(json, "id", _id);
-            jsonWriteStr_(json, "val", getValue());
+            jsonWriteStr_(json, "val", getValueS());
             jsonWriteInt_(json, "int", _interval / 1000);
             publishEvent(_id, json);
             SerialPrint("i", F("<=MQTT"), "Broadcast event: " + json);
@@ -228,7 +236,7 @@ void IoTItem::getNetEvent(String &event)
 {
     event = "{}";
     jsonWriteStr_(event, "id", _id);
-    jsonWriteStr_(event, "val", getValue());
+    jsonWriteStr_(event, "val", getValueS());
     jsonWriteInt_(event, "int", _interval / 1000);
 }
 
@@ -271,12 +279,12 @@ void IoTItem::onMqttWsAppConnectEvent() {}
 void IoTItem::onModuleOrder(String &key, String &value) {}
 void IoTItem::onTrackingValue(IoTItem *item)
 {
-    setValue(item->getValue(), false);
+    setValue(*item->getValue(), false);
 }
 
 bool IoTItem::isTracking(IoTItem *item)
 {
-    return &(item->value) == _trackingValue;
+    return &(item->_value) == _trackingValue;
 }
 
 // делаем доступным модулям отправку сообщений в телеграм
@@ -392,7 +400,7 @@ String getItemValue(const String &name)
 {
     IoTItem *tmp = findIoTItem(name);
     if (tmp)
-        return tmp->getValue();
+        return tmp->getValueS();
     else
         return "";
 }
@@ -432,7 +440,7 @@ IoTItem *createItemFromNet(const String &msgFromNet)
         tmpp->setIntFromNet(tmpp->getInterval() / 1000 + 5);
     tmpp->iAmLocal = false;
     IoTItems.push_back(tmpp);
-    generateEvent(tmpp->getID(), tmpp->getValue());
+    generateEvent(tmpp->getID(), tmpp->getValueS());
     return tmpp;
 }
 

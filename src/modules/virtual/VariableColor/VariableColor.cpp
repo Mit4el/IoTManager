@@ -18,7 +18,7 @@ public:
     void onMqttWsAppConnectEvent()
     {
         SerialPrint("i", "Connecting", "Dashbord open ");
-        setValue((String)getValue(), true);
+        setValue((String)getValueS(), true);
     }
      
      IoTValue execute(String command, std::vector<IoTValue> &param)
@@ -26,7 +26,7 @@ public:
         if (command == "widget" && param.size() == 2)
         {
             String json = "{}";
-            jsonWriteStr(json, param[0].val(), param[1].val());
+            jsonWriteStr(json, param[0].valS(), param[1].valS());
             sendSubWidgetsValues(_id, json);
         }
         return {};

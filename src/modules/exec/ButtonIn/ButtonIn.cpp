@@ -31,7 +31,7 @@ class ButtonIn : public IoTItem {
         _buttonState = IoTgpio.digitalRead(_pin);
         if (_inv) _buttonState = !_buttonState;    // инвертируем, если нужно показания
         // сообщаем всем о стартовом статусе без генерации события
-        setValue(_buttonState, false, false);
+        setValue((float&)_buttonState, false);
     }
 
     void loop() {
@@ -47,12 +47,12 @@ class ButtonIn : public IoTItem {
 
                 if (_fixState == 1 && _buttonState == _execLevel) {
                    // value.valD = !value.valD;
-                    setValue(!(bool)getValue(), F("ButtonIn")); 
+                    setValue(!getValueD()); 
                 }
                 
                 if (_fixState == 0) {
-                    if (_inv) setValue(!_buttonState, F("ButtonIn"));    // инвертируем, если нужно показания
-                    else setValue(_buttonState, F("ButtonIn"));
+                    if (_inv) setValue(!_buttonState);    // инвертируем, если нужно показания
+                    else setValue(_buttonState);
                 }
             }
         }

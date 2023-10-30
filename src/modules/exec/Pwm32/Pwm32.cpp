@@ -38,25 +38,25 @@ class Pwm32 : public IoTItem {
 
     void doByInterval() {
         if (_apin >= 0) {
-            setValueSilent(map(IoTgpio.analogRead(_apin), 0, 4095, 0, _resolution)); //Сохраняем значение без события
-            if (getValue() > _resolution - 6) getValue() = _resolution;  // нивелируем погрешность установки мин и макс
-                else if (getValue() < 9) getValue() = 0;   // из-за смягчения значений
-            if (abs(_oldValue - getValue()) > 20) {
-                _oldValue = getValue();
-                ledcWrite(_ledChannel, getValue());
+            setValue((float)map(IoTgpio.analogRead(_apin), 0, 4095, 0, _resolution), false); //Сохраняем значение без события
+            if (getValueD() > _resolution - 6) setValue(_resolution);  // нивелируем погрешность установки мин и макс
+                else if (getValueD() < 9) setValue(0);   // из-за смягчения значений
+            if (abs(_oldValue - getValueD()) > 20) {
+                _oldValue = getValueD();
+                ledcWrite(_ledChannel, getValueD());
                 _freezVal = false;
             } else {
                 if (!_freezVal) {   // отправляем событие только раз после серии изменений, чтоб не спамить события
-                    setValue(getValue());
+                    setValue((float)getValueD());
                     _freezVal = true;
                 }
             }
         }
     }
  
-    void setValue(const IoTValue& Value, bool genEvent = true) {
-        ledcWrite(_ledChannel, Value.val());
-        setValue((float)Value.val(), genEvent);
+    void setValue(int Value, bool genEvent = true) {
+        ledcWrite(_ledChannel, Value);
+        setValue((float)Value, genEvent);
     }
     //=======================================================================================================
 

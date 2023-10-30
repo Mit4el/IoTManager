@@ -31,14 +31,14 @@ class Encoder : public IoTItem {
     void loop() { 
         if (enc1.tick() != 0) {
             if (enc1.left()) {  
-                setValue(getValue() - step);
+                setValue(getValueD() - step);
             } else if (enc1.right()) {   
-                setValue(getValue() + step");
+                setValue(getValueD() + step);
             } else if (stepOnPress) {
                 if (enc1.leftH()) {  
-                    setValue(getValue() - stepOnPress);
+                    setValue(getValueD() - stepOnPress);
                 } else if (enc1.rightH()) {   
-                    setValue(getValue() + stepOnPress);
+                    setValue(getValueD() + stepOnPress);
                 }
             }
 

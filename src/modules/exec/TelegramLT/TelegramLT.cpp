@@ -39,11 +39,11 @@ class TelegramLT : public IoTItem {
         if (param.size() == 1) {
             if (command == "sendMsg") {
                 if (param.size()) {
-                    sendTelegramMsg(false,  param[0].val());
+                    sendTelegramMsg(false,  param[0].valS());
                 }
             } else if (command == "sendOftenMsg") {
                 if (param.size()) {
-                    sendTelegramMsg(true,  param[0].val());
+                    sendTelegramMsg(true,  param[0].valS());
                 }
             }
         }

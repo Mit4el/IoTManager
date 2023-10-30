@@ -45,18 +45,18 @@ class IoTServo : public IoTItem {
         IoTValue execute(String command, std::vector<IoTValue> &param) {
             if (command == "rotate") { 
                 if (param.size()) {
-                    servObj.write(param[0].val());
-                    setValue(param[0].val());
+                    servObj.write(param[0].valD());
+                    setValue(param[0].valD());
                 }
             } 
             return {}; 
         }
 
-        void setValue(const IoTValue& Value, bool genEvent = true) {
-            if (Value.isDecimal & (_oldValue != Value.val())) {
-                _oldValue = Value.val();
+        void setValue(int Value, bool genEvent = true) {
+            if (Value & (_oldValue != Value)) {
+                _oldValue = Value;
                 servObj.write(_oldValue);
-                setValue(Value.val(), genEvent);
+                setValue((float)Value, genEvent);
             }
         }
 

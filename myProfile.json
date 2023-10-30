@@ -292,7 +292,7 @@
             },
             {
                 "path": "src/modules/sensors/RTC",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/S8",

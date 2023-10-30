@@ -153,17 +153,17 @@ class IoTmUART : public IoTItem {
                 
                 if (printStr.indexOf("_txt") > 0) {
                     printStr.replace("_txt", ".txt=\"");
-                    printStr += eventItem->getValue();
+                    printStr += eventItem->getValueS();
                     printStr += "\"";
                 } else if (printStr.indexOf("_val") > 0) { 
-                    printStr += eventItem->getValue();
+                    printStr += eventItem->getValueS();
                     printStr.replace(".", "");
                     printStr.replace("_val", ".val=");
                 } else {
                     if (indexOf_ == printStr.length()-1) printStr.replace("_", "");
                     else printStr.replace("_", ".");
                     printStr += "=";
-                    printStr += eventItem->getValue();
+                    printStr += eventItem->getValueS();
                 }
 
                 uartPrintFFF(printStr);
@@ -179,7 +179,7 @@ class IoTmUART : public IoTItem {
                 String VP = printStr.substring(indexOf_ + 1, indexOf_ + 5);
 
                 if (typeOfVP == 0) {    // если не указан тип, то додумываем на основании типа данных источника
-                    if (eventItem->isDecimal())
+                    if (eventItem->getValue()->isDecimal())
                         typeOfVP = 'i';
                     else
                         typeOfVP = 's';
@@ -196,28 +196,28 @@ class IoTmUART : public IoTItem {
                         //eventItem->getIoTValue().valD = atoi(eventItem->getIoTValue().valS().c_str());
                     //}
 
-                    _myUART->write(highByte((int)eventItem->getIoTValue().val()));
-                    _myUART->write(lowByte((int)eventItem->getIoTValue().val()));
+                    _myUART->write(highByte((int)eventItem->getValueD()));
+                    _myUART->write(lowByte((int)eventItem->getValueD()));
                 }
 
                 if (typeOfVP == 's') {
-                    if (eventItem->isDecimal()) {
-                        eventItem->getIoTValue().val = eventItem->getValue();
+                    if (eventItem->getValue()->isDecimal()) {
+                     //   eventItem->getIoTValue().val = eventItem->getValue();
                     }
 
                     // подсчитываем количество символов отличающихся от ASCII, для понимания сколько символов состоит из дух байт
                     int u16counter = 0;
-                    const char* valSptr = eventItem->getIoTValue().val().c_str();
-                    for (int i=0; i < eventItem->getIoTValue().val().length(); i++) {
+                    const char* valSptr = eventItem->getValueS().c_str();
+                    for (int i=0; i < eventItem->getValueS().length(); i++) {
                         if (valSptr[i] > 200) u16counter++;
                     }
 
                     _myUART->write(0x5A);
                     _myUART->write(0xA5);
-                    _myUART->write((eventItem->getIoTValue().val().length() - u16counter) * 2 + 5);  // подсчитываем и отправляем размер итоговой строки + служебные байты
+                    _myUART->write((eventItem->getValueS().length() - u16counter) * 2 + 5);  // подсчитываем и отправляем размер итоговой строки + служебные байты
                     _myUART->write(0x82);   // требуем запись в память
                     uartPrintHex(VP);   // отправляем адрес в памяти VP
-                    uartPrintStrInUTF16(eventItem->getIoTValue().val().c_str(), eventItem->getIoTValue().val().length());     // отправляем строку для записи
+                    uartPrintStrInUTF16(eventItem->getValueS().c_str(), eventItem->getValueS().length());     // отправляем строку для записи
                     _myUART->write(0xFF);   // терминируем строку, чтоб экран очистил все остальное в элементе своем
                     _myUART->write(0xFF);
 
@@ -235,8 +235,8 @@ class IoTmUART : public IoTItem {
                     //if (!eventItem->isDecimal()) {
                        //eventItem->getIoTValue().valD = atof(eventItem->getIoTValue().valS.c_str()); 
                     //}
-
-                    byte* f_byte = reinterpret_cast<byte*>(&(eventItem->getIoTValue().val()));
+                    float tmp = eventItem->getValueD();
+                    byte* f_byte = reinterpret_cast<byte*>(&(tmp));
                     memcpy(hex, f_byte, 4);
 
                     _myUART->write(hex[3]);
@@ -316,17 +316,17 @@ class IoTmUART : public IoTItem {
             if (param.size() == 1) {
                 //if (param[0].isDecimal) uartPrintln((String)param[0].valD);
                 //else uartPrintln(param[0].valS);
-                uartPrintln(param[0].val());
+                uartPrintln(param[0].valS());
             }
         } else if (command == "print") { 
             if (param.size() == 1) {
                 //if (param[0].isDecimal) uartPrint((String)param[0].valD);
                 //else uartPrint(param[0].valS);
-                uartPrintln(param[0].val());
+                uartPrintln(param[0].valS());
             }
         } else if (command == "printHex") {
             if (param.size() == 1) {
-                uartPrintHex(param[0].val());
+                uartPrintHex(param[0].valS());
             }
         } else if (command == "printFFF") {
             if (param.size() == 2) {
@@ -335,9 +335,9 @@ class IoTmUART : public IoTItem {
                 //     strToUart = param[0].valD;  
                 // else 
                 //     strToUart = param[0].valS;
-                strToUart = param[0].val();
+                strToUart = param[0].valS();
 
-                if (param[1].val()) 
+                if (param[1].valD()) 
                     uartPrintFFF("\"" + strToUart + "\"");
                 else
                     uartPrintFFF(strToUart);
