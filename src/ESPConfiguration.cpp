@@ -7,6 +7,9 @@ std::list<IoTItem*> IoTItems;
 void* getAPI(String subtype, String params);
 
 void configure(String path) {
+    #ifdef OS_BENCH
+    IoTBenchmark::instance()->clearBenchConfig();
+    #endif
     File file = seekFile(path);
     file.find("[");
     while (file.available()) {
@@ -36,6 +39,9 @@ void configure(String path) {
                     // пробуем спросить драйвер Telegram_v2
                     if (driver = myIoTItem->getTlgrmDriver()) tlgrmItem = (IoTItem*)driver;
                     IoTItems.push_back(myIoTItem);
+                    #ifdef OS_BENCH
+                    IoTBenchmark::instance()->attach(myIoTItem->getID());
+                    #endif
                 }
             }
         }

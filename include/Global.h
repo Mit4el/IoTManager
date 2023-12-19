@@ -9,6 +9,11 @@
 #include <PubSubClient.h>
 #include <list>
 
+#define OS_BENCH
+#ifdef OS_BENCH
+#include "IoTBench.h"
+#endif
+
 #ifdef ESP32
 #include "WiFi.h"
 #include <HTTPClient.h>

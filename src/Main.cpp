@@ -13,11 +13,20 @@ String volStrForSave = "";
 // unsigned long currentMillis; // это сдесь лишнее
 // unsigned long prevMillis;
 
+
 void elementsLoop() {
+    #ifdef OS_BENCH
+    IoTBenchmark::instance()->initLoadFunction();
+    #endif
     // передаем управление каждому элементу конфигурации для выполнения своих функций
     for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
+        #ifdef OS_BENCH
+        IoTBenchmark::instance()->preBenchFunction((*it)->getID());
+        #endif
         (*it)->loop();
-
+        #ifdef OS_BENCH
+        IoTBenchmark::instance()->postBenchFunction((*it)->getID());
+        #endif
         // if ((*it)->iAmDead) {
         if (!((*it)->iAmLocal) && (*it)->getIntFromNet() == -1) {
             delete *it;
@@ -25,6 +34,9 @@ void elementsLoop() {
             break;
         }
     }
+    #ifdef OS_BENCH
+    IoTBenchmark::instance()->postLoadFunction();
+    #endif
 
     handleOrder();
     handleEvent();
