@@ -9,7 +9,7 @@
 // #include "esp_camera.h"
 
 #include <FastBot.h>
-#include <vector>
+#include <map>
 
 // FastBot _myBot;
 FastBot *_myBot = nullptr;
@@ -28,12 +28,23 @@ String _chatID;
 bool _autos;
 bool _initSD;
 
+struct ButtonMenu
+{
+    String message = "";
+    String getId = "";
+    String setId = "";
+    String value = "";
+};
+
+std::map<String, ButtonMenu* > mapBtnMenu; // <btnName, ID>
+
 class Telegram_v2 : public IoTItem
 {
 private:
     bool _receiveMsg;
     String _prevMsg = "";
     bool _useLed = false;
+
 
 public:
     Telegram_v2(String parameters) : IoTItem(parameters)
@@ -71,7 +82,8 @@ public:
 
     IoTValue execute(String command, std::vector<IoTValue> &param)
     {
-        if (!isNetworkActive()) return {};
+        if (!isNetworkActive())
+            return {};
         if (command == "sendMsg")
         {
             if (param.size())
@@ -108,7 +120,7 @@ public:
                 _myBot->sendMessage(strTmp, _chatID);
                 _myBot->pinMessage(_myBot->lastBotMsg());
 
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ",pin msg: " + strTmp);
+                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ",pin msg: " + strTmp);
             }
         }
         else if (command == "editMsg")
@@ -121,7 +133,7 @@ public:
                 else
                     strTmp = param[0].valS;
                 _myBot->editMessage(_myBot->lastBotMsg(), strTmp);
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ",edit msg: " + strTmp);
+                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ",edit msg: " + strTmp);
             }
         }
         else if (command == "sendFile")
@@ -139,10 +151,9 @@ public:
                 // selectToMarkerLast(msg.text, "_")
                 uint8_t res = _myBot->sendFile(file, (FB_FileType)param[1].valD, selectToMarkerLast(param[0].valS, "/"), _chatID);
                 file.close();
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", sendFile: " + param[0].valS + " res: " + String(res));
+                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", sendFile: " + param[0].valS + " res: " + String(res));
             }
         }
-
         else if (command == "editFile")
         {
             if (param.size() && !param[0].isDecimal)
@@ -158,8 +169,60 @@ public:
                 // selectToMarkerLast(msg.text, "_")
                 uint8_t res = _myBot->editFile(file, (FB_FileType)param[1].valD, selectToMarkerLast(param[0].valS, "/"), _myBot->lastBotMsg(), _chatID);
                 file.close();
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", editFile: " + param[0].valS + " res: " + String(res));
+                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", editFile: " + param[0].valS + " res: " + String(res));
             }
+        }
+        else if (command == "btnMenu")
+        {
+            mapBtnMenu[param[0].valS] = new ButtonMenu;
+            if (param.size() == 3) // btnMenu("Name", message, getId);
+            {
+               // if (IoTItems.find(param[2].valS) != IoTItems.end())
+              //  {
+                    mapBtnMenu[param[0].valS]->message = param[1].valS;
+                    mapBtnMenu[param[0].valS]->getId = param[2].valS;
+                    //mapBtnMenu[param[0].valS] = btn;
+                    SerialPrint("i", F("Telegram"), "add button menu: " + param[0].valS + ", get id: " + param[2].valS);
+               // }
+            }
+            else if (param.size() == 5) // btnMenu("Name", message, getId, setId, value);
+            {
+              //  if (IoTItems.find(param[2].valS) != IoTItems.end())
+              //  {
+                    mapBtnMenu[param[0].valS]->message = param[1].valS;
+                    mapBtnMenu[param[0].valS]->getId = param[2].valS;
+                    mapBtnMenu[param[0].valS]->setId = param[3].valS;
+                    mapBtnMenu[param[0].valS]->value = param[4].valS;
+                    //mapBtnMenu[param[0].valS] = btn;
+                    SerialPrint("i", F("Telegram"), "add button menu: " + param[0].valS + ",get id: " + param[2].valS + ",set id: " + param[3].valS + "=" + param[4].valS);
+              //  }
+            }
+        }
+        else if (command == "showMenu")
+        {
+            String out;
+            // перебирвем весь мап и строим меню
+            for (auto it = mapBtnMenu.begin(); it != mapBtnMenu.end(); it++)
+            {
+                if (it == mapBtnMenu.begin())
+                {
+                    out = it->first + " \t ";
+                }
+                else
+                {
+                  //  if (it != mapBtnMenu.end())
+                        out = out + it->first + " \n ";
+                  //  else
+                   //     out = out + it->first;
+                }
+            }
+            _myBot->showMenuText("Menu", out, true);
+            SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", show menu: \n" + out);
+        }
+        else if (command == "closeMenu")
+        {
+            _myBot->closeMenu();
+            SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", closeMenu ");
         }
         return {};
     }
@@ -167,18 +230,38 @@ public:
     void static telegramMsgParse(FB_msg &msg)
     {
         //     FB_msg msg;
-        SerialPrint("->", F("Telegram"), "chat ID: " + msg.chatID + ", msg: " + msg.text);
+        SerialPrint("i", F("Telegram"), "chat ID: " + msg.chatID + ", msg: " + msg.text);
         //  _myBot->setChatID(_chatID);
         if (_autos)
         {
             _chatID = msg.chatID;
         }
-        if (msg.text.indexOf("set") != -1)
+       if (auto search = mapBtnMenu.find(msg.text); search != mapBtnMenu.end()) // Обработка кнопок меню созданного в сценарии
+        {
+            String outMsg;
+            outMsg = mapBtnMenu[msg.text]->message;
+            if (mapBtnMenu[msg.text]->getId != "")
+            {
+                IoTItem *item = findIoTItem(mapBtnMenu[msg.text]->getId);
+                if (item)
+                {
+                    outMsg += ": " + item->getValue();
+                }
+            }
+            if (mapBtnMenu[msg.text]->setId != "")
+            {
+                outMsg += ", " + mapBtnMenu[msg.text]->setId + "=" + mapBtnMenu[msg.text]->value;
+                generateOrder(mapBtnMenu[msg.text]->setId, mapBtnMenu[msg.text]->value);
+            }
+            SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", msg: " + String(outMsg));
+            _myBot->sendMessage(outMsg, _chatID);
+        }
+        else if (msg.text.indexOf("set") != -1)
         {
             msg.text = deleteBeforeDelimiter(msg.text, "_");
             generateOrder(selectToMarker(msg.text, "_"), selectToMarkerLast(msg.text, "_"));
             _myBot->replyMessage("order done", msg.messageID, _chatID);
-            SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", msg: " + String(msg.text));
+            SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", msg: " + String(msg.text));
         }
         else if (msg.text.indexOf("get") != -1)
         {
@@ -187,41 +270,73 @@ public:
             if (item)
             {
                 _myBot->replyMessage(item->getValue(), msg.messageID, _chatID);
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", msg: " + String(msg.text));
+                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", msg: " + String(msg.text));
             }
         }
-
-        else if (msg.text.indexOf("all") != -1)
+        else if (msg.text.indexOf("allMenu") != -1)
         {
             // String list = returnListOfParams();
             String out;
-            std::vector<float> vctr;
+            // std::vector<float> vctr;
             for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
             {
                 if ((*it)->iAmLocal)
                 {
                     if (it == IoTItems.begin())
                     {
-                        out = "get_" + (*it)->getID();
+                        out = "get_" + (*it)->getID() + " \t ";
                     }
                     else
                     {
-                        out = out + " \n " + "get_" + (*it)->getID();
+                        if (it != IoTItems.end())
+                            out = out + "get_" + (*it)->getID() + " \n ";
+                        else
+                            out = out + "get_" + (*it)->getID();
                     }
-                    vctr.push_back(atoff((*it)->getValue().c_str()));
+                    // vctr.push_back(atoff((*it)->getValue().c_str()));
                     //  _myBot->sendMessage((*it)->getID() + ": " + (*it)->getValue(),  _chatID);
                 }
             }
             _myBot->showMenuText("select Id", out, true);
-            SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + "\n" + out);
+            SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + "\n" + out);
             //    _myBot->sendMessage(CharPlot<LINE_X2>(&vctr[0], vctr.size(), 5),  _chatID);
             //    SerialPrint("<-", F("Telegram"), CharPlot<LINE_X2>(&vctr[0], vctr.size(), 10));
         }
-
+        else if (msg.text.indexOf("all") != -1)
+        {
+            // String list = returnListOfParams();
+            String out;
+            // std::vector<float> vctr;
+            for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
+            {
+                if ((*it)->iAmLocal)
+                {
+                    if (it == IoTItems.begin())
+                    {
+                        out = "get_" + (*it)->getID() + " \t ";
+                    }
+                    else
+                    {
+                        if (it != IoTItems.end())
+                            out = out + "get_" + (*it)->getID() + " \n ";
+                        else
+                            out = out + "get_" + (*it)->getID();
+                    }
+                    // vctr.push_back(atoff((*it)->getValue().c_str()));
+                    //  _myBot->sendMessage((*it)->getID() + ": " + (*it)->getValue(),  _chatID);
+                }
+            }
+            //_myBot->showMenuText("select Id", out, true);
+            // String menu1 = F("Menu 1 \t Menu 2 \t Menu 3 \n Back");
+            _myBot->inlineMenu("All menu", out);
+            SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + "\n" + out);
+            //    _myBot->sendMessage(CharPlot<LINE_X2>(&vctr[0], vctr.size(), 5),  _chatID);
+            //    SerialPrint("<-", F("Telegram"), CharPlot<LINE_X2>(&vctr[0], vctr.size(), 10));
+        }
         else if (msg.text.indexOf("file") != -1 && msg.chatID == _chatID)
         {
             msg.text = deleteBeforeDelimiter(msg.text, "_");
-            SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", get file: " + String(msg.text));
+            SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", get file: " + String(msg.text));
             auto file = FileFS.open(selectToMarker(msg.text, "_"), FILE_READ); // /test.png
             if (!file)
             {
@@ -240,11 +355,13 @@ public:
             }
             else if (msg.text.indexOf("nextion") != -1 && msg.chatID == _chatID)
             {
-            for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it) {
-                if ((*it)->getSubtype() == "NextionUpload") {
-                    (*it)->uploadNextionTlgrm(msg.fileUrl);
+                for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
+                {
+                    if ((*it)->getSubtype() == "NextionUpload")
+                    {
+                        (*it)->uploadNextionTlgrm(msg.fileUrl);
+                    }
                 }
-            }
             }
         }
         else if (msg.text.indexOf("help") != -1)
@@ -261,11 +378,12 @@ public:
 
     void sendTelegramMsg(bool often, String msg)
     {
-        if (!isNetworkActive()) return;
+        if (!isNetworkActive())
+            return;
         if (often)
         {
             _myBot->sendMessage(msg, _chatID);
-            SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", msg: " + msg);
+            SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", msg: " + msg);
         }
         else
         {
@@ -273,23 +391,25 @@ public:
             {
                 _prevMsg = msg;
                 _myBot->sendMessage(msg, _chatID);
-                SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", msg: " + msg);
+                SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", msg: " + msg);
             }
         }
     }
 
     void sendFoto(uint8_t *buf, uint32_t length, const String &name)
     {
-        if (!isNetworkActive()) return;
+        if (!isNetworkActive())
+            return;
         _myBot->sendFile(buf, length, FB_PHOTO, name, _chatID);
-        SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", send foto from esp-cam");
+        SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", send foto from esp-cam");
     }
 
     void editFoto(uint8_t *buf, uint32_t length, const String &name)
     {
-        if (!isNetworkActive()) return;
+        if (!isNetworkActive())
+            return;
         _myBot->editFile(buf, length, FB_PHOTO, name, _myBot->lastBotMsg(), _chatID);
-        SerialPrint("<-", F("Telegram"), "chat ID: " + _chatID + ", edit foto from esp-cam");
+        SerialPrint("i", F("Telegram"), "chat ID: " + _chatID + ", edit foto from esp-cam");
     }
 
     int static downloadFile(FB_msg &msg)
@@ -325,7 +445,7 @@ public:
             }
             else
             {
-                SerialPrint("<-", F("Telegram"), "download from: " + _chatID + ", file: " + msg.fileName + " size = " + String(_size) + " byte");
+                SerialPrint("i", F("Telegram"), "download from: " + _chatID + ", file: " + msg.fileName + " size = " + String(_size) + " byte");
                 _myBot->sendMessage("Download Ok, size = " + String(_size) + " byte", _chatID);
             }
         }
@@ -341,9 +461,19 @@ public:
     {
         return this;
     }
+    void clearMapMenu()
+    {
+        
+        for (auto it = mapBtnMenu.begin(); it != mapBtnMenu.end(); it++)
+        {
+            delete it->second;
+        }
+        mapBtnMenu.clear();
+    }
 
     ~Telegram_v2()
     {
+        clearMapMenu();
         tlgrmItem = nullptr;
     };
 };
