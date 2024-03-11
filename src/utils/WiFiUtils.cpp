@@ -20,12 +20,6 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-const char *ssid = "Home";
-const char *password = "9063950858";
-
-const char *assid = "ESPiotm";
-const char *asecret = "1234567890";
-
 #endif
 
 void routerConnect()
