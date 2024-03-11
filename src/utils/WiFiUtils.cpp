@@ -4,41 +4,28 @@
 #define TRIES 40    // количество попыток подключения сети если она одна
 
 #if defined(esp32_wifirep)
-#include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-#include "esp_system.h"
-#include "esp_wifi.h"
-#include "esp_wpa2.h"
-#include "esp_event.h"
-#include "esp_log.h"
-#include "nvs_flash.h"
-#include "driver/gpio.h"
-#include "lwip/opt.h"
 #include "lwip/lwip_napt.h"
-#include "lwip/err.h"
-#include "lwip/sys.h"
-
+//#include "lwip/ip_route.h"
 #endif
 
 void routerConnect()
 {
 #if defined(esp32_wifirep)
-
+//ip_add_route(daddr, dmask, gw);
+//ip_portmap_add(proto, my_ip.addr, mport, daddr, dport);
 // Set custom dns server address for dhcp server
-#define MY_DNS_IP_ADDR 0x08080808 // 8.8.8.8
+#define MY_DNS_IP_ADDR 0xC0A80401 //0x08080808 // 8.8.8.8
   ip_addr_t dnsserver;
   dnsserver.u_addr.ip4.addr = htonl(MY_DNS_IP_ADDR);
   dnsserver.type = IPADDR_TYPE_V4;
   dhcps_dns_setserver(&dnsserver);
-
+/*
   // Enable DNS (offer) for dhcp server
   dhcps_offer_t dhcps_dns_value = OFFER_DNS;
   dhcps_set_option_info(6, &dhcps_dns_value, sizeof(dhcps_dns_value));
-
   u32_t napt_netif_ip = 0xC0A80401; // Set to ip address of softAP netif (Default is 192.168.4.1)
   ip_napt_enable(htonl(napt_netif_ip), 1);
+*/
   String _ssidAP = jsonReadStr(settingsFlashJson, "apssid");
   String _passwordAP = jsonReadStr(settingsFlashJson, "appass");
   int _chanelAP = 0;
@@ -53,9 +40,12 @@ void routerConnect()
   // WiFi.begin(ssid, password);
   WiFi.mode(WIFI_AP_STA);
   WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str(), _chanelAP, 0, 5);
+  jsonWriteStr(settingsFlashJson, "ip", WiFi.softAPIP().toString());
+  SerialPrint("i", "WIFI", "AP SSID: " + WiFi.softAPSSID());
   SerialPrint("i", "WIFI", "AP IP: " + WiFi.softAPIP().toString());
   SerialPrint("i", "WIFI", "AP pass: " + _passwordAP);
-
+  //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000);
+  //bool softAPConfig(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dhcp_lease_start = (uint32_t) 0);
 #else
   WiFi.mode(WIFI_STA);
 #endif
@@ -127,6 +117,27 @@ void routerConnect()
     Serial.println("");
 #if defined(esp32_wifirep)
     SerialPrint("E", "WIFI", "is no connection, time_out");
+      if (jsonReadInt(errorsHeapJson, "passer") != 1)
+      {
+        ts.add(
+            WIFI_SCAN, 30 * 1000,
+            [&](void *)
+            {
+              std::vector<String> jArray;
+              jsonReadArray(settingsFlashJson, "routerssid", jArray);
+              for (int8_t i = 0; i < jArray.size(); i++)
+              {
+                SerialPrint("i", "WIFI", "scanning for " + jArray[i]);
+              }
+              if (RouterFind(jArray))
+              {
+                ts.remove(WIFI_SCAN);
+                WiFi.scanDelete();
+                routerConnect();
+              }
+            },
+            nullptr, true);
+      }
 #else
     startAPMode();
 #endif
@@ -143,6 +154,8 @@ void routerConnect()
     dhcps_set_option_info(6, &dhcps_dns_value, sizeof(dhcps_dns_value));
     u32_t napt_netif_ip = 0xC0A80401; // Set to ip address of softAP netif (Default is 192.168.4.1)
     ip_napt_enable(htonl(napt_netif_ip), 1);
+    //ip_napt_enable((u8_t)1, 1);
+    
 #endif
 
     mqttInit();
