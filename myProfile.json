@@ -4,6 +4,11 @@
         "apssid": "IoTmanager",
         "appass": "",
         "apchanel": 7,
+        "apip": "192.168.4.1",
+        "staip": "192.168.1.160",
+        "netmask": "255.255.255.0",
+        "gateway": "192.168.4.1",
+        "dns": "192.168.4.1",
         "routerssid": "iot",
         "routerpass": "hostel3333",
         "timezone": 2,
@@ -25,7 +30,7 @@
     },
     "projectProp": {
         "platformio": {
-            "default_envs": "esp8266_4mb",
+            "default_envs": "esp32_wifirep",
             "comments_default_envs": "choose from: esp8266_4mb or esp32_4mb or esp32cam_4mb or esp32s2_4mb or esp32_4mb3f or esp32s3_16mb or esp32c3m_4mb or esp8266_1mb or esp8266_1mb_ota or esp8285_1mb or esp8285_1mb_ota",
             "envs": [
                 {

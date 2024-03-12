@@ -5,51 +5,94 @@
 
 #if defined(esp32_wifirep)
 #include "lwip/lwip_napt.h"
-//#include "lwip/ip_route.h"
+// #include "lwip/ip_route.h"
+#define PROTO_TCP 6
+#define PROTO_UDP 17
 #endif
+
+IPAddress stringToIp(String strIp)
+{
+  IPAddress ip;
+  ip.fromString(strIp);
+  return ip;
+}
+void addPortMap(String TCP_UDP, String maddr, u16_t mport, String daddr, u16_t dport)
+{
+#if defined(esp32_wifirep)
+  uint8_t tcp_udp;
+  if (TCP_UDP == "TCP")
+    tcp_udp = PROTO_TCP;
+  else if (TCP_UDP == "UDP")
+    tcp_udp = PROTO_UDP;
+  else
+    SerialPrint("E", "WIFI", "Add port map: ERROR, Must be 'TCP' or 'UDP'");
+
+  ip_portmap_add(tcp_udp, stringToIp(maddr), mport, stringToIp(daddr), dport);
+  SerialPrint("i", "WIFI", "Add port map: " + String(tcp_udp) + ", " + maddr + ":" + String(mport) + " -> " + daddr + ":" + String(dport));
+#else
+  SerialPrint("E", "WIFI", "Add port map: ERROR, change board to esp32_wifirep");
+#endif
+}
 
 void routerConnect()
 {
 #if defined(esp32_wifirep)
-//ip_add_route(daddr, dmask, gw);
-//ip_portmap_add(proto, my_ip.addr, mport, daddr, dport);
-// Set custom dns server address for dhcp server
-#define MY_DNS_IP_ADDR 0xC0A80401 //0x08080808 // 8.8.8.8
+//  Set custom dns server address for dhcp server
+#define MY_DNS_IP_ADDR 0xC0A80401 // 192.168.4.1 // 0x08080808 // 8.8.8.8
   ip_addr_t dnsserver;
-  dnsserver.u_addr.ip4.addr = htonl(MY_DNS_IP_ADDR);
-  dnsserver.type = IPADDR_TYPE_V4;
-  dhcps_dns_setserver(&dnsserver);
-/*
-  // Enable DNS (offer) for dhcp server
-  dhcps_offer_t dhcps_dns_value = OFFER_DNS;
-  dhcps_set_option_info(6, &dhcps_dns_value, sizeof(dhcps_dns_value));
-  u32_t napt_netif_ip = 0xC0A80401; // Set to ip address of softAP netif (Default is 192.168.4.1)
-  ip_napt_enable(htonl(napt_netif_ip), 1);
-*/
+
   String _ssidAP = jsonReadStr(settingsFlashJson, "apssid");
   String _passwordAP = jsonReadStr(settingsFlashJson, "appass");
   int _chanelAP = 0;
   jsonRead(settingsFlashJson, "apchanel", _chanelAP);
-  if (_chanelAP == 0) _chanelAP = 7;
-#endif
+  if (_chanelAP == 0)
+    _chanelAP = 7;
 
-  WiFi.setAutoConnect(false);
-  WiFi.persistent(false);
-
-#if defined(esp32_wifirep)
   // WiFi.begin(ssid, password);
   WiFi.mode(WIFI_AP_STA);
+
+  String s_apip = "";
+  bool ap_ip = jsonRead(settingsFlashJson, "apip", s_apip);
+  if (ap_ip && s_apip != "")
+  {
+    WiFi.softAPConfig(stringToIp(s_apip), stringToIp(s_apip), stringToIp("255.255.255.0"));
+    // bool softAPConfig(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dhcp_lease_start = (uint32_t) 0);
+    dnsserver.u_addr.ip4.addr = stringToIp(s_apip);
+  }
+  else
+    dnsserver.u_addr.ip4.addr = htonl(MY_DNS_IP_ADDR);
+
+  dnsserver.type = IPADDR_TYPE_V4;
+  dhcps_dns_setserver(&dnsserver);
+
   WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str(), _chanelAP, 0, 5);
   jsonWriteStr(settingsFlashJson, "ip", WiFi.softAPIP().toString());
   SerialPrint("i", "WIFI", "AP SSID: " + WiFi.softAPSSID());
   SerialPrint("i", "WIFI", "AP IP: " + WiFi.softAPIP().toString());
   SerialPrint("i", "WIFI", "AP pass: " + _passwordAP);
-  //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000);
-  //bool softAPConfig(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dhcp_lease_start = (uint32_t) 0);
+
+  String s_staip = "";
+  bool static_ip = jsonRead(settingsFlashJson, "staip", s_staip);
+  String s_gateway = jsonReadStr(settingsFlashJson, "gateway");
+  String s_netmask = jsonReadStr(settingsFlashJson, "netmask");
+  String s_dns = jsonReadStr(settingsFlashJson, "dns");
+
+  if (static_ip == true && s_staip != "")
+  {
+    SerialPrint("i", "WIFI", "Use static IP");
+    WiFi.config(stringToIp(s_staip), stringToIp(s_gateway), stringToIp(s_netmask), stringToIp(s_dns));
+    // bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000);
+    SerialPrint("i", "WIFI", "Static IP: " + s_staip);
+    SerialPrint("i", "WIFI", "Gateway: " + s_gateway);
+    SerialPrint("i", "WIFI", "Netmask: " + s_netmask);
+    SerialPrint("i", "WIFI", "DNS: " + s_dns);
+  }
 #else
   WiFi.mode(WIFI_STA);
 #endif
 
+  WiFi.setAutoConnect(false);
+  WiFi.persistent(false);
   byte triesOne = TRIESONE;
 
   std::vector<String> _ssidList;
@@ -115,32 +158,8 @@ void routerConnect()
   if (WiFi.status() != WL_CONNECTED)
   {
     Serial.println("");
-#if defined(esp32_wifirep)
     SerialPrint("E", "WIFI", "is no connection, time_out");
-      if (jsonReadInt(errorsHeapJson, "passer") != 1)
-      {
-        ts.add(
-            WIFI_SCAN, 30 * 1000,
-            [&](void *)
-            {
-              std::vector<String> jArray;
-              jsonReadArray(settingsFlashJson, "routerssid", jArray);
-              for (int8_t i = 0; i < jArray.size(); i++)
-              {
-                SerialPrint("i", "WIFI", "scanning for " + jArray[i]);
-              }
-              if (RouterFind(jArray))
-              {
-                ts.remove(WIFI_SCAN);
-                WiFi.scanDelete();
-                routerConnect();
-              }
-            },
-            nullptr, true);
-      }
-#else
     startAPMode();
-#endif
   }
   else
   {
@@ -152,10 +171,18 @@ void routerConnect()
     // Enable DNS (offer) for dhcp server
     dhcps_offer_t dhcps_dns_value = OFFER_DNS;
     dhcps_set_option_info(6, &dhcps_dns_value, sizeof(dhcps_dns_value));
-    u32_t napt_netif_ip = 0xC0A80401; // Set to ip address of softAP netif (Default is 192.168.4.1)
-    ip_napt_enable(htonl(napt_netif_ip), 1);
-    //ip_napt_enable((u8_t)1, 1);
-    
+    u32_t napt_netif_ip;
+    if (ap_ip && s_apip != "")
+      napt_netif_ip = stringToIp(s_apip);
+    else
+    {
+      napt_netif_ip = 0xC0A80401; // Set to ip address of softAP netif (Default is 192.168.4.1)
+      napt_netif_ip = htonl(napt_netif_ip);
+    }
+    // get_esp_interface_netif(ESP_IF_WIFI_AP)
+    ip_napt_enable(napt_netif_ip, 1);
+    // ip_napt_enable_no(ESP_IF_WIFI_AP, 1);
+
 #endif
 
     mqttInit();
@@ -165,6 +192,7 @@ void routerConnect()
 
 bool startAPMode()
 {
+#if !defined(esp32_wifirep)
   SerialPrint("i", "WIFI", "AP Mode");
 
   WiFi.disconnect();
@@ -178,7 +206,7 @@ bool startAPMode()
 
   SerialPrint("i", "WIFI", "AP IP: " + myIP.toString());
   jsonWriteStr(settingsFlashJson, "ip", myIP.toString());
-
+#endif
   if (jsonReadInt(errorsHeapJson, "passer") != 1)
   {
     ts.add(
@@ -247,31 +275,46 @@ boolean RouterFind(std::vector<String> jArray)
   return res;
 }
 
-boolean isNetworkActive() {
-    return WiFi.status() == WL_CONNECTED;
+boolean isNetworkActive()
+{
+  return WiFi.status() == WL_CONNECTED;
 }
 
-uint8_t getNumAPClients() {
-    return WiFi.softAPgetStationNum();
+uint8_t getNumAPClients()
+{
+  return WiFi.softAPgetStationNum();
 }
 
-uint8_t RSSIquality() {
-    uint8_t res = 0;
-    if (isNetworkActive()) {
-        int rssi = WiFi.RSSI();
-        if (rssi >= -50) {
-            res = 6;  //"Excellent";
-        } else if (rssi < -50 && rssi >= -60) {
-            res = 5;  //"Very good";
-        } else if (rssi < -60 && rssi >= -70) {
-            res = 4;  //"Good";
-        } else if (rssi < -70 && rssi >= -80) {
-            res = 3;  //"Low";
-        } else if (rssi < -80 && rssi > -100) {
-            res = 2;  //"Very low";
-        } else if (rssi <= -100) {
-            res = 1;  //"No signal";
-        }
+uint8_t RSSIquality()
+{
+  uint8_t res = 0;
+  if (isNetworkActive())
+  {
+    int rssi = WiFi.RSSI();
+    if (rssi >= -50)
+    {
+      res = 6; //"Excellent";
     }
-    return res;
+    else if (rssi < -50 && rssi >= -60)
+    {
+      res = 5; //"Very good";
+    }
+    else if (rssi < -60 && rssi >= -70)
+    {
+      res = 4; //"Good";
+    }
+    else if (rssi < -70 && rssi >= -80)
+    {
+      res = 3; //"Low";
+    }
+    else if (rssi < -80 && rssi > -100)
+    {
+      res = 2; //"Very low";
+    }
+    else if (rssi <= -100)
+    {
+      res = 1; //"No signal";
+    }
+  }
+  return res;
 }
