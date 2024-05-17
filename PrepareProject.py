@@ -41,7 +41,22 @@ def printHelp():
         PrepareProject.py
         -p --profile <file.json_in_root_folder>
         -u --update
-        -h --help''')
+        -h --help
+        -b --board <board_name>''')
+    with open('myProfile.json', "r", encoding='utf-8') as read_file:
+        profJson = json.load(read_file)  
+    print ('')
+    print ('Choose a board from the list:')
+    # print(profJson['projectProp']['platformio']['comments_default_envs'])
+    print ('        ', end='')
+    cnt = 0
+    for envs in profJson['projectProp']['platformio']['envs']:
+        if cnt == 5:
+            cnt = 0
+            print('')
+            print('        ', end='')
+        print(envs['name'] + ', ', end='')
+        cnt = cnt + 1
 
 
 def updateModulesInProfile(profJson):
@@ -68,10 +83,11 @@ def updateModulesInProfile(profJson):
 
 update = False              # признак необходимости обновить список модулей
 profile = 'myProfile.json'  # имя профиля. Будет заменено из консоли, если указано при старте
-            
+selectDevice = ''           # имя платы для которой хотим собрать, если её указали к командной строке -b <board>
+
 argv = sys.argv[1:]
 try:
-    opts, args = getopt.getopt(argv, 'hp:u', ['help', 'profile=', 'update'])
+    opts, args = getopt.getopt(argv, 'hp:ub:', ['help', 'profile=', 'update', 'board='])
 except getopt.GetoptError:
     print('Ошибка обработки параметров!')
     printHelp()
@@ -85,7 +101,8 @@ for opt, arg in opts:
         profile = arg
     elif opt in ("-u", "--update"):
         update = True
-        
+    elif opt in ("-b", "--board"):
+        selectDevice = arg
 
 if Path(profile).is_file():
     # подтягиваем уже существующий профиль
@@ -121,9 +138,17 @@ else:
     with open(profile, "w", encoding='utf-8') as write_file:
         json.dump(profJson, write_file, ensure_ascii=False, indent=4, sort_keys=False)
 
-
-# определяем какое устройство используется в профиле
-deviceName = profJson['projectProp']['platformio']['default_envs']  
+deviceName = ''
+if selectDevice == '':
+    # определяем какое устройство используется в профиле
+    deviceName = profJson['projectProp']['platformio']['default_envs']  
+else:
+    for envs in profJson['projectProp']['platformio']['envs']:
+        if envs['name'] == selectDevice:
+            deviceName = selectDevice
+    if deviceName == '':
+        deviceName = profJson['projectProp']['platformio']['default_envs'] 
+        print(f"\x1b[1;31;31m Board ", selectDevice, " not found in ",profile,"!!! Use ",deviceName,"  \x1b[0m")
 
 # заполняем папку /data файлами прошивки в зависимости от устройства
 if deviceName == 'esp8266_1mb_ota' or deviceName == 'esp8285_1mb_ota' or deviceName == 'esp8266_2mb_ota': 
