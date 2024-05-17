@@ -1,3 +1,6 @@
+env:
+  BOARDS: '["esp32_4bm", "esp32c3m_4mb", "esp32s2_4mb"]'
+  
 name: Build Firmware
 
 on:
@@ -8,21 +11,25 @@ jobs:
   generate-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ steps.set_matrix.outputs.json }}
     steps:
-    - id: set-matrix
-      run: echo "::set-output name=matrix::{\"board\":[\"esp32s3\",\"esp32c6\"]}"
+      - name: Prepare matrix JSON Object
+        id: set_matrix
+        uses: nickofthyme/object-remap@v2.0.0
+        with:
+          __case: kebab
+          board: ${{ env.BOARDS }}
     
   build:
-    needs: generate-matrix
+    needs: [ generate-matrix ]
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
+      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
         
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: 'ver4dev'
+        ref: 'ci_build'
     - name: Run PrepareProject.py -b ${{ matrix.board }}
       run: python3 ./PrepareProject.py -b ${{ matrix.board }}
     - name: Set up Python
