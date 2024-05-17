@@ -5,12 +5,20 @@ on:
        
   
 jobs:
-  build:
-    strategy:
-      matrix:
-        board: [esp32s3_4mb, esp32c3m_4mb]
+  generate-matrix:
     runs-on: ubuntu-latest
-
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+    - id: set-matrix
+      run: echo "::set-output name=matrix::{\"board\":[\"esp32s3\",\"esp32c6\"]}"
+    
+  build:
+    needs: generate-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
+        
     steps:
     - uses: actions/checkout@v2
       with:
