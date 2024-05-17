@@ -16,7 +16,7 @@ jobs:
       with:
         ref: 'ver4dev'
     - name: Run PrepareProject.py -b ${{ matrix.board }}
-      run: python3 ./PrepareProject.py
+      run: python3 ./PrepareProject.py -b ${{ matrix.board }}
     - name: Set up Python
       uses: actions/setup-python@v4
     - name: Install dependencies
