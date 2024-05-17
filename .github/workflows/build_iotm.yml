@@ -6,14 +6,16 @@ on:
   
 jobs:
   build:
-
+    strategy:
+      matrix:
+        board: [esp32s3_4mb, esp32c3m_4mb]
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
       with:
         ref: 'ver4dev'
-    - name: Run PrepareProject.py
+    - name: Run PrepareProject.py -b ${{ matrix.board }}
       run: python3 ./PrepareProject.py
     - name: Set up Python
       uses: actions/setup-python@v4
