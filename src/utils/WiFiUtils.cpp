@@ -16,23 +16,7 @@ IPAddress stringToIp(String strIp)
   ip.fromString(strIp);
   return ip;
 }
-void addPortMap(String TCP_UDP, String maddr, u16_t mport, String daddr, u16_t dport)
-{
-#if defined(esp32_wifirep)
-  uint8_t tcp_udp;
-  if (TCP_UDP == "TCP")
-    tcp_udp = PROTO_TCP;
-  else if (TCP_UDP == "UDP")
-    tcp_udp = PROTO_UDP;
-  else
-    SerialPrint("E", "WIFI", "Add port map: ERROR, Must be 'TCP' or 'UDP'");
 
-  ip_portmap_add(tcp_udp, stringToIp(maddr), mport, stringToIp(daddr), dport);
-  SerialPrint("i", "WIFI", "Add port map: " + String(tcp_udp) + ", " + maddr + ":" + String(mport) + " -> " + daddr + ":" + String(dport));
-#else
-  SerialPrint("E", "WIFI", "Add port map: ERROR, change board to esp32_wifirep");
-#endif
-}
 
 void routerConnect()
 {
@@ -63,7 +47,7 @@ void routerConnect()
     dnsserver.u_addr.ip4.addr = htonl(MY_DNS_IP_ADDR);
 
   dnsserver.type = IPADDR_TYPE_V4;
-  dhcps_dns_setserver(&dnsserver);
+  //dhcps_dns_setserver(&dnsserver);
 
   WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str(), _chanelAP, 0, 5);
   jsonWriteStr(settingsFlashJson, "ip", WiFi.softAPIP().toString());
@@ -91,8 +75,10 @@ void routerConnect()
   WiFi.mode(WIFI_STA);
 #endif
 
+#if  !defined libretiny
   WiFi.setAutoConnect(false);
   WiFi.persistent(false);
+#endif  
   byte triesOne = TRIESONE;
 
   std::vector<String> _ssidList;
@@ -104,14 +90,16 @@ void routerConnect()
 
   if (_passwordList.size() == 0 && _ssidList[0] == "" && _passwordList[0] == "")
   {
+    #ifndef libretiny
     WiFi.begin();
+    #endif
   }
   else
   {
     WiFi.begin(_ssidList[0].c_str(), _passwordList[0].c_str());
 #ifdef ESP32
     WiFi.setTxPower(WIFI_POWER_19_5dBm);
-#else
+#elif ESP8266
     WiFi.setOutputPower(20.5);
 #endif
     String _ssid;
@@ -164,13 +152,23 @@ void routerConnect()
   else
   {
     Serial.println("");
+    #ifndef libretiny
     SerialPrint("i", "WIFI", "http://" + WiFi.localIP().toString());
     jsonWriteStr(settingsFlashJson, "ip", WiFi.localIP().toString());
-
+    #endif
 #if defined(esp32_wifirep)
+/*
+    esp_netif_dns_info_t dns;
+    if (esp_netif_get_dns_info(get_esp_interface_netif(ESP_IF_WIFI_STA), ESP_NETIF_DNS_MAIN, &dns) == ESP_OK)
+    {
+      esp_netif_set_dns_info(get_esp_interface_netif(ESP_IF_WIFI_AP), ESP_NETIF_DNS_MAIN, &dns);
+      //ESP_LOGI(TAG, "set dns to:" IPSTR, IP2STR(&(dns.ip.u_addr.ip4)));
+      SerialPrint("i", "WIFI", "set dns to: " + String(dns.ip.u_addr.ip4.addr));
+    }
+*/
     // Enable DNS (offer) for dhcp server
-    dhcps_offer_t dhcps_dns_value = OFFER_DNS;
-    dhcps_set_option_info(6, &dhcps_dns_value, sizeof(dhcps_dns_value));
+ //   dhcps_offer_t dhcps_dns_value = OFFER_DNS;
+ //   dhcps_set_option_info(6, &dhcps_dns_value, sizeof(dhcps_dns_value));
     u32_t napt_netif_ip;
     if (ap_ip && s_apip != "")
       napt_netif_ip = stringToIp(s_apip);
@@ -203,9 +201,10 @@ bool startAPMode()
 
   WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str());
   IPAddress myIP = WiFi.softAPIP();
-
+#ifndef libretiny
   SerialPrint("i", "WIFI", "AP IP: " + myIP.toString());
   jsonWriteStr(settingsFlashJson, "ip", myIP.toString());
+  #endif
 #endif
   if (jsonReadInt(errorsHeapJson, "passer") != 1)
   {
@@ -317,4 +316,38 @@ uint8_t RSSIquality()
     }
   }
   return res;
+}
+
+
+String httpGetString(HTTPClient &http)
+{
+      String payload = "";
+        int len = http.getSize();
+        uint8_t buff[128] = { 0 };
+        WiFiClient * stream = http.getStreamPtr();
+
+                // read all data from server
+                while(http.connected() && (len > 0 || len == -1)) {
+                    // get available data size
+                    size_t size = stream->available();
+
+                    if(size) {
+                        // read up to 128 byte
+                        int c = stream->readBytes(buff, ((size > sizeof(buff)) ? sizeof(buff) : size));
+
+                        // write it to Serial
+                     //   Serial.write(buff,c);
+                        
+                        //payload += String((char*)buff);
+                        char charBuff[c + 1]; // Create a character array with space for null terminator
+                        memcpy(charBuff, buff, c); // Copy the data to the character array
+                        charBuff[c] = '\0'; // Null-terminate the character array
+                        payload += String(charBuff); // Append the character array to the payload
+
+                        if(len > 0) {
+                            len -= c;
+                        }
+                    }
+                    delay(1);
+                }       
 }

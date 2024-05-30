@@ -1,12 +1,17 @@
 #include "EspFileSystem.h"
 #include "Global.h"
+#if defined(esp32c6)
+#include "esp_mac.h"
+#endif
 
 bool fileSystemInit()
 {
+    #ifndef libretiny
     if (!FileFS.begin()) {
         SerialPrint(F("E"), F("FS"), F("Init ERROR, may be FS was not flashed"));
         return false;
     }
+    #endif
     SerialPrint(F("i"), F("FS"), F("Init completed"));
     return true;
 }
@@ -23,9 +28,13 @@ void globalVarsSync()
     jsonWriteStr_(settingsFlashJson, "id", chipId);
 
     mqttRootDevice = mqttPrefix + "/" + chipId;
-
+ #ifndef libretiny
     jsonWriteStr_(settingsFlashJson, "ip", WiFi.localIP().toString());
-
+#else
+String str;
+WiFi.localIP().printTo((Print&)str);
+jsonWriteStr_(settingsFlashJson, "ip", str);
+#endif
     // это не используется - удалить в последствии
     jsonWriteStr_(settingsFlashJson, "root", mqttRootDevice);
 }
@@ -80,7 +89,7 @@ uint32_t ESP_getChipId(void)
 }
 
 // устарела используем новую функцию ниже
-#if !defined(esp32s2_4mb) && !defined(esp32c3m_4mb) && !defined(esp32s3_16mb) && !defined(esp32_wifirep)
+#if !defined(esp32s2_4mb) && !defined(esp32c3m_4mb) && !defined(esp32s3_16mb) && !defined(esp32_wifirep) && !defined(esp32c6)
 //#ifndef esp32s2_4mb
 uint32_t ESP_getFlashChipId(void)
 {
@@ -127,9 +136,12 @@ const String getMacAddress()
 #if defined(ESP8266)
     WiFi.macAddress(mac);
     sprintf(buf, MACSTR, MAC2STR(mac));
-#else
+#elif defined(ESP32)
     esp_read_mac(mac, ESP_MAC_WIFI_STA);
     sprintf(buf, MACSTR, mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+#elif defined(libretiny)
+   uint32_t macid = lt_cpu_get_mac_id ();
+   memcpy(buf, &macid, sizeof(macid));
 #endif
     return String(buf);
 }

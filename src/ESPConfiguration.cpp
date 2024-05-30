@@ -59,8 +59,9 @@ void clearConfigure() {
         if (*it) delete *it;
     }
     IoTItems.clear();
-
+    #ifndef libretiny
     valuesFlashJson.clear();
+    #endif
     benchTaskItem = nullptr; 
     benchLoadItem = nullptr; 
 }

@@ -56,6 +56,14 @@
 #define FIRMWARE_NAME "esp32_wifirep"
 #endif
 
+#ifdef esp32c6
+#define FIRMWARE_NAME "esp32c6"
+#endif
+
+#ifdef libretiny
+#define FIRMWARE_NAME "libretiny"
+#endif
+
 // Размер буфера json
 #define JSON_BUFFER_SIZE 4096  // держим 2 кб не меняем
 
@@ -76,8 +84,9 @@ WEB_SOCKETS_FRAME_SIZE создан для того что бы не загру�
 #define STANDARD_WEB_SERVER
 #define STANDARD_WEB_SOCKETS
 
+#ifndef libretiny
 #define UDP_ENABLED
-
+#endif
 // #define REST_FILE_OPERATIONS
 
 #define MQTT_RECONNECT_INTERVAL 20000

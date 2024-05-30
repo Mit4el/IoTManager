@@ -24,6 +24,7 @@
 
 #include "WebSockets.h"
 #include "WebSocketsServer.h"
+#include "Common.h"
 
 WebSocketsServerCore::WebSocketsServerCore(const String & origin, const String & protocol) {
     _origin                 = origin;

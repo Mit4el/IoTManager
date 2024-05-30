@@ -15,6 +15,5 @@ extern void handleStatus();
 extern void handleGetEdit();
 extern void replyOK ();
 extern void handleNotFound ();
-
 //#endif
 #endif

@@ -59,7 +59,12 @@ String ESP_getResetReason(void) {
     return ESP.getResetReason();
 }
 #endif
-#if defined(esp32s2_4mb) || defined(esp32s3_16mb) || defined(esp32c3m_4mb)
+#ifdef libretiny
+String ESP_getResetReason(void) {
+    return ESP.getResetReason();
+}
+#endif
+#if defined(esp32s2_4mb) || defined(esp32s3_16mb) || defined(esp32c3m_4mb) || defined(esp32c6)
 String ESP_getResetReason(void) {
     return ESP32GetResetReason(0);  // CPU 0
 }
@@ -82,8 +87,8 @@ String ESP32GetResetReason(uint32_t cpu_no) {
             return F("Timer Group1 Watchdog reset digital core");  // 8
         case RTCWDT_SYS_RESET:
             return F("RTC Watchdog Reset digital core");  // 9
-        case INTRUSION_RESET:
-            return F("Instrusion tested to reset CPU");  // 10
+//ESP32-C6        case INTRUSION_RESET:
+//            return F("Instrusion tested to reset CPU");  // 10
         case TG0WDT_CPU_RESET:
             return F("Time Group reset CPU");  // 11
         case RTC_SW_CPU_RESET:

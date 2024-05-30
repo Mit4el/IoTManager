@@ -420,7 +420,7 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
                 esp_sleep_enable_timer_wakeup(param[0].valD * 1000000);
                 delay(1000);
                 esp_deep_sleep_start();
-#else
+#elif ESP8266
                 ESP.deepSleep(param[0].valD * 1000000);
 #endif
             }
@@ -437,7 +437,7 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
             if (param.size() == 2) {
                 // Serial.printf("Call from  sysExecute %s %s\n", param[0].valS.c_str(), param[1].valS.c_str());
                 String tmpStr = param[1].valS;
-                if (param[1].isDecimal) tmpStr = param[1].valD;
+                if (param[1].isDecimal) tmpStr = String(param[1].valD);
                 value.valD = mqtt.publish(param[0].valS.c_str(),  tmpStr.c_str(), false);
             }
             break;
@@ -450,7 +450,7 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
             break;
         case sysop_addPortMap:
             if (param.size() == 5) {
-                addPortMap(param[0].valS,  param[1].valS, param[2].valD, param[3].valS, param[4].valD);
+           //     addPortMap(param[0].valS,  param[1].valS, param[2].valD, param[3].valS, param[4].valD);
             }
             break;
     }
@@ -667,7 +667,7 @@ int IoTScenario::gettok() {
         LastChar = getLastChar();
 
     if (isalpha(LastChar) || LastChar == '_') {  // идентификатор: [a-zA-Z][a-zA-Z0-9]*
-        IdentifierStr = (char)LastChar;
+        IdentifierStr = String((char)LastChar);
         while (isalnum((LastChar = getLastChar())) || LastChar == '_') {
             IdentifierStr += (char)LastChar;
         }

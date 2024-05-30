@@ -29,7 +29,7 @@
 #endif
 
 extern "C" {
-#ifdef CORE_HAS_LIBB64
+#if defined CORE_HAS_LIBB64 || defined libretiny 
 #include <libb64/cencode.h>
 #else
 #include "libb64/cencode_inc.h"
@@ -53,10 +53,16 @@ extern "C" {
 
 #else
 
+#if defined libretiny 
+extern "C" {
+#include <typedef.h>
+#include <crypto/sha1_i.h>
+}
+#else
 extern "C" {
 #include "libsha1/libsha1.h"
 }
-
+#endif
 #endif
 
 /**
@@ -759,3 +765,12 @@ void WebSockets::handleHBTimeout(WSclient_t * client) {
         }
     }
 }
+
+#ifdef libretiny
+void randomSeed(unsigned long seed)
+{
+	if (seed != 0) {
+		srand(seed);
+	}
+}
+#endif

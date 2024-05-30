@@ -9,6 +9,13 @@
 #include <PubSubClient.h>
 #include <list>
 
+#ifdef libretiny
+#include <vector>
+#include <typedef.h>
+#include <WebServer.h>
+#include <HTTPClient.h>
+#endif
+
 #ifdef ESP32
 #include "WiFi.h"
 #include <HTTPClient.h>
@@ -76,6 +83,9 @@ extern ESP8266WebServer HTTP;
 extern ESP8266HTTPUpdateServer httpUpdater;
 #endif
 #ifdef ESP32
+extern WebServer HTTP;
+#endif
+#ifdef libretiny
 extern WebServer HTTP;
 #endif
 #endif

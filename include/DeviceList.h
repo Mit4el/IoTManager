@@ -5,9 +5,9 @@
 // эта библиотека встроена в ядро
 #include "ESPAsyncUDP.h"
 #else
-#include "AsyncUDP.h"
+//#include "AsyncUDP.h"
 #endif
-extern AsyncUDP asyncUdp;
+//extern AsyncUDP asyncUdp;
 
 extern const String getThisDevice();
 extern void addThisDeviceToList();

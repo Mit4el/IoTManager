@@ -172,10 +172,19 @@
 #define WEBSOCKETS_NETWORK_CLASS TCPClient
 #define WEBSOCKETS_NETWORK_SERVER_CLASS TCPServer
 #else
-#include <Ethernet.h>
-#include <SPI.h>
-#define WEBSOCKETS_NETWORK_CLASS EthernetClient
-#define WEBSOCKETS_NETWORK_SERVER_CLASS EthernetServer
+//#include <Ethernet.h>
+//#include <SPI.h>
+//#define WEBSOCKETS_NETWORK_CLASS EthernetClient
+//#define WEBSOCKETS_NETWORK_SERVER_CLASS EthernetServer
+#if defined(libretiny)
+typedef struct SHA1Context SHA1_CTX;
+#include <WiFi.h>
+//#include <WiFiClientSecure.h>
+//#define SSL_AXTLS
+#define WEBSOCKETS_NETWORK_CLASS WiFiClient
+//#define WEBSOCKETS_NETWORK_SSL_CLASS WiFiClientSecure
+#define WEBSOCKETS_NETWORK_SERVER_CLASS WiFiServer
+#endif
 #endif
 
 #elif(WEBSOCKETS_NETWORK_TYPE == NETWORK_ENC28J60)

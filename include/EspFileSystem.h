@@ -15,6 +15,31 @@ extern FS* filesystem;
 #endif
 #endif
 
+#if defined(libretiny)
+#include <FS.h>
+//extern FS* filesystem;
+//extern fs::FS SPIFFS;
+/*namespace fs {
+class FS;
+}*/
+//using FS = fs::FS;
+//#define FS _fs
+/*
+fs::FS _fs = fs::FS(fs::FSImplPtr(new fs::FSImpl::FSImpl()));
+#define FileFS  _fs
+#define FS_NAME "FS_32"
+*/
+#include "LittleFS.h"
+extern FS LittleFS;
+using littlefs_impl::LittleFSConfig;
+extern FS* filesystem;
+#define FileFS LittleFS
+#define FS_NAME "LittleFS_8266"
+#define FILE_READ "r"
+#define FILE_WRITE "w"
+#define FILE_APPEND "a"
+#endif
+
 #ifdef ESP8266
 #if USE_LITTLEFS
 #include "LittleFS.h"

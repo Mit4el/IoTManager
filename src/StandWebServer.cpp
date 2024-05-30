@@ -4,6 +4,7 @@
 File uploadFile;
 String unsupportedFiles = String();
 
+
 static const char TEXT_PLAIN[] PROGMEM = "text/plain";
 static const char FS_INIT_ERROR[] PROGMEM = "FS INIT ERROR";
 static const char FILE_NOT_FOUND[] PROGMEM = "FileNotFound";
@@ -231,7 +232,11 @@ bool handleFileRead(String path) {
    return the path of the closest parent still existing
 */
 String lastExistingParent(String path) {
+ #ifndef libretiny      
     while (!path.isEmpty() && !FileFS.exists(path)) {
+ #else
+     while (!path.length()==0 && !FileFS.exists(path)) {
+ #endif       
         if (path.lastIndexOf('/') > 0) {
             path = path.substring(0, path.lastIndexOf('/'));
         } else {
@@ -278,7 +283,7 @@ void handleFileUpload() {
     }
 }
 
-#ifdef ESP8266
+#if defined ESP8266 
 void deleteRecursive(String path) {
     File file = FileFS.open(path, "r");
     bool isDir = file.isDirectory();
@@ -299,14 +304,14 @@ void deleteRecursive(String path) {
 }
 #endif
 
-#ifdef ESP32
+#if defined ESP32 || defined libretiny
 struct treename {
     uint8_t type;
     char *name;
 };
 
 void deleteRecursive(String path) {
-    fs::File dir = FileFS.open(path);
+    fs::File dir = FileFS.open(path.c_str());
 
     if (!dir.isDirectory()) {
         Serial.printf("%s is a file\n", path);
@@ -321,7 +326,11 @@ void deleteRecursive(String path) {
 
     while (entry = dir.openNextFile()) {
         if (entry.isDirectory()) {
+#if defined ESP32
             deleteRecursive(entry.path());
+#elif defined libretiny
+            deleteRecursive(entry.fullName());
+#endif
         } else {
             String tmpname = path + "/" + strdup(entry.name());  // buffer file name
             entry.close();
@@ -342,10 +351,15 @@ void deleteRecursive(String path) {
 */
 void handleFileDelete() {
     String path = HTTP.arg(0);
+    #ifndef libretiny
     if (path.isEmpty() || path == "/") {
         return replyBadRequest("BAD PATH");
     }
-
+    #else
+    if (path.length()==0 || path == "/") {
+        return replyBadRequest("BAD PATH");
+    }
+    #endif
     //    DBG_OUTPUT_PORT.println(String("handleFileDelete: ") + path);
     if (!FileFS.exists(path)) {
         return replyNotFound(FPSTR(FILE_NOT_FOUND));
@@ -368,10 +382,15 @@ void handleFileDelete() {
 */
 void handleFileCreate() {
     String path = HTTP.arg("path");
+    #ifndef libretiny
     if (path.isEmpty()) {
         return replyBadRequest(F("PATH ARG MISSING"));
     }
-
+    #else
+    if (path.length()==0) {
+        return replyBadRequest(F("PATH ARG MISSING"));
+    }
+    #endif
 #ifdef USE_SPIFFS
     if (checkForUnsupportedPath(path).length() > 0) {
         return replyServerError(F("INVALID FILENAME"));
@@ -386,7 +405,11 @@ void handleFileCreate() {
     }
 
     String src = HTTP.arg("src");
+    #ifndef libretiny
     if (src.isEmpty()) {
+    #else
+    if (src.length()==0) {
+    #endif    
         // No source specified: creation
         //        DBG_OUTPUT_PORT.println(String("handleFileCreate: ") + path);
         if (path.endsWith("/")) {
@@ -404,6 +427,9 @@ void handleFileCreate() {
 #endif
 #ifdef ESP32
                 file.write(0);
+#endif
+#ifdef libretiny
+                file.write((uint8_t)0);
 #endif
                 file.close();
             } else {
@@ -509,7 +535,7 @@ void handleFileList() {
 }
 #endif
 
-#ifdef ESP32
+#if defined ESP32 || defined libretiny
 void handleFileList() {
     if (!HTTP.hasArg("dir")) {
         HTTP.send(500, "text/plain", "BAD ARGS");
@@ -518,8 +544,11 @@ void handleFileList() {
 
     String path = HTTP.arg("dir");
     //  DBG_OUTPUT_PORT.println("handleFileList: " + path);
-
+#if defined libretiny
+    File root = FileFS.open(path.c_str());
+#else
     File root = FileFS.open(path);
+#endif    
     path = String();
 
     String output = "[";
@@ -559,6 +588,9 @@ void handleNotFound() {
     String uri = ESP8266WebServer::urlDecode(HTTP.uri());  // required to read paths with blanks
 #endif
 #ifdef ESP32
+    String uri = WebServer::urlDecode(HTTP.uri());  // required to read paths with blanks
+#endif
+#ifdef libretiny
     String uri = WebServer::urlDecode(HTTP.uri());  // required to read paths with blanks
 #endif
     if (handleFileRead(uri)) {

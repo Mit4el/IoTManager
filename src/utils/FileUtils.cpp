@@ -60,8 +60,11 @@ File seekFile(const String& filename, size_t position) {
 
 const String writeFile(const String& filename, const String& str) {
     String path = filepath(filename);
-#ifdef ESP32
+#if defined ESP32
     auto file = FileFS.open(path, FILE_WRITE, true);
+#endif
+#if defined libretiny
+    auto file = FileFS.open(path, FILE_WRITE);
 #endif
 #ifdef ESP8266
     auto file = FileFS.open(path, FILE_WRITE);
@@ -77,8 +80,11 @@ const String writeFile(const String& filename, const String& str) {
 
 const String writeEmptyFile(const String& filename) {
     String path = filepath(filename);
-#ifdef ESP32
+#if defined ESP32
     auto file = FileFS.open(path, FILE_WRITE, true);
+#endif
+#if defined libretiny
+    auto file = FileFS.open(path, FILE_WRITE);
 #endif
 #ifdef ESP8266
     auto file = FileFS.open(path, FILE_WRITE);
@@ -285,7 +291,7 @@ String getFilesList(String& directory) {
 #endif
 }
 
-#if defined(ESP8266)
+#if defined(ESP8266) || defined (libretiny)
 bool getInfo(FSInfo& info) { return FileFS.info(info); }
 
 // Информация о ФС

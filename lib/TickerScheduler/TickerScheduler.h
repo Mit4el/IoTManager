@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 
-#ifdef ARDUINO_ARCH_AVR
+#if defined ARDUINO_ARCH_AVR || defined libretiny
 class Ticker
 {
 	typedef void(*ticker_callback_t)(bool*);
@@ -41,12 +41,17 @@ public:
 		this->is_attached = true;
 	}
 };
-#endif
+
+#else
 
 //#ifdef ARDUINO_ARCH_ESP8266
 #include <Ticker.h>
 #include <functional>
-//#endif
+#endif
+#if  defined libretiny
+#include <functional>
+#endif
+
 
 void tickerFlagHandle(volatile bool * flag);
 

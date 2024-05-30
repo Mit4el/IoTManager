@@ -5,7 +5,7 @@
         "appass": "",
         "apchanel": 7,
         "apip": "192.168.4.1",
-        "staip": "192.168.1.160",
+        "staip": "",
         "netmask": "255.255.255.0",
         "gateway": "192.168.4.1",
         "dns": "192.168.4.1",
@@ -30,7 +30,7 @@
     },
     "projectProp": {
         "platformio": {
-            "default_envs": "esp32_wifirep",
+            "default_envs": "tiny",
             "comments_default_envs": "choose from: esp8266_4mb or esp32_4mb or esp32cam_4mb or esp32s2_4mb or esp32_4mb3f or esp32s3_16mb or esp32c3m_4mb or esp8266_1mb or esp8266_1mb_ota or esp8285_1mb or esp8285_1mb_ota",
             "envs": [
                 {
@@ -136,6 +136,14 @@
                     "firmware": "0x10000",
                     "partitions": "0x8000",
                     "littlefs": "0x910000"
+                },
+                {
+                    "name": "esp32c6_4mb",
+                    "boot_app0": "0xe000",
+                    "bootloader_qio_80m": "0x1000",
+                    "firmware": "0x10000",
+                    "partitions": "0x8000",
+                    "littlefs": "0x310000"
                 }
             ]
         }
@@ -198,11 +206,11 @@
             },
             {
                 "path": "src/modules/sensors/A02Distance",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Acs712",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ads1115",
@@ -210,11 +218,11 @@
             },
             {
                 "path": "src/modules/sensors/AhtXX",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/AnalogAdc",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/BH_1750",
@@ -234,19 +242,19 @@
             },
             {
                 "path": "src/modules/sensors/Bme280",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Bmp280",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Dht1122",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ds18b20",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/DS2401",
@@ -286,7 +294,7 @@
             },
             {
                 "path": "src/modules/sensors/Impulse",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ina219",
@@ -314,7 +322,7 @@
             },
             {
                 "path": "src/modules/sensors/MQgas",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ntc",
@@ -326,7 +334,7 @@
             },
             {
                 "path": "src/modules/sensors/Pzem004t_v2",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/RCswitch",
@@ -334,11 +342,11 @@
             },
             {
                 "path": "src/modules/sensors/RTC",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/S8",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Scd40",
@@ -354,25 +362,25 @@
             },
             {
                 "path": "src/modules/sensors/Sht20",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Sht30",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Sonar",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/UART",
-                "active": true
+                "active": false
             }
         ],
         "executive_devices": [
             {
                 "path": "src/modules/exec/AnalogBtn",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/BrokerMQTT",
@@ -380,19 +388,19 @@
             },
             {
                 "path": "src/modules/exec/ButtonIn",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/ButtonOut",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Buzzer",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Enconder",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/EspCam",
@@ -408,7 +416,7 @@
             },
             {
                 "path": "src/modules/exec/IoTServo",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Mcp23008",
@@ -416,15 +424,15 @@
             },
             {
                 "path": "src/modules/exec/Mcp23017",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Mp3",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Multitouch",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/MySensors",
@@ -432,19 +440,23 @@
             },
             {
                 "path": "src/modules/exec/Pcf8574",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Pwm32",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Pwm8266",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/SDcard",
                 "active": false
+            },
+            {
+                "path": "src/modules/exec/SIM800",
+                "active": true
             },
             {
                 "path": "src/modules/exec/SmartBoiler",
@@ -460,7 +472,7 @@
             },
             {
                 "path": "src/modules/exec/TelegramLT",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Telegram_v2",
@@ -478,11 +490,11 @@
         "screens": [
             {
                 "path": "src/modules/display/DwinI",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Lcd2004",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Nextion",
@@ -498,11 +510,11 @@
             },
             {
                 "path": "src/modules/display/Oled64",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Smi2_m",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/TM16XX",

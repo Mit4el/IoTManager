@@ -94,9 +94,11 @@ void WebSocketsClient::begin(String host, uint16_t port, String url, String prot
     begin(host.c_str(), port, url.c_str(), protocol.c_str());
 }
 
+#ifndef libretiny
 void WebSocketsClient::begin(IPAddress host, uint16_t port, const char * url, const char * protocol) {
     return begin(host.toString().c_str(), port, url, protocol);
 }
+#endif
 
 #if defined(HAS_SSL)
 #if defined(SSL_AXTLS)

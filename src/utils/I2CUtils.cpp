@@ -1,3 +1,4 @@
+#ifndef libretiny
 #include <Wire.h>
 #include "utils/SerialPrint.h"
 
@@ -30,3 +31,4 @@ void scanI2C() {
 
     SerialPrint("i", "I2C Scaner", message);
 }
+#endif

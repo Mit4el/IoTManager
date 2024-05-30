@@ -139,7 +139,7 @@ class LogingDaily : public IoTItem {
             SerialPrint("E", F("LogingDaily"), "'" + id + "' db file writing error, return");
             return;
         }
-        SerialPrint("i", F("LogingDaily"), "'" + id + "' file created http://" + WiFi.localIP().toString() + path);
+      //libretiny  SerialPrint("i", F("LogingDaily"), "'" + id + "' file created http://" + WiFi.localIP().toString() + path);
     }
 
     void addNewDataToExistingFile(String &path, String &logData) {
@@ -148,7 +148,7 @@ class LogingDaily : public IoTItem {
             SerialPrint("i", F("LogingDaily"), "'" + id + "' file writing error, return");
             return;
         };
-        SerialPrint("i", F("LogingDaily"), "'" + id + "' LogingDaily in file http://" + WiFi.localIP().toString() + path);
+      //libretiny  SerialPrint("i", F("LogingDaily"), "'" + id + "' LogingDaily in file http://" + WiFi.localIP().toString() + path);
     }
 
     bool hasDayChanged() {

@@ -34,8 +34,9 @@ void upgrade_firmware(int type, String path) {
     }
 }
 
-bool upgradeFS(String path) {
+bool upgradeFS(String path) { 
     bool ret = false;
+#ifndef libretiny   
     WiFiClient wifiClient;
     SerialPrint("!!!", F("Update"), "Start upgrade FS... " + path);
 
@@ -67,11 +68,13 @@ bool upgradeFS(String path) {
             SerialPrint("E", F("Update"), "HTTP_UPDATE_NO_UPDATES");
         }
     }
+#endif    
     return ret;
 }
 
 bool upgradeBuild(String path) {
     bool ret = false;
+#ifndef libretiny     
     WiFiClient wifiClient;
     SerialPrint("!!!", F("Update"), "Start upgrade BUILD... " + path);
 
@@ -102,6 +105,7 @@ bool upgradeBuild(String path) {
             SerialPrint("E", F("Update"), "HTTP_UPDATE_NO_UPDATES");
         }
     }
+#endif    
     return ret;
 }
 

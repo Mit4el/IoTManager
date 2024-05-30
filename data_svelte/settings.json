@@ -2,8 +2,8 @@
     "name": "IoTmanagerVer4",
     "apssid": "IoTmanager",
     "appass": "",
-    "routerssid": "iot",
-    "routerpass": "hostel3333",
+    "routerssid": "Home",
+    "routerpass": "9063950858",
     "timezone": 2,
     "ntp": "pool.ntp.org",
     "weblogin": "admin",
@@ -22,5 +22,11 @@
     "i2cFreq": 100000,
     "wg": "group1",
     "udps": 1,
-    "settings_": ""
+    "settings_": "",
+    "apchanel": 7,
+    "apip": "192.168.4.1",
+    "staip": "",
+    "netmask": "255.255.255.0",
+    "gateway": "192.168.4.1",
+    "dns": "192.168.4.1"
 }
