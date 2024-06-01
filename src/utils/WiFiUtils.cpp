@@ -152,10 +152,14 @@ void routerConnect()
   else
   {
     Serial.println("");
-    #ifndef libretiny
+#ifdef libretiny
+    SerialPrint("i", "WIFI", "http://" + ipToString(WiFi.localIP()));
+    jsonWriteStr(settingsFlashJson, "ip", ipToString(WiFi.localIP()));
+#else
     SerialPrint("i", "WIFI", "http://" + WiFi.localIP().toString());
     jsonWriteStr(settingsFlashJson, "ip", WiFi.localIP().toString());
-    #endif
+#endif
+
 #if defined(esp32_wifirep)
 /*
     esp_netif_dns_info_t dns;

@@ -28,12 +28,10 @@ void globalVarsSync()
     jsonWriteStr_(settingsFlashJson, "id", chipId);
 
     mqttRootDevice = mqttPrefix + "/" + chipId;
- #ifndef libretiny
-    jsonWriteStr_(settingsFlashJson, "ip", WiFi.localIP().toString());
+#ifdef libretiny
+    jsonWriteStr_(settingsFlashJson, "ip", ipToString(WiFi.localIP()));
 #else
-String str;
-WiFi.localIP().printTo((Print&)str);
-jsonWriteStr_(settingsFlashJson, "ip", str);
+    jsonWriteStr_(settingsFlashJson, "ip", WiFi.localIP().toString());
 #endif
     // это не используется - удалить в последствии
     jsonWriteStr_(settingsFlashJson, "root", mqttRootDevice);
