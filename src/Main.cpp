@@ -100,7 +100,9 @@ void setup() {
     Serial.flush();
     Serial.println();
     Serial.println(F("--------------started----------------"));
-
+    #ifdef libretiny
+    LT_I("--------------started--LT--------------");
+    #endif
     // создание экземпляров классов
     // myNotAsyncActions = new NotAsync(do_LAST);
 

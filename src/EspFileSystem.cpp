@@ -6,12 +6,12 @@
 
 bool fileSystemInit()
 {
-    #ifndef libretiny
+    //#ifndef libretiny
     if (!FileFS.begin()) {
         SerialPrint(F("E"), F("FS"), F("Init ERROR, may be FS was not flashed"));
         return false;
     }
-    #endif
+    //#endif
     SerialPrint(F("i"), F("FS"), F("Init completed"));
     return true;
 }

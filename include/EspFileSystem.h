@@ -30,11 +30,11 @@ fs::FS _fs = fs::FS(fs::FSImplPtr(new fs::FSImpl::FSImpl()));
 #define FS_NAME "FS_32"
 */
 #include "LittleFS.h"
-extern FS LittleFS;
-using littlefs_impl::LittleFSConfig;
-extern FS* filesystem;
+//extern FS LittleFS;
+//using littlefs_impl::LittleFSConfig;
+//extern FS* filesystem;
 #define FileFS LittleFS
-#define FS_NAME "LittleFS_8266"
+#define FS_NAME "LittleFS_LT"
 #define FILE_READ "r"
 #define FILE_WRITE "w"
 #define FILE_APPEND "a"

@@ -202,14 +202,18 @@ bool startAPMode()
 
   String _ssidAP = jsonReadStr(settingsFlashJson, "apssid");
   String _passwordAP = jsonReadStr(settingsFlashJson, "appass");
-
+  if (_ssidAP ==  "")
+    _ssidAP = "IoTManager";
   WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str());
   IPAddress myIP = WiFi.softAPIP();
-#ifndef libretiny
+#ifdef libretiny
+  SerialPrint("i", "WIFI", "AP IP: " + ipToString(myIP));
+  jsonWriteStr(settingsFlashJson, "ip", ipToString(myIP));
+#else
   SerialPrint("i", "WIFI", "AP IP: " + myIP.toString());
   jsonWriteStr(settingsFlashJson, "ip", myIP.toString());
-  #endif
 #endif
+#endif //esp32_wifirep
   if (jsonReadInt(errorsHeapJson, "passer") != 1)
   {
     ts.add(
