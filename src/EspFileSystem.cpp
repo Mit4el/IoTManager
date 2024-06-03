@@ -23,7 +23,8 @@ void globalVarsSync()
 
     valuesFlashJson = readFile(F("values.json"), 4096);
     valuesFlashJson.replace("\r\n", "");
-
+    if (settingsFlashJson  ==  "failed")
+        return;
     mqttPrefix = jsonReadStr(settingsFlashJson, F("mqttPrefix"));
     jsonWriteStr_(settingsFlashJson, "id", chipId);
 
