@@ -129,10 +129,12 @@ void setup() {
 
     // настраиваем i2c шину
     int i2c, pinSCL, pinSDA, i2cFreq;
-    jsonRead(settingsFlashJson, "pinSCL", pinSCL, false);
-    jsonRead(settingsFlashJson, "pinSDA", pinSDA, false);
-    jsonRead(settingsFlashJson, "i2cFreq", i2cFreq, false);
-    jsonRead(settingsFlashJson, "i2c", i2c, false);
+    if (settingsFlashJson != "failed") {
+        jsonRead(settingsFlashJson, "pinSCL", pinSCL, false);
+        jsonRead(settingsFlashJson, "pinSDA", pinSDA, false);
+        jsonRead(settingsFlashJson, "i2cFreq", i2cFreq, false);
+        jsonRead(settingsFlashJson, "i2c", i2c, false);
+    }
     if (i2c != 0) {
 #ifdef ESP32
         Wire.end();

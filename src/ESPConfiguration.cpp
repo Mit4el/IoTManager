@@ -8,6 +8,10 @@ void* getAPI(String subtype, String params);
 
 void configure(String path) {
     File file = seekFile(path);
+    if (!file) {
+        SerialPrint(F("E"), F("FS"), F("configure file open error"));
+        return;
+    }
     file.find("[");
     while (file.available()) {
         String jsonArrayElement = file.readStringUntil('}') + "}";
