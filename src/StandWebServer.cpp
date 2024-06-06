@@ -233,10 +233,11 @@ bool handleFileRead(String path) {
 */
 String lastExistingParent(String path) {
  #ifndef libretiny      
-    while (!path.isEmpty() && !FileFS.exists(path)) {
+    while (!path.isEmpty() && !FileFS.exists(path)) 
  #else
-     while (!path.length()==0 && !FileFS.exists(path)) {
- #endif       
+     while (!path.length()==0 && !FileFS.exists(path)) 
+ #endif      
+    {
         if (path.lastIndexOf('/') > 0) {
             path = path.substring(0, path.lastIndexOf('/'));
         } else {

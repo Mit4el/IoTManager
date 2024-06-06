@@ -12,7 +12,9 @@
 #ifdef libretiny
 #include <vector>
 #include <typedef.h>
+#ifdef STANDARD_WEB_SERVER
 #include <WebServer.h>
+#endif 
 #include <HTTPClient.h>
 #endif
 
@@ -29,6 +31,7 @@
 
 #ifdef ASYNC_WEB_SERVER
 #include <ESPAsyncWebServer.h>
+#include "AsyncWebServer.h"
 #endif
 
 #ifdef STANDARD_WEB_SERVER
