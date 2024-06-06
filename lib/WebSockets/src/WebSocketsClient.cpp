@@ -475,6 +475,7 @@ void WebSocketsClient::messageReceived(WSclient_t * client, WSopcode_t opcode, u
 void WebSocketsClient::clientDisconnect(WSclient_t * client) {
     bool event = false;
 
+#if defined(HAS_SSL)
 #if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
     if(client->isSSL && client->ssl) {
         if(client->ssl->connected()) {
@@ -487,7 +488,7 @@ void WebSocketsClient::clientDisconnect(WSclient_t * client) {
         client->tcp = NULL;
     }
 #endif
-
+#endif //ssl
     if(client->tcp) {
         if(client->tcp->connected()) {
 #if(WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP8266_ASYNC)
@@ -866,8 +867,10 @@ void WebSocketsClient::connectedCb() {
     _client.tcp->setTimeout(WEBSOCKETS_TCP_TIMEOUT);
 #endif
 
+#if !defined(libretiny)
 #if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
     _client.tcp->setNoDelay(true);
+#endif
 #endif
 
 #if defined(HAS_SSL)

@@ -116,6 +116,8 @@
 #elif defined(ESP32)
 #define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP32
 //#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP32_ETH
+#elif defined(libretiny)
+#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP8266
 #else
 #define WEBSOCKETS_NETWORK_TYPE NETWORK_W5100
 
@@ -146,13 +148,13 @@
 #define WEBSOCKETS_NETWORK_CLASS AsyncTCPbuffer
 #define WEBSOCKETS_NETWORK_SERVER_CLASS AsyncServer
 
-#elif(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266)
 
+#elif(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) && !defined(libretiny)
 #if !defined(ESP8266) && !defined(ESP31B)
 #error "network type ESP8266 only possible on the ESP mcu!"
 #endif
 
-#ifdef ESP8266
+#if defined(ESP8266)
 #include <ESP8266WiFi.h>
 #if defined(wificlientbearssl_h) && !defined(USING_AXTLS) && !defined(wificlientsecure_h)
 #define SSL_BARESSL
@@ -162,29 +164,15 @@
 #else
 #include <ESP31BWiFi.h>
 #endif
+
 #define WEBSOCKETS_NETWORK_CLASS WiFiClient
 #define WEBSOCKETS_NETWORK_SSL_CLASS WiFiClientSecure
 #define WEBSOCKETS_NETWORK_SERVER_CLASS WiFiServer
-
 #elif(WEBSOCKETS_NETWORK_TYPE == NETWORK_W5100)
 
 #ifdef STM32_DEVICE
 #define WEBSOCKETS_NETWORK_CLASS TCPClient
 #define WEBSOCKETS_NETWORK_SERVER_CLASS TCPServer
-#else
-//#include <Ethernet.h>
-//#include <SPI.h>
-//#define WEBSOCKETS_NETWORK_CLASS EthernetClient
-//#define WEBSOCKETS_NETWORK_SERVER_CLASS EthernetServer
-#if defined(libretiny)
-typedef struct SHA1Context SHA1_CTX;
-#include <WiFi.h>
-//#include <WiFiClientSecure.h>
-//#define SSL_AXTLS
-#define WEBSOCKETS_NETWORK_CLASS WiFiClient
-//#define WEBSOCKETS_NETWORK_SSL_CLASS WiFiClientSecure
-#define WEBSOCKETS_NETWORK_SERVER_CLASS WiFiServer
-#endif
 #endif
 
 #elif(WEBSOCKETS_NETWORK_TYPE == NETWORK_ENC28J60)
@@ -208,6 +196,21 @@ typedef struct SHA1Context SHA1_CTX;
 #define WEBSOCKETS_NETWORK_CLASS WiFiClient
 #define WEBSOCKETS_NETWORK_SERVER_CLASS WiFiServer
 
+#elif defined(libretiny)
+//#include <Ethernet.h>
+//#include <SPI.h>
+//#define WEBSOCKETS_NETWORK_CLASS EthernetClient
+//#define WEBSOCKETS_NETWORK_SERVER_CLASS EthernetServer
+//#if defined(libretiny)
+typedef struct SHA1Context SHA1_CTX;
+#include <WiFi.h>
+//#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP8266
+//#include <WiFiClientSecure.h>
+//#define SSL_AXTLS
+#define WEBSOCKETS_NETWORK_CLASS WiFiClient
+//#define WEBSOCKETS_NETWORK_SSL_CLASS WiFiClientSecure
+#define WEBSOCKETS_NETWORK_SERVER_CLASS WiFiServer
+//#endif 
 #else
 #error "no network type selected!"
 #endif

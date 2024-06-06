@@ -436,11 +436,12 @@ WSclient_t * WebSocketsServerCore::newClient(WEBSOCKETS_NETWORK_CLASS * TCPclien
         // state is not connected or tcp connection is lost
         if(!clientIsConnected(client)) {
             client->tcp = TCPclient;
-
+#if defined(HAS_SSL)
 #if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
             client->isSSL = false;
             client->tcp->setNoDelay(true);
 #endif
+#endif //ssl
 #if(WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP8266_ASYNC)
             // set Timeout for readBytesUntil and readStringUntil
             client->tcp->setTimeout(WEBSOCKETS_TCP_TIMEOUT);
@@ -547,6 +548,7 @@ void WebSocketsServerCore::dropNativeClient(WSclient_t * client) {
  * @param client WSclient_t *  ptr to the client struct
  */
 void WebSocketsServerCore::clientDisconnect(WSclient_t * client) {
+#if defined(HAS_SSL)
 #if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
     if(client->isSSL && client->ssl) {
         if(client->ssl->connected()) {
@@ -558,6 +560,7 @@ void WebSocketsServerCore::clientDisconnect(WSclient_t * client) {
         client->tcp = NULL;
     }
 #endif
+#endif //ssl
 
     dropNativeClient(client);
 
