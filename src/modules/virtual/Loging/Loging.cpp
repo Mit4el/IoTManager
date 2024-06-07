@@ -174,7 +174,11 @@ class Loging : public IoTItem {
             SerialPrint("E", F("Loging"), "'" + id + "' db file writing error, return");
             return;
         }
+#ifdef libretiny
+        SerialPrint("i", F("Loging"), "'" + id + "' file created http://" + ipToString(WiFi.localIP()) + path);
+#else        
         SerialPrint("i", F("Loging"), "'" + id + "' file created http://" + WiFi.localIP().toString() + path);
+#endif       
     }
 
     void addNewDataToExistingFile(String &path, String &logData) {
@@ -183,7 +187,11 @@ class Loging : public IoTItem {
             SerialPrint("i", F("Loging"), "'" + id + "' file writing error, return");
             return;
         };
+#ifdef libretiny
+        SerialPrint("i", F("Loging"), "'" + id + "' loging in file http://" + ipToString(WiFi.localIP()) + path);
+#else   
         SerialPrint("i", F("Loging"), "'" + id + "' loging in file http://" + WiFi.localIP().toString() + path);
+#endif        
     }
 
     // данная функция уже перенесена в ядро и будет удалена в последствии

@@ -77,7 +77,7 @@ public:
 
             if (httpCode > 0)
             {
-                ret = httpCode;
+                ret = String(httpCode);
 
                 if (httpCode == HTTP_CODE_OK)
                 {
