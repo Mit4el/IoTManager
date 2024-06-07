@@ -76,9 +76,9 @@ WEB_SOCKETS_FRAME_SIZE создан для того что бы не загру�
 #define STANDARD_WEB_SERVER
 #define STANDARD_WEB_SOCKETS
 
-#ifndef libretiny
+//#ifndef libretiny
 #define UDP_ENABLED
-#endif
+//#endif
 // #define REST_FILE_OPERATIONS
 
 #define MQTT_RECONNECT_INTERVAL 20000
@@ -99,7 +99,7 @@ enum TimerTask_t {
     TIME,
     TIME_SYNC,
     UPTIME,
-    UDP,    // UDPP
+    UDPt,    // UDPP
     TIMES,  // периодические секундные проверки
     PTASK,
     ST,

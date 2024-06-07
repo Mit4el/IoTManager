@@ -37,7 +37,11 @@ void addThisDeviceToList() {
 AsyncUDP asyncUdp;
 
 void udpListningInit() {
-    if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210)) {
+#if defined(libretiny)
+    if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210, WiFi.localIP()))  {
+#else
+    if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210))  {
+#endif
         asyncUdp.onPacket([](AsyncUDPPacket packet) {
             // если был включен автоматический поиск устройств то начнем запись в оперативную память
             if (jsonReadInt(settingsFlashJson, F("udps")) != 0) {
@@ -65,8 +69,12 @@ void udpListningInit() {
                     String loacalWorkgroup = "";
                     jsonRead(settingsFlashJson, F("wg"), loacalWorkgroup);
                     if (remoteWorkgroup == loacalWorkgroup) {
+#if defined(libretiny)
+                        SerialPrint("i", F("UDP"), "IP: " + ipToString(packet.remoteIP()) + ":" + String(packet.remotePort()) + " localIP:"+String(packet.localIP()));
+#else
                         SerialPrint("i", F("UDP"), "IP: " + packet.remoteIP().toString() + ":" + String(packet.remotePort()));
-                        jsonMergeArrays(devListHeapJson, data);
+#endif
+                       jsonMergeArrays(devListHeapJson, data);
                         // эксперементальный вариант отправки нового списка сразу по приходу
                         // sendStringToWs("devlis", devListHeapJson, -1);
                     }
@@ -91,7 +99,7 @@ void udpListningInit() {
 void udpBroadcastInit() {
     // будем отправлять каждые 60 секунд презентацию данного устройства
     ts.add(
-        UDP, 60000, [&](void*) {  // UDPP
+        UDPt, 60000, [&](void*) {  // UDPP
             if (isNetworkActive()) {
                 SerialPrint("i", F("UDP"), F("Broadcast device presentation"));
                 asyncUdp.broadcastTo(getThisDevice().c_str(), 4210);

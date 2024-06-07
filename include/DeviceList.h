@@ -1,7 +1,7 @@
 #pragma once
 #include "Global.h"
 
-#ifdef ESP8266
+#if defined (ESP8266) || defined(libretiny)
 // эта библиотека встроена в ядро
 #include "ESPAsyncUDP.h"
 #elif defined(ESP32)
