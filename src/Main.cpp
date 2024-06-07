@@ -3,7 +3,9 @@
 #include "classes/IoTDB.h"
 #include "utils/Statistic.h"
 #include "classes/IoTBench.h"
+#ifndef libretiny
 #include <Wire.h>
+#endif
 #if defined(esp32s2_4mb) || defined(esp32s3_16mb)
 #include <USB.h>
 #endif
@@ -134,7 +136,7 @@ void setup() {
 #ifdef ESP32
         Wire.end();
         Wire.begin(pinSDA, pinSCL, (uint32_t)i2cFreq);
-#else
+#elif defined(ESP8266)
         Wire.begin(pinSDA, pinSCL);
         Wire.setClock(i2cFreq);
 #endif
@@ -190,9 +192,10 @@ void setup() {
 
     // запуск работы udp
     addThisDeviceToList();
+    #ifdef UDP_ENABLED
     udpListningInit();
     udpBroadcastInit();
-
+    #endif
     // создаем событие завершения конфигурирования для возможности выполнения блока кода при загрузке
     createItemFromNet("onStart", "1", 1);
 

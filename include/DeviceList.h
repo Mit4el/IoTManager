@@ -4,10 +4,12 @@
 #ifdef ESP8266
 // эта библиотека встроена в ядро
 #include "ESPAsyncUDP.h"
-#else
+#elif defined(ESP32)
 #include "AsyncUDP.h"
 #endif
+#ifndef libretiny
 extern AsyncUDP asyncUdp;
+#endif
 
 extern const String getThisDevice();
 extern void addThisDeviceToList();

@@ -428,13 +428,22 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
             // Serial.println(String(i) + ") " + "ws: " + String(client_id) + " fr sz:
             // " + String(size) + " fin: " + String(fin) + " cnt: " +
             // String(continuation));
-
+#ifdef ASYNC_WEB_SOCKETS
+            if (client_id == -1) {
+                //ws.broadcastBIN(frameBuf, size, fin, continuation);
+                ws.binaryAll(frameBuf, size);
+            } else {
+                //ws.sendBIN(client_id, frameBuf, size, fin, continuation);
+                ws.binary(client_id,frameBuf, size);
+            }
+#elif defined (STANDARD_WEB_SOCKETS)
             if (client_id == -1) {
                 standWebSocket.broadcastBIN(frameBuf, size, fin, continuation);
 
             } else {
                 standWebSocket.sendBIN(client_id, frameBuf, size, fin, continuation);
             }
+#endif
         }
         i++;
     }
@@ -460,11 +469,19 @@ void sendStringToWs(const String& header, String& payload, int client_id) {
 
     char dataArray[totalSize];
     msg.toCharArray(dataArray, totalSize + 1);
+#ifdef ASYNC_WEB_SOCKETS
+    if (client_id == -1) {
+        ws.binaryAll((uint8_t*)dataArray, totalSize);
+    } else {
+        ws.binary(client_id, (uint8_t*)dataArray, totalSize);
+    }
+#elif defined (STANDARD_WEB_SOCKETS)
     if (client_id == -1) {
         standWebSocket.broadcastBIN((uint8_t*)dataArray, totalSize);
     } else {
         standWebSocket.sendBIN(client_id, (uint8_t*)dataArray, totalSize);
     }
+#endif
 }
 
 void sendDeviceList(uint8_t num) {
@@ -478,5 +495,8 @@ void sendDeviceList(uint8_t num) {
         SerialPrint("i", "FS", "flash list");
     }
 }
-
+#ifdef ASYNC_WEB_SOCKETS
+int getNumWSClients() { return ws.count(); }
+#elif defined (STANDARD_WEB_SOCKETS)
 int getNumWSClients() { return standWebSocket.connectedClients(false); }
+#endif

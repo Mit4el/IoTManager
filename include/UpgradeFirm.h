@@ -3,7 +3,7 @@
 // #include "Upgrade.h"
 #ifdef ESP8266
 // #include "ESP8266.h"
-#else
+#elif ESP32
 #include <HTTPUpdate.h>
 #endif
 

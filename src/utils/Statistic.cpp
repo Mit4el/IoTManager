@@ -36,7 +36,11 @@ void updateDeviceStatus() {
         if (httpResponseCode > 0) {
             ret = http.errorToString(httpResponseCode).c_str();
             if (httpResponseCode == HTTP_CODE_OK) {
+                #ifndef libretiny
                 String payload = http.getString();
+                #else
+                String payload = httpGetString(http);
+                #endif
                 ret += " " + payload;
             }
         } else {

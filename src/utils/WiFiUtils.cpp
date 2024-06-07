@@ -5,10 +5,10 @@
 
 void routerConnect()
 {
+#if  !defined libretiny  
   WiFi.setAutoConnect(false);
   WiFi.persistent(false);
-
-  WiFi.mode(WIFI_STA);
+#endif  
   byte triesOne = TRIESONE;
 
   std::vector<String> _ssidList;
@@ -20,14 +20,16 @@ void routerConnect()
 
   if (_passwordList.size() == 0 && _ssidList[0] == "" && _passwordList[0] == "")
   {
+    #ifndef libretiny
     WiFi.begin();
+    #endif
   }
   else
   {
     WiFi.begin(_ssidList[0].c_str(), _passwordList[0].c_str());
-#ifdef ESP32
+#if defined (ESP32)
     WiFi.setTxPower(WIFI_POWER_19_5dBm);
-#else
+#elif defined (ESP8266)
     WiFi.setOutputPower(20.5);
 #endif
     String _ssid;
@@ -79,8 +81,13 @@ void routerConnect()
   else
   {
     Serial.println("");
+#ifdef libretiny
+    SerialPrint("i", "WIFI", "http://" + ipToString(WiFi.localIP()));
+    jsonWriteStr(settingsFlashJson, "ip", ipToString(WiFi.localIP()));
+#else
     SerialPrint("i", "WIFI", "http://" + WiFi.localIP().toString());
     jsonWriteStr(settingsFlashJson, "ip", WiFi.localIP().toString());
+#endif
 
     mqttInit();
   }
@@ -99,10 +106,13 @@ bool startAPMode()
 
   WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str());
   IPAddress myIP = WiFi.softAPIP();
-
+#ifdef libretiny
+  SerialPrint("i", "WIFI", "AP IP: " + ipToString(myIP));
+  jsonWriteStr(settingsFlashJson, "ip", ipToString(myIP));
+#else
   SerialPrint("i", "WIFI", "AP IP: " + myIP.toString());
   jsonWriteStr(settingsFlashJson, "ip", myIP.toString());
-
+#endif
   if (jsonReadInt(errorsHeapJson, "passer") != 1)
   {
     ts.add(
@@ -199,3 +209,38 @@ uint8_t RSSIquality() {
     }
     return res;
 }
+
+#ifdef libretiny
+String httpGetString(HTTPClient &http)
+{
+      String payload = "";
+        int len = http.getSize();
+        uint8_t buff[128] = { 0 };
+        WiFiClient * stream = http.getStreamPtr();
+
+                // read all data from server
+                while(http.connected() && (len > 0 || len == -1)) {
+                    // get available data size
+                    size_t size = stream->available();
+
+                    if(size) {
+                        // read up to 128 byte
+                        int c = stream->readBytes(buff, ((size > sizeof(buff)) ? sizeof(buff) : size));
+
+                        // write it to Serial
+                     //   Serial.write(buff,c);
+                        
+                        //payload += String((char*)buff);
+                        char charBuff[c + 1]; // Create a character array with space for null terminator
+                        memcpy(charBuff, buff, c); // Copy the data to the character array
+                        charBuff[c] = '\0'; // Null-terminate the character array
+                        payload += String(charBuff); // Append the character array to the payload
+
+                        if(len > 0) {
+                            len -= c;
+                        }
+                    }
+                    delay(1);
+                }       
+}
+#endif

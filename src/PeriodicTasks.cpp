@@ -59,9 +59,29 @@ String ESP_getResetReason(void) {
     return ESP.getResetReason();
 }
 #endif
+#ifdef libretiny
+String ESP_getResetReason(void) {
+    return ESP.getResetReason();
+}
+#endif
 #if defined(esp32s2_4mb) || defined(esp32s3_16mb) || defined(esp32c3m_4mb)
 String ESP_getResetReason(void) {
-    return ESP32GetResetReason(0);  // CPU 0
+ //   return ESP32GetResetReason(0);  // CPU 0
+        esp_reset_reason_t esp_reason = esp_reset_reason();
+  switch (esp_reason) {
+    case ESP_RST_UNKNOWN:   return "UNKNOWN";
+    case ESP_RST_POWERON:   return "POWER ON";
+    case ESP_RST_EXT:       return "EXTERNAL PIN";
+    case ESP_RST_SW:        return "SOFTWARE RESET";
+    case ESP_RST_PANIC:     return "EXCEPTION / PANIC";
+    case ESP_RST_INT_WDT:   return "INTERRUPT WATCHDOG";
+    case ESP_RST_TASK_WDT:  return "TASK WATCHDOG";
+    case ESP_RST_WDT:       return "WATCHDOGS";
+    case ESP_RST_DEEPSLEEP: return "EXITING DEEP SLLEP MODE";
+    case ESP_RST_BROWNOUT:  return "BROWNOUT";
+    case ESP_RST_SDIO:      return "SDIO";
+    default :               return "NO MEAN";
+  };
 }
 String ESP32GetResetReason(uint32_t cpu_no) {
     // tools\sdk\include\esp32\rom\rtc.h
@@ -103,7 +123,22 @@ String ESP32GetResetReason(uint32_t cpu_no) {
 #endif
 #if defined(esp32_4mb) || defined(esp32_16mb) || defined(esp32cam_4mb)
 String ESP_getResetReason(void) {
-    return ESP32GetResetReason(0);  // CPU 0
+  //  return ESP32GetResetReason(0);  // CPU 0
+    esp_reset_reason_t esp_reason = esp_reset_reason();
+  switch (esp_reason) {
+    case ESP_RST_UNKNOWN:   return "UNKNOWN";
+    case ESP_RST_POWERON:   return "POWER ON";
+    case ESP_RST_EXT:       return "EXTERNAL PIN";
+    case ESP_RST_SW:        return "SOFTWARE RESET";
+    case ESP_RST_PANIC:     return "EXCEPTION / PANIC";
+    case ESP_RST_INT_WDT:   return "INTERRUPT WATCHDOG";
+    case ESP_RST_TASK_WDT:  return "TASK WATCHDOG";
+    case ESP_RST_WDT:       return "WATCHDOGS";
+    case ESP_RST_DEEPSLEEP: return "EXITING DEEP SLLEP MODE";
+    case ESP_RST_BROWNOUT:  return "BROWNOUT";
+    case ESP_RST_SDIO:      return "SDIO";
+    default :               return "NO MEAN";
+  };
 }
 String ESP32GetResetReason(uint32_t cpu_no) {
     // tools\sdk\include\esp32\rom\rtc.h

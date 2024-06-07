@@ -8,6 +8,10 @@ void* getAPI(String subtype, String params);
 
 void configure(String path) {
     File file = seekFile(path);
+    if (!file) {
+        SerialPrint(F("E"), F("FS"), F("configure file open error"));
+        return;
+    }
     file.find("[");
     while (file.available()) {
         String jsonArrayElement = file.readStringUntil('}') + "}";
@@ -59,8 +63,11 @@ void clearConfigure() {
         if (*it) delete *it;
     }
     IoTItems.clear();
-
+#ifdef libretiny
+    valuesFlashJson.remove(0, valuesFlashJson.length());
+#else
     valuesFlashJson.clear();
+#endif
     benchTaskItem = nullptr; 
     benchLoadItem = nullptr; 
 }
