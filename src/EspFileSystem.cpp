@@ -121,7 +121,7 @@ uint32_t getFlashChipIdNew()
         }
 
         //    esp_flash_read_id(nullptr, &flashChipId);
-#elif defined(ESP8266)
+#elif defined(ESP8266) || defined(libretiny)  
         flashChipId = ESP.getFlashChipId();
 #endif // ifdef ESP32
     }
