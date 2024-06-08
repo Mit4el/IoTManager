@@ -8,7 +8,8 @@ void routerConnect()
 #if  !defined libretiny  
   WiFi.setAutoConnect(false);
   WiFi.persistent(false);
-#endif  
+#endif
+  WiFi.mode(WIFI_STA);
   byte triesOne = TRIESONE;
 
   std::vector<String> _ssidList;
