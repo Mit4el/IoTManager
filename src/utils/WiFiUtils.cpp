@@ -104,8 +104,10 @@ bool startAPMode()
 
   String _ssidAP = jsonReadStr(settingsFlashJson, "apssid");
   String _passwordAP = jsonReadStr(settingsFlashJson, "appass");
-
-  WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str());
+  if (_passwordAP == "")
+    WiFi.softAP(_ssidAP.c_str());
+  else
+    WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str());
   IPAddress myIP = WiFi.softAPIP();
 #ifdef libretiny
   SerialPrint("i", "WIFI", "AP IP: " + ipToString(myIP));
