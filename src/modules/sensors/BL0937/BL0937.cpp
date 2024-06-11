@@ -139,11 +139,11 @@ public:
     ~BL0937wh(){};
 };
 
-void ICACHE_RAM_ATTR bl0937_cf1_interrupt()
+void /* ICACHE_RAM_ATTR */ bl0937_cf1_interrupt()
 {
     bl0937->cf1_interrupt();
 }
-void ICACHE_RAM_ATTR bl0937_cf_interrupt()
+void /* ICACHE_RAM_ATTR */ bl0937_cf_interrupt()
 {
     bl0937->cf_interrupt();
 }

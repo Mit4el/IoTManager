@@ -178,14 +178,14 @@ void BL0937::setResistors(double current, double voltage_upstream, double voltag
     }
 }
 
-void ICACHE_RAM_ATTR BL0937::cf_interrupt() {
+void /* ICACHE_RAM_ATTR */ BL0937::cf_interrupt() {
     unsigned long now = micros();
     _power_pulse_width = now - _last_cf_interrupt;
     _last_cf_interrupt = now;
     _pulse_count++;
 }
 
-void ICACHE_RAM_ATTR BL0937::cf1_interrupt() {
+void /* ICACHE_RAM_ATTR */ BL0937::cf1_interrupt() {
 
     unsigned long now = micros();
 
