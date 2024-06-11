@@ -2,6 +2,14 @@
 #include <vector>
 #define TRIESONE 25 // количество попыток подключения к одной сети из несколких
 #define TRIES 40    // количество попыток подключения сети если она одна
+/* 
+IPAddress stringToIp(String strIp)
+{
+  IPAddress ip;
+  ip.fromString(strIp);
+  return ip;
+} */
+
 
 void routerConnect()
 {
@@ -9,6 +17,17 @@ void routerConnect()
   WiFi.setAutoConnect(false);
   WiFi.persistent(false);
 #endif
+/*     String s_staip = "192.168.2.62";
+    String s_gateway = "192.168.2.1";
+    String s_netmask = "255.255.255.0";
+    String s_dns = "192.168.2.1";
+    SerialPrint("i", "WIFI", "Use static IP");
+    WiFi.config(stringToIp(s_staip), stringToIp(s_gateway), stringToIp(s_netmask), stringToIp(s_dns));
+    // bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000);
+    SerialPrint("i", "WIFI", "Static IP: " + s_staip);
+    SerialPrint("i", "WIFI", "Gateway: " + s_gateway);
+    SerialPrint("i", "WIFI", "Netmask: " + s_netmask);
+    SerialPrint("i", "WIFI", "DNS: " + s_dns); */
   WiFi.mode(WIFI_STA);
   byte triesOne = TRIESONE;
 
@@ -244,6 +263,7 @@ String httpGetString(HTTPClient &http)
                         }
                     }
                     delay(1);
-                }       
+                }      
+                return payload;
 }
 #endif
