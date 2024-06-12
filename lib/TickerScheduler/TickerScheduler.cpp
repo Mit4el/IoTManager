@@ -105,9 +105,9 @@ void TickerScheduler::update()
     {
 		if (this->items[i].is_used)
 		{
-			#ifdef ARDUINO_ARCH_AVR
+			//#ifdef ARDUINO_ARCH_AVR
 			this->items[i].t.Tick();
-			#endif
+			//#endif
 
 			handleTicker(this->items[i].cb, this->items[i].cb_arg, &this->items[i].flag);
 		}
