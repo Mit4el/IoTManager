@@ -15,7 +15,7 @@ extern FS* filesystem;
 #endif
 #endif
 
-#if defined(libretiny)
+#if defined(LIBRETINY)
 #include <FS.h>
 
 #include "LittleFS.h"

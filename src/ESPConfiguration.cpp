@@ -63,7 +63,7 @@ void clearConfigure() {
         if (*it) delete *it;
     }
     IoTItems.clear();
-#ifdef libretiny
+#ifdef LIBRETINY
     valuesFlashJson.remove(0, valuesFlashJson.length());
 #else
     valuesFlashJson.clear();

@@ -378,7 +378,7 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
 
     auto path = filepath(filename);
     auto file = FileFS.open(path, "r");
-    SerialPrint("I", "sendFileToWsByFrames", ("reed file: ")+ path);
+    //SerialPrint("I", "sendFileToWsByFrames", ("reed file: ")+ path);
     if (!file) {
         SerialPrint("E", "FS", F("reed file error"));
         return;
@@ -454,12 +454,12 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
 }
 
 void sendStringToWs(const String& header, String& payload, int client_id) {
-#ifdef libretiny    
+#ifdef LIBRETINY    
     if (/* (!getNumAPClients() && !isNetworkActive())  || */ !getNumWSClients()) {
 #else
     if ( (!getNumAPClients() && !isNetworkActive())  ||  !getNumWSClients()) {
 #endif        
-        SerialPrint("E", "sendStringToWs", "getNumAPClients: " + String(getNumAPClients()) + "isNetworkActive: " + String(isNetworkActive() + "getNumWSClients: " + String(getNumWSClients())));
+      //  SerialPrint("E", "sendStringToWs", "getNumAPClients: " + String(getNumAPClients()) + "isNetworkActive: " + String(isNetworkActive() + "getNumWSClients: " + String(getNumWSClients())));
         // standWebSocket.disconnect(); // это и ниже надо сделать при -
         // standWebSocket.close();      // - отключении AP И WiFi(STA), надо менять ядро WiFi. Сейчас не закрывается сессия клиента при пропаже AP И WiFi(STA)
         return;
@@ -472,7 +472,7 @@ void sendStringToWs(const String& header, String& payload, int client_id) {
 
     String msg = header + "|0012|" + payload;
     size_t totalSize = msg.length();
-
+   // SerialPrint("E", "sendStringToWs", msg);
     char dataArray[totalSize];
     msg.toCharArray(dataArray, totalSize + 1);
 #ifdef ASYNC_WEB_SOCKETS

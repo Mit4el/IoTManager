@@ -9,7 +9,7 @@
 #include <PubSubClient.h>
 #include <list>
 
-#ifdef libretiny
+#ifdef LIBRETINY
 #include <vector>
 #include <typedef.h>
 #ifdef STANDARD_WEB_SERVER
@@ -87,7 +87,7 @@ extern ESP8266HTTPUpdateServer httpUpdater;
 #ifdef ESP32
 extern WebServer HTTP;
 #endif
-#ifdef libretiny
+#ifdef LIBRETINY
 extern WebServer HTTP;
 #endif
 #endif

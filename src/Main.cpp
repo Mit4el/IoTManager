@@ -3,7 +3,7 @@
 #include "classes/IoTDB.h"
 #include "utils/Statistic.h"
 #include "classes/IoTBench.h"
-#ifndef libretiny
+#ifndef LIBRETINY
 #include <Wire.h>
 #endif
 #if defined(esp32s2_4mb) || defined(esp32s3_16mb)

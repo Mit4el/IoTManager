@@ -9,6 +9,6 @@ bool startAPMode();
 boolean RouterFind(std::vector<String> jArray);
 uint8_t RSSIquality();
 extern void wifiSignalInit();
-#ifdef libretiny
+#ifdef LIBRETINY
 String httpGetString(HTTPClient &http);
 #endif

@@ -231,7 +231,7 @@ bool handleFileRead(String path) {
    return the path of the closest parent still existing
 */
 String lastExistingParent(String path) {
- #ifndef libretiny      
+ #ifndef LIBRETINY      
     while (!path.isEmpty() && !FileFS.exists(path)) 
  #else
      while (!path.length()==0 && !FileFS.exists(path)) 
@@ -304,7 +304,7 @@ void deleteRecursive(String path) {
 }
 #endif
 
-#if defined ESP32 || defined libretiny
+#if defined ESP32 || defined LIBRETINY
 struct treename {
     uint8_t type;
     char *name;
@@ -328,7 +328,7 @@ void deleteRecursive(String path) {
         if (entry.isDirectory()) {
 #if defined ESP32
             deleteRecursive(entry.path());
-#elif defined libretiny
+#elif defined LIBRETINY
             deleteRecursive(entry.fullName());
 #endif
         } else {
@@ -351,7 +351,7 @@ void deleteRecursive(String path) {
 */
 void handleFileDelete() {
     String path = HTTP.arg(0);
-    #ifndef libretiny
+    #ifndef LIBRETINY
     if (path.isEmpty() || path == "/") {
         return replyBadRequest("BAD PATH");
     }
@@ -382,7 +382,7 @@ void handleFileDelete() {
 */
 void handleFileCreate() {
     String path = HTTP.arg("path");
-    #ifndef libretiny
+    #ifndef LIBRETINY
     if (path.isEmpty()) {
         return replyBadRequest(F("PATH ARG MISSING"));
     }
@@ -405,7 +405,7 @@ void handleFileCreate() {
     }
 
     String src = HTTP.arg("src");
-    #ifndef libretiny
+    #ifndef LIBRETINY
     if (src.isEmpty()) {
     #else
     if (src.length()==0) {
@@ -428,7 +428,7 @@ void handleFileCreate() {
 #ifdef ESP32
                 file.write(0);
 #endif
-#ifdef libretiny
+#ifdef LIBRETINY
                 file.write((uint8_t)0);
 #endif
                 file.close();
@@ -535,7 +535,7 @@ void handleFileList() {
 }
 #endif
 
-#if defined ESP32 || defined libretiny
+#if defined ESP32 || defined LIBRETINY
 void handleFileList() {
     if (!HTTP.hasArg("dir")) {
         HTTP.send(500, "text/plain", "BAD ARGS");
@@ -543,9 +543,15 @@ void handleFileList() {
     }
 
     String path = HTTP.arg("dir");
-    //  DBG_OUTPUT_PORT.println("handleFileList: " + path);
-#if defined libretiny
+    if (path != "/" && !FileFS.exists(path)) {
+        return replyBadRequest("BAD PATH");
+    }
+    path = "build/";
+    Serial.println("handleFileList: " + path);
+#if defined LIBRETINY
     File root = FileFS.open(path.c_str());
+    //Dir dir = FileFS.openDir(path);
+    Serial.println("handleFileList File Name: " + String(root.name()));
 #else
     File root = FileFS.open(path);
 #endif    
@@ -553,8 +559,12 @@ void handleFileList() {
 
     String output = "[";
     if (root.isDirectory()) {
+        Serial.println("handleFileList IS DIR: " + String(root.name()));
         File file = root.openNextFile();
+        Serial.println("handleFileList openNextFile: " + String(file.name()));
+
         while (file) {
+                  
             if (output != "[") {
                 output += ',';
             }
@@ -590,7 +600,7 @@ void handleNotFound() {
 #ifdef ESP32
     String uri = WebServer::urlDecode(HTTP.uri());  // required to read paths with blanks
 #endif
-#ifdef libretiny
+#ifdef LIBRETINY
     String uri = WebServer::urlDecode(HTTP.uri());  // required to read paths with blanks
 #endif
     if (handleFileRead(uri)) {

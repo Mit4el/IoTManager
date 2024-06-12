@@ -1,4 +1,4 @@
-#ifndef libretiny
+#ifndef LIBRETINY
 #include <Wire.h>
 #include "utils/SerialPrint.h"
 

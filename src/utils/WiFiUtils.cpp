@@ -13,7 +13,7 @@ IPAddress stringToIp(String strIp)
 
 void routerConnect()
 {
-#if  !defined libretiny  
+#if  !defined LIBRETINY  
   WiFi.setAutoConnect(false);
   WiFi.persistent(false);
 #endif
@@ -40,7 +40,7 @@ void routerConnect()
 
   if (_passwordList.size() == 0 && _ssidList[0] == "" && _passwordList[0] == "")
   {
-    #ifndef libretiny
+    #ifndef LIBRETINY
     WiFi.begin();
     #endif
   }
@@ -101,7 +101,7 @@ void routerConnect()
   else
   {
     Serial.println("");
-#ifdef libretiny
+#ifdef LIBRETINY
     SerialPrint("i", "WIFI", "http://" + ipToString(WiFi.localIP()));
     jsonWriteStr(settingsFlashJson, "ip", ipToString(WiFi.localIP()));
 #else
@@ -128,7 +128,7 @@ bool startAPMode()
   else
     WiFi.softAP(_ssidAP.c_str(), _passwordAP.c_str());
   IPAddress myIP = WiFi.softAPIP();
-#ifdef libretiny
+#ifdef LIBRETINY
   SerialPrint("i", "WIFI", "AP IP: " + ipToString(myIP));
   jsonWriteStr(settingsFlashJson, "ip", ipToString(myIP));
 #else
@@ -158,7 +158,54 @@ bool startAPMode()
   }
   return true;
 }
+#if defined (LIBRETINY)
+boolean RouterFind(std::vector<String> jArray)
+{
+  bool res = false;
+  int n = WiFi.scanComplete();
+  SerialPrint("i", "WIFI", "scan result: " + String(n, DEC));
 
+  if (n == -2)
+  { // Сканирование не было запущено, запускаем
+    SerialPrint("i", "WIFI", "start scanning");
+   n =  WiFi.scanNetworks(false, false); // async, show_hidden
+     SerialPrint("i", "WIFI", "scan result: " + String(n, DEC));
+  }
+
+  else if (n == -1)
+  { // Сканирование все еще выполняется
+    SerialPrint("i", "WIFI", "scanning in progress");
+  }
+
+  else if (n == 0)
+  { // ни одна сеть не найдена
+    SerialPrint("i", "WIFI", "no networks found");
+   n =  WiFi.scanNetworks(false, false);
+     SerialPrint("i", "WIFI", "scan result: " + String(n, DEC));
+  }
+
+  if (n > 0)
+  {
+    for (int8_t i = 0; i < n; i++)
+    {
+      for (int8_t k = 0; k < jArray.size(); k++)
+      {
+        if (WiFi.SSID(i) == jArray[k])
+        {
+          res = true;
+        }
+      }
+      // SerialPrint("i", "WIFI", (res ? "*" : "") + String(i, DEC) + ") " + WiFi.SSID(i));
+      jsonWriteStr_(ssidListHeapJson, String(i), WiFi.SSID(i));
+
+      // String(WiFi.RSSI(i)
+    }
+  }
+  SerialPrint("i", "WIFI", ssidListHeapJson);
+  WiFi.scanDelete();
+  return res;
+}
+#elif  defined (ESP8266) || defined (ESP32)
 boolean RouterFind(std::vector<String> jArray)
 {
   bool res = false;
@@ -202,6 +249,7 @@ boolean RouterFind(std::vector<String> jArray)
   WiFi.scanDelete();
   return res;
 }
+#endif
 
 boolean isNetworkActive() {
     return WiFi.status() == WL_CONNECTED;
@@ -232,7 +280,7 @@ uint8_t RSSIquality() {
     return res;
 }
 
-#ifdef libretiny
+#ifdef LIBRETINY
 String httpGetString(HTTPClient &http)
 {
       String payload = "";

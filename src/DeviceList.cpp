@@ -37,7 +37,7 @@ void addThisDeviceToList() {
 AsyncUDP asyncUdp;
 
 void udpListningInit() {
-#if defined(libretiny)
+#if defined(LIBRETINY)
     if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210, WiFi.localIP()))  {
 #else
     if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210))  {
@@ -69,7 +69,7 @@ void udpListningInit() {
                     String loacalWorkgroup = "";
                     jsonRead(settingsFlashJson, F("wg"), loacalWorkgroup);
                     if (remoteWorkgroup == loacalWorkgroup) {
-#if defined(libretiny)
+#if defined(LIBRETINY)
                         SerialPrint("i", F("UDP"), "IP: " + ipToString(packet.remoteIP()) + ":" + String(packet.remotePort()) + " localIP:"+String(packet.localIP()));
 #else
                         SerialPrint("i", F("UDP"), "IP: " + packet.remoteIP().toString() + ":" + String(packet.remotePort()));

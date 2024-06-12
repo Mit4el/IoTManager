@@ -44,7 +44,7 @@ void ntpInit() {
 }
 
 void synchTime() {
-#ifndef libretiny    
+#ifndef LIBRETINY    
     configTime(0, 0, "pool.ntp.org", "ru.pool.ntp.org", jsonReadStr(settingsFlashJson, F("ntp")).c_str());
 #endif
 }

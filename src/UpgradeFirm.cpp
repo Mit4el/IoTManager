@@ -36,7 +36,7 @@ void upgrade_firmware(int type, String path) {
 
 bool upgradeFS(String path) {
     bool ret = false;
-#ifndef libretiny   
+#ifndef LIBRETINY   
     WiFiClient wifiClient;
     SerialPrint("!!!", F("Update"), "Start upgrade FS... " + path);
 
@@ -74,7 +74,7 @@ bool upgradeFS(String path) {
 
 bool upgradeBuild(String path) {
     bool ret = false;
-#ifndef libretiny     
+#ifndef LIBRETINY     
     WiFiClient wifiClient;
     SerialPrint("!!!", F("Update"), "Start upgrade BUILD... " + path);
 

@@ -9,7 +9,7 @@ IoTGpio::~IoTGpio(){
 
 }
 
-#ifndef libretiny
+#ifndef LIBRETINY
 void IoTGpio::pinMode(int pin, uint8_t mode) {
     int pinH = pin/100;
     if (_drivers[pinH]) _drivers[pinH]->pinMode(pin - pinH*100, mode);
@@ -63,7 +63,7 @@ void IoTGpio::analogWrite(int pin, int val) {
 void IoTGpio::digitalInvert(int pin) {
     int pinH = pin/100;
     if (_drivers[pinH]) _drivers[pinH]->digitalInvert(pin - pinH*100);
-#ifdef libretiny    
+#ifdef LIBRETINY    
     else ::digitalWrite(pin, (PinStatus)(1 - ::digitalRead(pin)));
 #else
     else ::digitalWrite(pin, (1 - ::digitalRead(pin)));

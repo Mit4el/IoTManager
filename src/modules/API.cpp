@@ -8,6 +8,7 @@ void* getAPI_owmWeather(String subtype, String params);
 void* getAPI_Timer(String subtype, String params);
 void* getAPI_Variable(String subtype, String params);
 void* getAPI_VButton(String subtype, String params);
+void* getAPI_BL0937(String subtype, String params);
 
 void* getAPI(String subtype, String params) {
 void* tmpAPI;
@@ -19,5 +20,6 @@ if ((tmpAPI = getAPI_owmWeather(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_Timer(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_Variable(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_VButton(subtype, params)) != nullptr) return tmpAPI;
+if ((tmpAPI = getAPI_BL0937(subtype, params)) != nullptr) return tmpAPI;
 return nullptr;
 }

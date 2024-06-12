@@ -20,7 +20,7 @@ ESP8266WebServer HTTP(80);
 #ifdef ESP32
 WebServer HTTP(80);
 #endif
-#ifdef libretiny
+#ifdef LIBRETINY
 WebServer HTTP(80);
 #endif
 #endif

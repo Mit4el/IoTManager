@@ -59,7 +59,7 @@ String ESP_getResetReason(void) {
     return ESP.getResetReason();
 }
 #endif
-#ifdef libretiny
+#ifdef LIBRETINY
 String ESP_getResetReason(void) {
     return ESP.getResetReason();
 }

@@ -52,7 +52,7 @@
 #define FIRMWARE_NAME "esp32s3_16mb"
 #endif
 
-#ifdef libretiny
+#ifdef LIBRETINY
 #define FIRMWARE_NAME "libretiny"
 #endif
 
@@ -76,7 +76,7 @@ WEB_SOCKETS_FRAME_SIZE создан для того что бы не загру�
 #define STANDARD_WEB_SERVER
 #define STANDARD_WEB_SOCKETS
 
-//#ifndef libretiny
+//#ifndef LIBRETINY
 #define UDP_ENABLED
 //#endif
 // #define REST_FILE_OPERATIONS

@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 
-#if defined ARDUINO_ARCH_AVR || defined libretiny
+#if defined ARDUINO_ARCH_AVR || defined LIBRETINY
 class Ticker
 {
 	typedef void(*ticker_callback_t)(bool*);
@@ -48,7 +48,7 @@ public:
 #include <Ticker.h>
 #include <functional>
 #endif
-#if  defined libretiny
+#if  defined LIBRETINY
 #include <functional>
 #endif
 
