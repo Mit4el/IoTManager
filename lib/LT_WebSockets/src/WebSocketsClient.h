@@ -40,7 +40,7 @@ class WebSocketsClient : protected WebSockets {
 
     void begin(const char * host, uint16_t port, const char * url = "/", const char * protocol = "arduino");
     void begin(String host, uint16_t port, String url = "/", String protocol = "arduino");
-#ifndef libretiny
+#ifndef LIBRETINY
     void begin(IPAddress host, uint16_t port, const char * url = "/", const char * protocol = "arduino");
 #endif
 

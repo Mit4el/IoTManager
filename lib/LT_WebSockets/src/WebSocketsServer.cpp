@@ -24,7 +24,7 @@
 
 #include "WebSockets.h"
 #include "WebSocketsServer.h"
-#ifdef libretiny
+#ifdef LIBRETINY
 #include "Common.h"
 #endif
 WebSocketsServerCore::WebSocketsServerCore(const String & origin, const String & protocol) {

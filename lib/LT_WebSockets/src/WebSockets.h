@@ -116,7 +116,7 @@
 #elif defined(ESP32)
 #define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP32
 //#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP32_ETH
-#elif defined(libretiny)
+#elif defined(LIBRETINY)
 #define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP8266
 #else
 #define WEBSOCKETS_NETWORK_TYPE NETWORK_W5100
@@ -149,7 +149,7 @@
 #define WEBSOCKETS_NETWORK_SERVER_CLASS AsyncServer
 
 
-#elif(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) && !defined(libretiny)
+#elif(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) && !defined(LIBRETINY)
 #if !defined(ESP8266) && !defined(ESP31B)
 #error "network type ESP8266 only possible on the ESP mcu!"
 #endif
@@ -196,12 +196,12 @@
 #define WEBSOCKETS_NETWORK_CLASS WiFiClient
 #define WEBSOCKETS_NETWORK_SERVER_CLASS WiFiServer
 
-#elif defined(libretiny)
+#elif defined(LIBRETINY)
 //#include <Ethernet.h>
 //#include <SPI.h>
 //#define WEBSOCKETS_NETWORK_CLASS EthernetClient
 //#define WEBSOCKETS_NETWORK_SERVER_CLASS EthernetServer
-//#if defined(libretiny)
+//#if defined(LIBRETINY)
 typedef struct SHA1Context SHA1_CTX;
 #include <WiFi.h>
 //#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP8266
