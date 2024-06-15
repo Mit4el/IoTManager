@@ -37,28 +37,24 @@ void addThisDeviceToList() {
 AsyncUDP asyncUdp;
 
 void udpListningInit() {
-#if defined(LIBRETINY)
-    if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210, WiFi.localIP()))  {
-#else
     if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210))  {
-#endif
         asyncUdp.onPacket([](AsyncUDPPacket packet) {
             // если был включен автоматический поиск устройств то начнем запись в оперативную память
             if (jsonReadInt(settingsFlashJson, F("udps")) != 0) {
-                // Serial.print("UDP Packet Type: ");
-                // Serial.println(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
-                // Serial.print("From: ");
-                // Serial.print(packet.remoteIP());
-                // Serial.print(":");
-                // Serial.println(packet.remotePort());
-                // Serial.print("To: ");
-                // Serial.print(packet.localIP());
-                // Serial.print(":");
-                // Serial.println(packet.localPort());
-                // Serial.print(", Length: ");
-                // Serial.print(packet.length());
-                // Serial.print(", Data: ");
-                // Serial.write(packet.data(), packet.length());
+                 Serial.print("UDP Packet Type: ");
+                 Serial.println(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
+                 Serial.print("From: ");
+                 Serial.print(packet.remoteIP());
+                 Serial.print(":");
+                 Serial.println(packet.remotePort());
+                 Serial.print("To: ");
+                 Serial.print(packet.localIP());
+                 Serial.print(":");
+                 Serial.println(packet.localPort());
+                 Serial.print(", Length: ");
+                 Serial.print(packet.length());
+                 Serial.print(", Data: ");
+                 Serial.write(packet.data(), packet.length());
                 // String data = {packet.data(), packet.length()}; // для ESP32 подходит как замена uint8tToString, но 8266 не переваривает
 
                 String data = uint8tToString(packet.data(), packet.length());

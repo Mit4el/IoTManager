@@ -535,7 +535,7 @@ void handleFileList() {
 }
 #endif
 
-#if defined ESP32 || defined LIBRETINY
+#if defined ESP32 
 void handleFileList() {
     if (!HTTP.hasArg("dir")) {
         HTTP.send(500, "text/plain", "BAD ARGS");
@@ -546,12 +546,12 @@ void handleFileList() {
     if (path != "/" && !FileFS.exists(path)) {
         return replyBadRequest("BAD PATH");
     }
-    path = "build/";
+    //path = "/build/";
     Serial.println("handleFileList: " + path);
 #if defined LIBRETINY
     File root = FileFS.open(path.c_str());
-    //Dir dir = FileFS.openDir(path);
-    Serial.println("handleFileList File Name: " + String(root.name()));
+    //Dir root = FileFS.openDir(path);
+    Serial.println("handleFileList FIRST OPEN  Name: " + String(root.name()));
 #else
     File root = FileFS.open(path);
 #endif    
@@ -560,6 +560,7 @@ void handleFileList() {
     String output = "[";
     if (root.isDirectory()) {
         Serial.println("handleFileList IS DIR: " + String(root.name()));
+       //root.close();
         File file = root.openNextFile();
         Serial.println("handleFileList openNextFile: " + String(file.name()));
 
@@ -588,6 +589,67 @@ void handleFileList() {
 }
 #endif
 
+#if defined LIBRETINY
+void handleFileList() {
+    if (!HTTP.hasArg("dir")) {
+        HTTP.send(500, "text/plain", "BAD ARGS");
+        return;
+    }
+    String path = HTTP.arg("dir");
+    if (path != "/" && !FileFS.exists(path)) {
+        return replyBadRequest("BAD PATH");
+    }
+FileFS.open(path.c_str());
+    lfs_dir_t dir;
+    struct lfs_info info;
+    int err = lfs_dir_open(FileFS.getFS(), &dir, path.c_str());
+    if (err) {
+        HTTP.send(500, "text/plain", "FAIL OPEN DIR");
+        return;
+    }
+    String output = "[";
+    while (true) {
+        int res = lfs_dir_read(FileFS.getFS(), &dir, &info);
+        if (res < 0) {
+            lfs_dir_close(FileFS.getFS(), &dir);
+            return ;
+        }
+        
+        if (!res) {
+            break;
+        }
+        
+        Serial.printf("%s %d", info.name, info.type);
+
+        if (output != "[") {
+            output += ',';
+        }
+            output += "{\"type\":\"";
+            //         output += (file.isDirectory()) ? "dir" : "file";
+        if (info.type == LFS_TYPE_DIR) {
+            output += "dir";
+        } else {
+            output += F("file\",\"size\":\"");
+            output += info.size;
+        }
+
+        output += "\",\"name\":\"";
+        output += String(info.name);
+        output += "\"}";
+        //file = root.openNextFile();
+
+    }
+
+    err = lfs_dir_close(FileFS.getFS(), &dir);
+    if (err) {
+        HTTP.send(500, "text/plain", "FAIL CLOSE DIR");
+        return;
+    }
+
+    output += "]";
+    HTTP.send(200, "text/json", output);
+}
+#endif
 /*
    The "Not Found" handler catches all URI not explicitly declared in code
    First try to find and return the requested file from the filesystem,

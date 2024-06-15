@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PULSE_TIMEOUT       5000000
 
 // Define ICACHE_RAM_ATTR for AVR platforms
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(LIBRETINY)
 #define ICACHE_RAM_ATTR     
 #endif
 

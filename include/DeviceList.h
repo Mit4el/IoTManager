@@ -1,10 +1,10 @@
 #pragma once
 #include "Global.h"
 
-#if defined (ESP8266) || defined(LIBRETINY)
+#if defined (ESP8266) 
 // эта библиотека встроена в ядро
 #include "ESPAsyncUDP.h"
-#elif defined(ESP32)
+#elif defined(ESP32) || defined(LIBRETINY)
 #include "AsyncUDP.h"
 #endif
 #ifndef LIBRETINY
