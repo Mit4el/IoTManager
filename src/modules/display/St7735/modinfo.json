@@ -1,0 +1,143 @@
+{   
+    "menuSection": "Экраны",
+
+    "configItem": [{
+        "name": "TFT экран ST7735s 1.8",
+        "type": "Reading",
+        "subtype": "St7735",
+        "id": "St",
+        "widget": "",
+        "page": "",
+        "descr": "T",
+
+		"descr1": "C",
+        "int": 15,
+        "coord": "0,10",
+        "id2show": "id датчика",
+        "shrift": "2",
+        "colour": "BLUE",
+        "fon": "BLACK",
+        "rotation": "1",
+        "size": "180",
+        "fon_screen" : "BLACK"
+    },
+    {
+        "name": "TFT экран ST7735s 1.44",
+        "type": "Reading",
+        "subtype": "St7735",
+        "id": "St",
+        "widget": "",
+        "page": "",
+        "descr": "T",
+
+		"descr1": "C",
+        "int": 15,
+        "coord": "0,10",
+        "id2show": "id датчика",
+        "shrift": "2",
+        "colour": "BLUE",
+        "fon": "BLACK",
+        "rotation": "1",
+        "size": "144",
+        "fon_screen" : "BLACK"
+    }],
+    
+    "about": {
+        "authorName": "Serghei Yakovlev, Serghei Crasnicov",
+        "authorContact": "https://t.me/Serghei63",
+        "authorGit": "https://github.com/Serghei63",
+        "specialThanks": "Ilya Belyakov",
+        "moduleName": "St7735",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "moduleDesc": "Позволяет выводить на графический экран с чипом ST7735s по указанным позициям значения других элементов конфигурации.",
+        "propInfo": {
+            "int": "Период времени в секундах обновления информации на экране по конкретному элементу.",
+            "coord": "Координата позиции для вывода данных элемента конфигурации.",
+            "id2show": "id элемента конфигурации.",
+            "shrift": "Шрифт текста 1, ...,5",
+            "colour": "Цвет текста BLACK,WHITE, GREEN, BLUE, CYAN, MAGENTA,YELLOW,ORANGE",
+            "fon": "Фон текста BLACK,WHITE, GREEN, BLUE, CYAN, MAGENTA,YELLOW,ORANGE",
+            "rotation": "Поворот экрана 0,1,2,3",
+            "size": "размер экрана 1.8 вводить 180, 1.44 - 144",
+            "fon_screen" : "Общий фон экрана BLACK,WHITE, GREEN, BLUE, CYAN, MAGENTA,YELLOW,ORANGE"
+        },
+        "funcInfo": [
+
+            {
+                "name": "x",
+                "descr": "Устанавливает первую координату",
+                "params": ["Номер строки первого символа"]
+            },
+            {
+                "name": "y",
+                "descr": "Устанавливает вторую координату",
+                "params": ["Номер столбца первого символа"]
+            },
+            {
+                "name": "ху",
+                "descr": "Задаем координаты текста",
+                "params": ["Координаты"]
+            },
+            {
+                "name": "descr",
+                "descr": "Задает приставку слева от значения",
+                "params": ["Строка"]
+            },
+			            {
+                "name": "descr1",
+                "descr": "Задает приставку справа от значения",
+                "params": ["Строка"]
+            },
+            {
+                "name": "id2show",
+                "descr": "Задает ИД элемента, значение которого хотим отображать на экране",
+                "params": ["Имя элемента конфигурации"]
+            },
+            {
+                "name": "shrift",
+                "descr": "Задаем шрифт текста",
+                "params": ["Размер"]
+            },
+            {
+                "name": "colour",
+                "descr": "Задаем цвет текста",
+                "params": ["Цвет"]
+            },
+            {
+                "name": "xycs",
+                "descr": "Задаем координаты, цвет, шрифт",
+                "params": ["Координаты, Цвет, шрифт"]
+            },
+            {
+                "name": "fon",
+                "descr": "Задаем цвет фона текста",
+                "params": ["Цвет"]
+            },
+            {
+                "name": "fon_screen",
+                "descr": "Задаем цвет общего фона",
+                "params": ["Цвет"]
+            },
+            {
+                "name": "line",
+                "descr": "Чертим линию",
+                "params": ["Координаты линии, цвет"]
+            }
+        ]
+    },
+
+    "defActive": false,
+
+    "usedLibs": {
+        "esp32*": [
+           "https://github.com/adafruit/Adafruit-ST7735-Library"
+        ],
+        "esp82*": [
+           "https://github.com/adafruit/Adafruit-ST7735-Library"
+        ]
+    }
+}

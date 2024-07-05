@@ -39,7 +39,7 @@
         },
         "title": "Acs712 Датчик тока"
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [],
         "esp82*": []

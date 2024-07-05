@@ -35,7 +35,7 @@
             "delta": "Погрешность срабатывания кнопки в диапазоне +-delta."
         }
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [],
         "esp82*": []

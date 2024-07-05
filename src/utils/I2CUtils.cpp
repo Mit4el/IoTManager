@@ -13,14 +13,14 @@ void scanI2C() {
  
         if (error == 0){
             message += "I2C device found at address 0x";
-            message += uint64ToString(address, 16);
+            message += uint64ToStringIoTM(address, 16);
             message += " !";
  
             nDevices++;
         }
         else if (error==4) {
             message += "Unknow error at address 0x";
-            message += uint64ToString(address, 16);
+            message += uint64ToStringIoTM(address, 16);
         } 
     }
     if (nDevices == 0)

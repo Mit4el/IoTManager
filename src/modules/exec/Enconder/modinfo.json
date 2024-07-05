@@ -41,7 +41,7 @@
             "pins": "Подключеные пины (CLK, DT, SW)"
         }
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [
             "gyverlibs/EncButton @ ^2.0"

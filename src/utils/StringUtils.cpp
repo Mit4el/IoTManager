@@ -183,7 +183,7 @@ String prettyBytes(size_t size) {
         return String(size / 1024.0 / 1024.0 / 1024.0) + "GB";
 }
 
-String uint64ToString(uint64_t input, uint8_t base) {
+String uint64ToStringIoTM(uint64_t input, uint8_t base) {
     String result = "";
 
     do {

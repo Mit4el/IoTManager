@@ -78,7 +78,7 @@
             "int": "Количество секунд между опросами датчика."
         }
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [
             "adafruit/Adafruit BME280 Library"

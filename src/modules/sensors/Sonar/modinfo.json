@@ -35,7 +35,7 @@
             "int": "Количество секунд между опросами датчика."
         }
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [],
         "esp82*": []

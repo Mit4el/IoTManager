@@ -47,7 +47,7 @@
             "int": "Количество секунд между опросами датчика."
         }
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [
             "WEMOS SHT3x@1.0.0"

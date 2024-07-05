@@ -50,7 +50,7 @@
             "int": "Количество секунд между опросами датчика."
         }
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [
             "beegee-tokyo/DHT sensor library for ESPx"

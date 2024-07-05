@@ -38,7 +38,7 @@
             "freq": "Частота"
         }
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp82*": []
     }

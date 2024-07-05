@@ -19,21 +19,21 @@ class Telegram : public IoTItem {
             msg = deleteBeforeDelimiter(msg, "_");
             generateOrder(selectToMarker(msg, "_"), selectToMarkerLast(msg, "_"));
             _myBot.sendMessage(_chatID, "order done");
-            SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToString(_chatID) + ", msg: " + String(msg));
+            SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToStringIoTM(_chatID) + ", msg: " + String(msg));
         } else if (msg.indexOf("get") != -1) {
             msg = deleteBeforeDelimiter(msg, "_");
             IoTItem* item = findIoTItem(msg);
             if (item) {
                 _myBot.sendMessage(_chatID, item->getValue()); 
-                SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToString(_chatID) + ", msg: " + String(msg));
+                SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToStringIoTM(_chatID) + ", msg: " + String(msg));
             }
         } else if (msg.indexOf("all") != -1) {
             String list = returnListOfParams();
             _myBot.sendMessage(_chatID, list);
-            SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToString(_chatID) + "\n" + list);
+            SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToStringIoTM(_chatID) + "\n" + list);
         } else if (msg.indexOf("help") != -1) {
             _myBot.sendMessage(_chatID, "ID: " + chipId);
-            _myBot.sendMessage(_chatID, "chatID: " + uint64ToString(_chatID));
+            _myBot.sendMessage(_chatID, "chatID: " + uint64ToStringIoTM(_chatID));
             _myBot.sendMessage(_chatID, F("Wrong order, use /all to get all values, /get_id to get value, or /set_id_value to set value"));
         } else {
             setValue(msg);
@@ -70,7 +70,7 @@ class Telegram : public IoTItem {
         if (_receiveMsg) {
             TBMessage msg;
             if (_myBot.getNewMessage(msg)) {
-                SerialPrint("->", F("Telegram"), "chat ID: " + uint64ToString(msg.sender.id) + ", msg: " + msg.text);
+                SerialPrint("->", F("Telegram"), "chat ID: " + uint64ToStringIoTM(msg.sender.id) + ", msg: " + msg.text);
                 if (_autos) {
                     _chatID = msg.sender.id;
                 }
@@ -100,12 +100,12 @@ class Telegram : public IoTItem {
     void sendTelegramMsg(bool often, String msg) {
         if (often) {
             _myBot.sendMessage(_chatID, msg);
-            SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToString(_chatID) + ", msg: " + msg);
+            SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToStringIoTM(_chatID) + ", msg: " + msg);
         } else {
             if (_prevMsg != msg) {
                 _prevMsg = msg;
                 _myBot.sendMessage(_chatID, msg);
-                SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToString(_chatID) + ", msg: " + msg);
+                SerialPrint("<-", F("Telegram"), "chat ID: " + uint64ToStringIoTM(_chatID) + ", msg: " + msg);
             }
         }
     }

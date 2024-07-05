@@ -1,0 +1,104 @@
+{   
+    "menuSection": "executive_devices",
+
+    "configItem": [{
+
+        "global": 0,
+        "name": "Управление кондиционером",
+        "type": "Reading",
+        "subtype": "IRremote",
+        "id": "ir",
+        "pinTx": 4,
+        "set_id": "",
+        "int": 1,
+        "prot": 15
+    }],
+    
+    "about": {
+        "authorName": "Serghei Crasnicov",
+        "authorContact": "https://t.me/Serghei63",
+        "authorGit": "https://github.com/Serghei63",
+        "specialThanks": "Mikhail Bubnov https://t.me/Mit4bmw , Олег Астахов https://t.me/Threedreality  , Valentin Khandriga @Valiuhaaa",
+        "moduleName": "IRremote",
+        "moduleVersion": "2.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Эмулятор IR пульта",
+        "moduleDesc": "Позволяет управлять кондиционером и другой техникой по IR каналу",
+        "propInfo": {
+            "pinTx": "GPIO номер, к которому подключен инфракрасный приемник.",
+            "prot": " Цифровой код протокола . UNKNOWN = -1, UNUSED = 0, COOLIX - 15, SAMSUNG_AC - 46 ....",
+            "set_id": "id установленной температуры"
+        },
+        "funcInfo": [
+            {
+               "name": "on",
+               "descr": "Включить конциционер",
+               "params": []
+            },
+            {
+               "name": "off",
+               "descr": "Выключить конциционер",
+               "params": []
+            },
+            {
+               "name": "cool",
+               "descr": "Режим охлаждения",
+               "params": []
+            },
+            {
+               "name": "heat",
+               "descr": "Режим нагрева",
+               "params": []
+            },
+            {
+               "name": "dry",
+               "descr": "Режим осушения",
+               "params": []
+            },
+            {
+               "name": "speedmin",
+               "descr": "Минимальная скорость вентилятора",
+               "params": []
+            },
+            {
+               "name": "speedlow",
+               "descr": "Медленная скорость вентилятора",
+               "params": []
+            },
+            {
+               "name": "speedmed",
+               "descr": "Средняя скорость вентилятора",
+               "params": []
+            },
+            {
+                "name": "speedhigh",
+                "descr": "Высокая скорость вентилятора",
+                "params": []
+             },
+             {
+                "name": "speedmax",
+                "descr": "Максимальная скорость вентилятора",
+                "params": []
+             },
+             {
+               "name": "setTemp",
+               "descr": "Установленная температура",
+               "params": []
+             }
+        ]
+    },
+
+    "defActive": false,
+
+    "usedLibs": {
+        "esp32*": [
+            "https://github.com/crankyoldgit/IRremoteESP8266"
+        ],
+        "esp82*": [
+            "https://github.com/crankyoldgit/IRremoteESP8266"
+        ]
+    }
+}

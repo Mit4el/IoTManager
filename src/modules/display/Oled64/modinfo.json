@@ -75,7 +75,7 @@
             }
         ]
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [
             "https://github.com/stblassitude/Adafruit_SSD1306_Wemos_OLED",

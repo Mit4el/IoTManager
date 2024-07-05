@@ -34,7 +34,7 @@
             "index": "Значения от 1 до 4, где при выборе 1 будет нумерация pin 100-115, при выборе 2 200-215 и т.д."
         }
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [
             "adafruit/Adafruit MCP23017 Arduino Library@^2.1.0",

@@ -117,7 +117,7 @@
             }
         ]
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32*": [
             "https://github.com/robotclass/RobotClass_LiquidCrystal_I2C",

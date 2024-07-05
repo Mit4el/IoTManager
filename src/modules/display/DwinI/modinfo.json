@@ -40,7 +40,7 @@
             "btn-uploadUI": "Формирует автоматически графический интерфейс на базе конфигурации и выгружает в экран. Занимает продолжительное время! (в разработке)"
         }
     },
-    "defActive": true,
+    "defActive": false,
     "usedLibs": {
         "esp32_4mb": [
             "plerup/EspSoftwareSerial"

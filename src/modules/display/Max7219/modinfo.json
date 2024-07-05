@@ -1,0 +1,58 @@
+{
+  "menuSection": "screens",
+
+  "configItem": [
+    {
+      "global": 0,
+      "name": "Max7219",
+      "type": "Reading",
+      "subtype": "Max7219",
+      "id": "Max7219",
+      "widget": "",
+      "page": "",
+      "descr": "Max7219",
+      "id2show": "id датчика",
+      "intensity": 3,
+      "SPEED_IN_TIME": 150,
+      "SPEED_OUT_TIME": 150,
+      "PAUSE_TIME": 2000,
+      "effect_in": 4,
+      "effect_out": 4,
+      "setTextAlignment": 1
+    }
+  ],
+
+  "about": {
+    "authorName": "Vladimir",
+    "moduleName": "Max7219",
+    "moduleVersion": "1.0",
+    "moduleDesc": "Позволяет выводить на матричный LED экран по указанным позициям значения других элементов конфигурации. Максимальное количество ячеек - 8 штук. Конфигурация подключения с веба пока не реализована.",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "propInfo": {
+      "id2show": "текст или переменная для вывода на экран",
+      "intensity": "Яркость экрана",
+      "SPEED_IN_TIME": "Скорость начала анимации",
+      "SPEED_OUT_TIME": "Скорость конца анимации",
+      "PAUSE_TIME": "Пауза между анимациями",
+      "effect_in": "Номер анимации в начале",
+      "effect_out": "Номер анимации в конце",
+      "setTextAlignment": "Выравнивание текста 0-слева, 1-по центру, 2-справа"
+    }
+  },
+
+  "defActive": false,
+
+  "usedLibs": {
+    "esp32*": [
+      "https://github.com/MajicDesigns/MD_MAX72XX",
+      "https://github.com/MajicDesigns/MD_Parola"
+    ],
+    "esp82*": [
+      "https://github.com/MajicDesigns/MD_MAX72XX",
+      "https://github.com/MajicDesigns/MD_Parola"
+    ]
+  }
+}

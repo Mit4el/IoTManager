@@ -1,0 +1,76 @@
+{   
+    "menuSection": "screens",
+
+    "configItem": [{
+        "name": "TFT экран Ili9341",
+        "type": "Reading",
+        "subtype": "Ili9341",
+        "id": "ili",
+        "widget": "",
+        "page": "",
+        "descr": "T",
+		"descr1": "C",
+        "int": 15,
+        "coord": "0,10",
+        "id2show": "id датчика"
+    }],
+    
+    "about": {
+        "authorName": "Serghei Crasnicov",
+        "authorContact": "https://t.me/Serghei63",
+        "authorGit": "https://github.com/Serghei63",
+        "specialThanks": "Ilya Belyakov",
+        "moduleName": "Ili9341",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "moduleDesc": "Позволяет выводить на графический экран с чипом Ili9341 по указанным позициям значения других элементов конфигурации.",
+        "propInfo": {
+            "int": "Период времени в секундах обновления информации на экране по конкретному элементу.",
+            "coord": "Координата позиции для вывода данных элемента конфигурации.",
+            "id2show": "id элемента конфигурации."
+        },
+        "funcInfo": [
+
+            {
+                "name": "x",
+                "descr": "Устанавливает первую координату",
+                "params": ["Номер строки первого символа"]
+            },
+            {
+                "name": "y",
+                "descr": "Устанавливает вторую координату",
+                "params": ["Номер столбца первого символа"]
+            },
+            {
+                "name": "descr",
+                "descr": "Задает приставку слева от значения",
+                "params": ["Строка"]
+            },
+			            {
+                "name": "descr1",
+                "descr": "Задает приставку справа от значения",
+                "params": ["Строка"]
+            },
+            {
+                "name": "id2show",
+                "descr": "Задает ИД элемента, значение которого хотим отображать на экране",
+                "params": ["Имя элемента конфигурации"]
+            }
+        ]
+    },
+
+    "defActive": false,
+
+    "usedLibs": {
+        "esp32*": [
+           "Adafruit ILI9341@^1.5.11"
+        ],
+        "esp82*": [
+           "Adafruit ILI9341@^1.5.11"
+        ]
+    }
+
+}
