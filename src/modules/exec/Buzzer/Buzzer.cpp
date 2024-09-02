@@ -1,6 +1,8 @@
 #include "Global.h"
 #include "classes/IoTItem.h"
-
+#if defined(LIBRETINY)
+#include "Common.h"
+#endif
 
 extern IoTGpio IoTgpio;
 
@@ -124,7 +126,7 @@ public:
                 toneFrequency = tonesList[thisTone];
                 toneDuration = tonesList[thisTone + 1];
                 //  noTone(_pin); // останавливаем, на всякий случай воспроизведение предыдущей ноты
-                tone(_pin, toneFrequency, toneDuration);
+                tone((uint8_t)_pin, (uint)toneFrequency, (ulong)toneDuration);
                 startPlayPrevTone = millis();
                 pauseBetweenTones = toneDuration * (1 + _pauseBetween);
             }
@@ -265,7 +267,7 @@ public:
 
     void doByInterval()
     {
-        tone(_pin, _freq, _duration);
+        tone((uint8_t)_pin, (uint)_freq, (ulong)_duration);
         //  regEvent(value.valD, "Buzzer");
     }
 

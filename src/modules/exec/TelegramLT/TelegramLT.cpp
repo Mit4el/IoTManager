@@ -41,7 +41,7 @@ class TelegramLT : public IoTItem {
         if (param.size() == 1) {
             String strTmp;
             if (param[0].isDecimal && param[0].valS == "")
-                strTmp = param[0].valD;
+                strTmp = String(param[0].valD);
             else
                 strTmp = param[0].valS;
 
