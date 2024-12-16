@@ -1,0 +1,41 @@
+{
+    "menuSection": "virtual_elments",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "Свой сервер обновлений",
+            "type": "Reading",
+            "subtype": "UpdateServer",
+            "id": "UpdateServer",
+            "widget": "",
+            "page": "",
+            "descr": "",
+            "btn-startUpdateAll": "http://192.168.11.112/iotm/esp8266_4mb/400",
+            "btn-startUpdateFS": "http://192.168.11.112/iotm/esp8266_4mb/400",
+            "btn-startUpdateFW": "http://192.168.11.112/iotm/esp8266_4mb/400"
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "exampleURL": "https://iotmanager.org/",
+        "specialThanks": "",
+        "moduleName": "UpdateServer",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Свой сервер обновлений",
+        "moduleDesc": "Модуль для получения прошивки из своего сервера обновлений.",
+        "propInfo": {
+            "btn-startUpdate": "Кнопка запуска процесса обновления из указанного URL"
+        }
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32*": [],
+        "esp82*": []
+    }
+}

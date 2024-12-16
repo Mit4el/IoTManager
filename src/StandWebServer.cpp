@@ -159,7 +159,7 @@ void handleStatus() {
 }
 
 void handleLocalOTA() {
-    upgrade_firmware(3, "local");
+    upgrade_firmware(3,"");
 }
 
 #ifdef ESP32

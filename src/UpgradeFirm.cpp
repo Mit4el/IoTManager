@@ -3,6 +3,9 @@
 updateFirm update;
 
 void upgrade_firmware(int type, String path) {
+    if (path == ""){
+        path = getBinPath();   
+    }
     putUserDataToRam();
     // сбросим файл статуса последнего обновления
     writeFile("ota.json", "{}");
@@ -44,9 +47,7 @@ bool upgradeFS(String path) {
         SerialPrint("E", F("Update"), F("FS Path error"));
         saveUpdeteStatus("fs", PATH_ERROR);
         return ret;
-    } else if (path == "local"){
-        path = getBinPath();        
-    }
+    } 
 #ifdef ESP8266
     ESPhttpUpdate.rebootOnUpdate(false);
     t_httpUpdate_return retFS = ESPhttpUpdate.updateFS(wifiClient, path + "/littlefs.bin");
@@ -88,9 +89,7 @@ bool upgradeBuild(String path) {
         SerialPrint("E", F("Update"), F("Build Path error"));
         saveUpdeteStatus("build", PATH_ERROR);
         return ret;
-    } else if (path == "local"){
-        path = getBinPath();    
-    }
+    } 
 #if defined(esp8266_4mb) || defined(esp8266_16mb) || defined(esp8266_1mb) || defined(esp8266_1mb_ota) || defined(esp8266_2mb) || defined(esp8266_2mb_ota)
     ESPhttpUpdate.rebootOnUpdate(false);
     t_httpUpdate_return retBuild = ESPhttpUpdate.update(wifiClient, path + "/firmware.bin");
@@ -134,15 +133,29 @@ const String getBinPath() {
     String path = "error";
     int targetVersion = 400; //HACKFUCK local OTA version in PrepareServer.py
     String serverip;
-//    if (jsonRead(errorsHeapJson, F("chver"), targetVersion)) {
-        if (targetVersion >= 400) {
+    if (jsonRead(errorsHeapJson, F("chver"), targetVersion)) {
+          if (targetVersion >= 400)
+        {
+            if (jsonRead(settingsFlashJson, F("serverip"), serverip))
+            {
+                if (serverip != "")
+                {
+                    path = jsonReadStr(settingsFlashJson, F("serverip")) + "/iotm/" + String(FIRMWARE_NAME) + "/" + String(targetVersion) + "/" ;
+                }
+            }
+        }
+    }
+    else if (targetVersion >= 400) 
+        {
             if (jsonRead(settingsFlashJson, F("serverlocal"), serverip)) {
-                if (serverip != "") {
+                if (serverip != "") 
+                {
                     path = jsonReadStr(settingsFlashJson, F("serverlocal")) + "/iotm/" + String(FIRMWARE_NAME) + "/" + String(targetVersion) + "/";
                 }
             }
         }
-//    }
+
+
     SerialPrint("i", F("Update"), "server local: " + path);
     return path;
 }

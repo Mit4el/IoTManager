@@ -40,7 +40,9 @@ void loopTask(void *pvParameters)
 	_begin();			// Startup MySensors library
 	for(;;) {
 		if(loopTaskWDTEnabled) {
+			#if !defined(esp32c6_4mb) && !defined(esp32c6_8mb) //TODO esp32-c6 переписать esp_task_wdt_init
 			esp_task_wdt_reset();
+			#endif
 		}
 		_process();		// Process incoming data
 		loop();

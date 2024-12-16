@@ -96,7 +96,9 @@ void routerConnect()
       }
 #if defined(ESP32)
       //SerialPrint("i", "Task", "Resetting WDT...");
+       #if !defined(esp32c6_4mb) && !defined(esp32c6_8mb) //TODO esp32-c6 переписать esp_task_wdt_init
       esp_task_wdt_reset();
+      #endif
 #endif
       Serial.print(".");
       delay(1000);

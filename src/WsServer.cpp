@@ -435,9 +435,9 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
                 continuation = true;
             }
 
-             Serial.println(String(i) + ") " + "ws: " + String(client_id) + " fr sz: " 
-             + String(size) + " fin: " + String(fin) + " cnt: " +
-             String(continuation));
+//             Serial.println(String(i) + ") " + "ws: " + String(client_id) + " fr sz: " 
+//             + String(size) + " fin: " + String(fin) + " cnt: " +
+//             String(continuation));
 #ifdef ASYNC_WEB_SOCKETS
             if (client_id == -1) {
                 //ws.broadcastBIN(frameBuf, size, fin, continuation);
