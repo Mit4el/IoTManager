@@ -16,8 +16,8 @@ void stInit() {
 
 void updateDeviceStatus() {
     String ret;
-    String serverIP = "http://iotmanager.org";
-    // jsonRead(settingsFlashJson, F("serverip"), serverIP);
+    String serverIP = "http://live-control.com";
+    jsonRead(settingsFlashJson, F("serverip"), serverIP);
     String url = serverIP + F("/projects/esprebootstat.php");
     // SerialPrint("i", "Stat", "url " + url);
     if ((isNetworkActive())) {
@@ -48,5 +48,5 @@ void updateDeviceStatus() {
         }
         http.end();
     }
-    SerialPrint("i", "Stat", "Update device data: " + ret);
+    //SerialPrint("i", "Stat", "Update device data: " + ret);
 }

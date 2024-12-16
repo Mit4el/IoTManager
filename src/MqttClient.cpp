@@ -120,7 +120,9 @@ void getMqttData() {
     mqttUser = jsonReadStr(settingsFlashJson, F("mqttUser"));
     mqttPass = jsonReadStr(settingsFlashJson, F("mqttPass"));
     mqttPrefix = jsonReadStr(settingsFlashJson, F("mqttPrefix"));
-    nameId = jsonReadStr(settingsFlashJson, F("name"));
+    if (jsonReadInt(settingsFlashJson, F("HOMEd_names"))){
+    nameId = jsonReadStr(settingsFlashJson, F("name"));}
+    else{nameId = getChipId();}
     mqttRootDevice = mqttPrefix + "/" + chipId;
 }
 

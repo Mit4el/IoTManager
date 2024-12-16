@@ -1,5 +1,6 @@
 #include "ESPConfiguration.h"
 #include "classes/IoTGpio.h"
+#include "classes/IoTDiscovery.h"
 
 extern IoTGpio IoTgpio;
 
@@ -52,6 +53,25 @@ void configure(String path) {
     }
     file.close();
     SerialPrint("i", "Config", "Configured");
+      
+#ifdef ESP32
+  if(HOMEdDiscovery)
+        HOMEdDiscovery->mqttSubscribeDiscovery();
+    if(HADiscovery)
+        HADiscovery->mqttSubscribeDiscovery();
+        // оттправляем все статусы
+    if(HOMEdDiscovery || HADiscovery)
+    {
+        for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
+        {
+            if ((*it)->iAmLocal)
+            {
+                publishStatusMqtt((*it)->getID(), (*it)->getValue());
+                (*it)->onMqttWsAppConnectEvent();
+            }
+        }
+    }
+#endif
 }
 
 void clearConfigure() {

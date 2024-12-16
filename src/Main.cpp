@@ -250,7 +250,9 @@ void setup() {
             // сброс WDT
 #if defined(ESP32)
             //SerialPrint("i", "Task", "reset wdt");
+             #if !defined(esp32c6_4mb) && !defined(esp32c6_8mb) //TODO esp32-c6 переписать esp_task_wdt_init
             esp_task_wdt_reset();
+            #endif
 #endif
             // сохраняем значения IoTItems в файл каждую секунду, если были изменения (установлены маркеры на сохранение)
             if (needSaveValues) {
@@ -287,8 +289,8 @@ void setup() {
         nullptr, true);
 
     // test
-    Serial.println("-------test start--------");
-    Serial.println("--------test end---------");
+    //Serial.println("-------test start--------");
+    //Serial.println("--------test end---------");
 
     stopErrorMarker(SETUPLAST_ERRORMARKER);
 #if defined(RESTART_DEBUG_INFO)    

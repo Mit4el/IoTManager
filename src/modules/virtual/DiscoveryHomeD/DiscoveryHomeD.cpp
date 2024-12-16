@@ -8,16 +8,30 @@ private:
     bool sendOk = false;
     // bool topicOk = false;
     bool HOMEd = false;
+    int _names = 0;
+    String ChipId = getChipId();
+    String esp_id = ChipId;
 
 public:
     DiscoveryHomeD(String parameters) : IoTDiscovery(parameters)
     {
         _topic = jsonReadStr(parameters, "topic");
+        _names = jsonReadInt(parameters, "names");
         if (_topic && _topic != "" && _topic != "null")
         {
             HOMEd = true;
             HOMEdTopic = _topic;
         }
+        if (_names)
+        {
+            esp_id = jsonReadStr(settingsFlashJson, F("name"));
+            jsonWriteInt(settingsFlashJson, F("HOMEd_names"), 1);
+        }
+        else
+        {
+            jsonWriteInt(settingsFlashJson, F("HOMEd_names"), 0);
+        }
+
         if (mqttIsConnect() && HOMEd)
         {
             mqttReconnect();
@@ -33,14 +47,14 @@ public:
 
         if (payloadStr.indexOf("HELLO") == -1)
         {
-/*             String dev = selectToMarkerLast(topic, "/");
-            dev.toUpperCase();
-            dev.replace(":", "");
-            if (_topic != topic)
-            {
-                //  SerialPrint("i", "ExternalMQTT", _id + " not equal: " + topic + " msg: " + msg);
-                return;
-            } */
+            /*             String dev = selectToMarkerLast(topic, "/");
+                        dev.toUpperCase();
+                        dev.replace(":", "");
+                        if (_topic != topic)
+                        {
+                            //  SerialPrint("i", "ExternalMQTT", _id + " not equal: " + topic + " msg: " + msg);
+                            return;
+                        } */
             // обработка топика, на который подписались
             if (topic.indexOf(F("/td/custom")) != -1)
             {
@@ -52,7 +66,6 @@ public:
                 {
 
                     String key = kvp.key().c_str();
-                    SerialPrint("i", F("=>MQTT"), "Msg from HOMEd: " + key);
                     String value = kvp.value().as<const char *>();
                     if (key.indexOf(F("status_")) != -1)
                     {
@@ -71,11 +84,17 @@ public:
                             generateOrder(key, val);
                         }
                     }
-
-                    if (!value)
+                    else
                     {
-                        float val = kvp.value();
-                        generateOrder(key, (String)(val));
+                        if (!value)
+                        {
+                            float val = kvp.value();
+                            generateOrder(key, (String)(val));
+                        }
+                        else
+                        {
+                            generateOrder(key, value);
+                        }
                     }
                 }
 
@@ -90,8 +109,8 @@ public:
                 if (mqttIsConnect() && !sendOk && topicOk)
                 {
                     sendOk = true;
-                    publishRetain(_topic + "/device/custom/" + nameId, "{\"status\":\"online\"}");
-                    String HOMEdsubscribeTopic = _topic + "/td/custom/" + nameId;
+                    publishRetain(_topic + "/device/custom/" + esp_id, "{\"status\":\"online\"}");
+                    String HOMEdsubscribeTopic = _topic + "/td/custom/" + esp_id;
                     // mqtt.subscribe(HOMEdsubscribeTopic.c_str());
                     mqttSubscribeExternal(HOMEdsubscribeTopic);
                 }
@@ -103,7 +122,7 @@ public:
 
     void publishStatusHOMEd(const String &topic, const String &data)
     {
-        String path_h = HOMEdTopic + "/fd/custom/" + nameId;
+        String path_h = HOMEdTopic + "/fd/custom/" + esp_id;
         String json_h = "{}";
         if (topic != "onStart")
         {
@@ -133,8 +152,8 @@ public:
         {
             deleteFromHOMEd();
             getlayoutHOMEd();
-            publishRetain(HOMEdTopic + "/device/custom/" + nameId, "{\"status\":\"online\"}");
-            String HOMEdsubscribeTopic = HOMEdTopic + "/td/custom/" + nameId;
+            publishRetain(HOMEdTopic + "/device/custom/" + esp_id, "{\"status\":\"online\"}");
+            String HOMEdsubscribeTopic = HOMEdTopic + "/td/custom/" + esp_id;
             mqtt.subscribe(HOMEdsubscribeTopic.c_str());
         }
     }
@@ -164,12 +183,12 @@ public:
             JsonArray arr = doc.as<JsonArray>();
             String HOMEdJSON = "";
             HOMEdJSON = "{\"action\":\"updateDevice\",";
-            HOMEdJSON = HOMEdJSON + "\"device\":\"" + nameId + "\",";
+            HOMEdJSON = HOMEdJSON + "\"device\":\"" + ChipId + "\",";
             HOMEdJSON = HOMEdJSON + "\"data\":{";
             HOMEdJSON = HOMEdJSON + "\"active\": true,";
             HOMEdJSON = HOMEdJSON + "\"cloud\": false,";
             HOMEdJSON = HOMEdJSON + "\"discovery\": false,";
-            HOMEdJSON = HOMEdJSON + "\"id\":\"" + chipId + "\",";
+            HOMEdJSON = HOMEdJSON + "\"id\":\"" + ChipId + "\",";
             HOMEdJSON = HOMEdJSON + "\"name\":\"" + devName + "\",";
             HOMEdJSON = HOMEdJSON + "\"real\":true,";
             HOMEdJSON = HOMEdJSON + "\"exposes\": [";
@@ -178,7 +197,7 @@ public:
             {
                 String name = value["descr"];
                 String device = selectToMarkerLast(value["topic"].as<String>(), "/");
-                //String id = chipId + "-" + device;
+                //            String id = ChipId + "-" + device;
                 String expose = value["name"];
                 if (value["name"].as<String>() == "toggle")
                 {
@@ -219,7 +238,7 @@ public:
 
             file.close();
 
-            publishRetain(HOMEdTopic + "/device/custom/" + nameId, "{\"status\":\"online\"}");
+            publishRetain(HOMEdTopic + "/device/custom/" + esp_id, "{\"status\":\"online\"}");
 
             for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
             {
@@ -243,7 +262,7 @@ public:
                     String HOMEdjson = "";
                     HOMEdjson = "{\"action\":\"removeDevice\",";
                     HOMEdjson = HOMEdjson + "\"device\":\"";
-                    HOMEdjson = HOMEdjson + nameId;
+                    HOMEdjson = HOMEdjson + ChipId;
                     HOMEdjson = HOMEdjson + "\"}";
                     String topic = (HOMEdTopic + "/command/custom").c_str();
                     if (!publish(topic, HOMEdjson))
@@ -261,7 +280,7 @@ public:
         else
             return nullptr;
     }
-    ~DiscoveryHomeD(){};
+    ~DiscoveryHomeD() {};
 };
 
 void *getAPI_DiscoveryHomeD(String subtype, String param)

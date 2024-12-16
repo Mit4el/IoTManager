@@ -90,7 +90,7 @@ class WebSocketsServerCore : protected WebSockets {
     void enableHeartbeat(uint32_t pingInterval, uint32_t pongTimeout, uint8_t disconnectTimeoutCount);
     void disableHeartbeat();
 
-#if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266_ASYNC) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
+#if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266_ASYNC) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_RP2040)
     IPAddress remoteIP(uint8_t num);
 #endif
 
@@ -228,8 +228,7 @@ class WebSocketsServer : public WebSocketsServerCore {
     void loop(void);    // handle incoming client and client data
 #else
     // Async interface not need a loop call
-    void loop(void) __attribute__((deprecated)) {
-    }
+    void loop(void) __attribute__((deprecated)) {}
 #endif
 
   protected:
